@@ -1,6 +1,10 @@
 # Build and hardware validation
 
 This record owns milestone acceptance and the limits of retained evidence.
+The user confirmed all revision-33 device checks passed on 8 November 2026.
+M5 is closed PASS; see [the current acceptance record](revision33.md) and
+[device confirmation](evidence/m5/m5-rev33-device.json). Older pending results
+below describe their named historical builds.
 Use [the roadmap](../README.md#milestone-status) for current status and next
 work, and subsystem guides for operating procedures. Public captures and historical
 inventories are at the [locations below](#evidence-locations). Their observations
@@ -28,7 +32,7 @@ or acceptance is claimed. Local CLI typing is an M5 integration check once
 display and fbcon exist. Electrical-fault, exhaustive physical mapping and
 stress follow-ups remain recorded in the keyboard guide.
 
-## M5 implementation — hardware acceptance pending
+## M5 implementation and early device captures
 
 Application **0.5.0 / AppFS revision 14 / Linux 6.18.35-gaijin-m5** adds loader
 panel initialization, reserved display memory, native DMA refresh, RGB565
@@ -245,7 +249,9 @@ installation archive. See [workspace layout](../development.md).
 
 ## Evidence locations
 
-The current [revision-32 validation](revision32.md) records the correction to
+The [revision-33 validation](revision33.md) describes the standalone boot and
+console changes, host regressions and user-confirmed PASS for the device checks.
+The earlier [revision-32 validation](revision32.md) records the correction to
 `com.github.siviqt.gaijin`, copied-installation checks and remaining device tests.
 
 The historical [revision-31 validation](revision31.md) records 93 passing host

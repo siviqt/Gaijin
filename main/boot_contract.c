@@ -73,7 +73,8 @@ int m0_prepare_dtb(void *dtb, size_t file_bytes, uint32_t initrd_bytes) {
     const fdt32_t region[] = {cpu_to_fdt32(M0_RAM_BASE), cpu_to_fdt32(M0_RAM_SIZE)};
     if (memory < 0 || fdt_setprop(dtb, memory, "reg", region, sizeof(region))) return -1;
     int chosen = fdt_path_offset(dtb, "/chosen");
-    if (chosen < 0 || fdt_setprop_string(dtb, chosen, "bootargs", M0_BOOTARGS)) return -1;
+    // Until panel setup succeeds, retain the usable USB recovery terminal.
+    if (chosen < 0 || fdt_setprop_string(dtb, chosen, "bootargs", M0_EARLYCON_BOOTARG M0_USB_BOOTARGS)) return -1;
     // Offsets can move after every structural edit; reacquire before each write.
     chosen = fdt_path_offset(dtb, "/chosen");
     if (initrd_bytes) {
@@ -94,6 +95,10 @@ int m0_prepare_dtb(void *dtb, size_t file_bytes, uint32_t initrd_bytes) {
 int m5_enable_display(void *dtb) {
     int display = fdt_path_offset(dtb, "/soc/framebuffer@50081000");
     if (display < 0 || fdt_node_check_compatible(dtb, display, "tanmatsu,rev7-fb")) return -1;
-    return fdt_setprop_string(dtb, display, "status", "okay");
+    if (fdt_setprop_string(dtb, display, "status", "okay")) return -1;
+    // Reacquire after the status edit, which can relocate /chosen.
+    int chosen = fdt_path_offset(dtb, "/chosen");
+    if (chosen < 0) return -1;
+    return fdt_setprop_string(dtb, chosen, "bootargs", M0_EARLYCON_BOOTARG M0_BOOTARGS);
 }
 

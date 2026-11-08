@@ -211,10 +211,11 @@ class UserspaceTests(unittest.TestCase):
         self.archive.write_bytes(gzip.compress(newc(entries)))
         with self.assertRaisesRegex(ValueError, "missing archive path"):
             verify(self.archive, [self.elf] * 6, "readelf")
-        for action in (b"ttyUJ0::respawn:/sbin/gaijin-console usb\ntty1::respawn:-/bin/sh",
+        for action in (b"tty1::respawn:-/bin/sh\nttyUJ0::respawn:/sbin/gaijin-console usb",
+                       b"ttyUJ0::respawn:-/bin/sh\ntty1::respawn:-/bin/sh",
                        b"ttyUJ0::respawn:-/bin/sh"):
             with self.subTest(action=action):
-                entries = [(name, mode, data.replace(b"ttyUJ0::respawn:-/bin/sh\ntty1::respawn:-/bin/sh", action), rdev)
+                entries = [(name, mode, data.replace(b"tty1::respawn:-/bin/sh\nttyUJ0::respawn:-/bin/sh", action), rdev)
                            if name == "etc/inittab" else (name, mode, data, rdev)
                            for name, mode, data, rdev in minimal_root()]
                 self.archive.write_bytes(gzip.compress(newc(entries)))
@@ -227,11 +228,12 @@ class UserspaceTests(unittest.TestCase):
 
     def test_launcher_and_complete_sd_package(self):
         loader = self.work / "linux-loader.bin"
-        loader.write_bytes(bootargs().encode() + b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0LDO4 disabled, bypass off\0/sd/apps/com.github.siviqt.gaijin/boot/\0")
+        loader.write_bytes(bootargs().encode() + b"\0" + bootargs(usb_only=True).encode() +
+                           b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0LDO4 disabled, bypass off\0/sd/apps/com.github.siviqt.gaijin/boot/\0")
         output = self.work / APP_ID
         stage_launcher(loader, output)
         meta = json.loads((output / "metadata.json").read_text())
-        self.assertEqual(meta["application"][0]["revision"], 32)
+        self.assertEqual(meta["application"][0]["revision"], 33)
         self.assertTrue(meta['application'][0]['external_only'])
         self.assertEqual(meta["repository_url"], "https://github.com/siviqt/Gaijin")
         self.assertEqual(meta["icon"], {f"{size}x{size}": f"icon{size}.png" for size in (16, 32, 64)})
@@ -241,6 +243,10 @@ class UserspaceTests(unittest.TestCase):
             self.assertEqual((output / f"icon{size}.png").read_bytes()[16:24],
                              struct.pack(">II", size, size))
         self.assertFalse((output / "boot/manifest.bin").exists())
+        self.assertFalse((output / "LICENSES").exists())
+        self.assertFalse(any(asset['target_file'].startswith(('LICENSES/', 'licenses/'))
+                             for asset in meta['application'][0]['assets']))
+        self.assertEqual((output / "THIRD_PARTY.md").read_bytes(), (ROOT / "THIRD_PARTY.md").read_bytes())
         kernel = self.work / "kernel"
         kernel.mkdir()
         (kernel / ".config").write_bytes((ROOT / "linux/tanmatsu_defconfig").read_bytes())
@@ -261,6 +267,15 @@ class UserspaceTests(unittest.TestCase):
         state.write_bytes(b"existing user data outside the application")
         stage_application(loader, kernel, self.work, output)
         check_application(output)
+        (output / "LICENSES").mkdir()
+        with self.assertRaisesRegex(ValueError, "consolidated THIRD_PARTY"):
+            check_application(output)
+        (output / "LICENSES").rmdir()
+        notices = output / "THIRD_PARTY.md"
+        notices.write_text('obsolete notices\n')
+        with self.assertRaisesRegex(ValueError, "third-party notices differ"):
+            check_application(output)
+        notices.write_bytes((ROOT / "THIRD_PARTY.md").read_bytes())
         for asset in meta['application'][0]['assets']:
             self.assertEqual(asset['source_file'], asset['target_file'])
             self.assertTrue((output / asset['source_file']).is_file(), asset)
@@ -318,7 +333,8 @@ class UserspaceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "directory must be named"):
             stage_application(self.work / "missing-loader", self.work, self.work, wrong_directory)
         loader = self.work / "linux-loader.bin"
-        loader.write_bytes(bootargs().encode() + b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0"
+        loader.write_bytes(bootargs().encode() + b"\0" + bootargs(usb_only=True).encode() +
+                           b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0"
                            b"LDO4 disabled, bypass off\0/sd/apps/com.github.siviq.gaijin/boot/\0")
         with self.assertRaisesRegex(ValueError, "loader is not current"):
             check_loader(loader)
@@ -332,6 +348,26 @@ class UserspaceTests(unittest.TestCase):
             self.archive.write_bytes(gzip.compress(newc(entries)))
             with self.subTest(script=script), self.assertRaisesRegex(ValueError, "stale userspace application path"):
                 check_userspace_paths(self.archive)
+
+    def test_package_rejects_stale_usb_first_startup(self):
+        for name in ('init', 'etc/inittab', 'etc/init.d/rcS'):
+            entries = [(path, mode, payload + b'# obsolete startup\n' if path == name else payload, rdev)
+                       for path, mode, payload, rdev in minimal_root()]
+            self.archive.write_bytes(gzip.compress(newc(entries)))
+            with self.subTest(script=name), self.assertRaisesRegex(ValueError, 'stale userspace startup'):
+                check_userspace_paths(self.archive)
+
+    def test_release_rejects_debug_earlycon_and_missing_recovery_mode(self):
+        loader = self.work / 'loader.bin'
+        common = b'\0Gaijin M5 contract=1\0Linux owns DMA refresh\0LDO4 disabled, bypass off\0/sd/apps/com.github.siviqt.gaijin/boot/\0'
+        loader.write_bytes(bootargs().encode() + common)
+        with self.assertRaisesRegex(ValueError, 'loader is not current'):
+            check_loader(loader)
+        loader.write_bytes(bootargs().encode() + b'\0' + bootargs(usb_only=True).encode() + common)
+        check_loader(loader)
+        loader.write_bytes(loader.read_bytes() + b'earlycon=esp32p4usbjtag,mmio32,0x500d2000\0')
+        with self.assertRaisesRegex(ValueError, 'must disable CONFIG_GAIJIN_USB_EARLYCON'):
+            check_loader(loader)
 
     def test_squashfs_memory_envelope_and_contents(self):
         image = self.work / "rootfs.sqfs"

@@ -1,0 +1,29 @@
+Log child startup on init's console before switching to the child's terminal.
+On NOMMU the parent waits for vfork's child to exec; a full USB TTY must not
+block a pre-exec log write and prevent init from starting other sessions.
+
+--- a/init/init.c
++++ b/init/init.c
+@@ -501,6 +501,11 @@ static pid_t run(const struct init_action *a)
+ 	/* Create a new session and make ourself the process group leader */
+ 	setsid();
+ 
++	/* Keep pre-exec logging on init's console. On NOMMU a blocked write
++	 * to a child's USB terminal would also suspend PID 1 in vfork(). */
++	message(L_LOG, "starting pid %u, tty '%s': '%s'",
++			(int)getpid(), a->terminal, a->command);
++
+ 	/* Open the new terminal device */
+ 	if (!open_stdio_to_tty(a->terminal))
+ 		_exit_FAILURE();
+@@ -542,10 +547,6 @@ static pid_t run(const struct init_action *a)
+ 		}
+ 	}
+ 
+-	/* Log the process name and args */
+-	message(L_LOG, "starting pid %u, tty '%s': '%s'",
+-			(int)getpid(), a->terminal, a->command);
+-
+ 	/* Now run it.  The new program will take over this PID,
+ 	 * so nothing further in init.c should be run. */
+ 	init_exec(a->command);

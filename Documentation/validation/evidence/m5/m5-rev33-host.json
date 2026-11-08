@@ -1,0 +1,39 @@
+{
+  "date": "2026-11-08",
+  "version": "0.5.19",
+  "appfs_revision": 33,
+  "application_id": "com.github.siviqt.gaijin",
+  "components": "Loader, kernel and pinned NOMMU userspace rebuilt",
+  "host_tests": {
+    "run": 107,
+    "passed": 107,
+    "skipped": 0
+  },
+  "usb_boot_regressions": {
+    "early_console": "PASS: full FIFO without a clock, connected CRLF, mid-message backpressure and late attachment",
+    "console_selection": "PASS: LCD preferred after panel setup; USB-only on rejected/uninitialized display; debug option explicit in both modes",
+    "init_child": "PASS: real patched child path reaches exec with a saturated PTY; previous logging order times out in the negative control",
+    "packaging": "PASS: rejects debug earlycon, missing recovery arguments and stale startup scripts or USB-first inittab"
+  },
+  "clic_rv32_cases": 60,
+  "clic_negative_control": "PASS",
+  "actual_rv32_kernel_string_objects": "PASS under QEMU user harness",
+  "native_vi": "PASS: unnamed/named edit-save-reopen at 80x24 and 80x26",
+  "metadata_validation": "PASS: strict package metadata and current revision/icon/asset checks",
+  "package_integrity": "PASS: manifest, root checksum, ABI and matching initramfs/SquashFS",
+  "publication_audit": "PASS",
+  "kernel_builder": "builder@gaijin",
+  "hardware_validated": true,
+  "remaining": [
+    "Display flicker/refresh latency optimization and other roadmap follow-ups beyond the accepted functional checks."
+  ],
+  "components_sha256": {
+    "loader": "9bc94973b70467f300e208984eae5bc22a7ace80bd0269bad5e62f560c17d88c",
+    "Image": "13b8e2a69b49d82302c5065f99bbf2fd7df8db5cc3d5e4fda9b1a10ff26aff21",
+    "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
+    "initramfs": "27ac13b46a75455b81d0734c5a6aa41c79e71d508db4bc3a75c8534532c53936",
+    "rootfs.sqfs": "dd3ccba4f0c95dd418fc5662f888ef02ce0b60370b89f73866f0db5363e9e747"
+  },
+  "hardware_validation_source": "Documentation/validation/evidence/m5/m5-rev33-device.json",
+  "license_consolidation": "PASS: all eight original license texts retained verbatim in THIRD_PARTY.md, identical uClibc/LGPL text included once, and separate license directories rejected by packaging."
+}

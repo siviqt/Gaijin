@@ -27,6 +27,17 @@ def heading_ids(text):
 
 
 class DocumentationTests(unittest.TestCase):
+    def test_consolidated_notices_preserve_every_original_license_text(self):
+        lock = json.loads((ROOT / 'sources.lock.json').read_text())['third_party_licenses']
+        data = (ROOT / lock['file']).read_bytes()
+        blocks = re.findall(rb'<!-- license-text: ([^\n]+) -->\n````text\n(.*?)\n````\n', data, re.S)
+        self.assertEqual(len(blocks), len(lock['license_texts_sha256']))
+        self.assertEqual({name.decode() for name, _ in blocks}, set(lock['license_texts_sha256']))
+        for name, payload in blocks:
+            with self.subTest(license=name.decode()):
+                self.assertEqual(hashlib.sha256(payload + b'\n').hexdigest(),
+                                 lock['license_texts_sha256'][name.decode()])
+
     def test_public_source_has_no_local_machine_identifiers(self):
         self.assertEqual(audit(ROOT), [])
 

@@ -1,0 +1,29 @@
+{
+  "date": "2026-11-08",
+  "version": "0.5.19",
+  "appfs_revision": 33,
+  "application_id": "com.github.siviqt.gaijin",
+  "kernel_release": "6.18.35-gaijin-m5",
+  "result": "PASS",
+  "basis": "User confirmation",
+  "user_statement": "Device validations passed all checks.",
+  "procedure": "Documentation/validation/revision33.md",
+  "scope": "All revision-33 device checks, including the referenced display, user-access and power regressions.",
+  "checks": {
+    "standalone_battery_boot_and_fresh_card_ram_fallback": "PASS (user confirmed)",
+    "local_console_keyboard_and_probes": "PASS (user confirmed)",
+    "late_usb_attachment_and_disconnect_under_output": "PASS (user confirmed)",
+    "closed_terminal_usb_and_charger_only_boot": "PASS (user confirmed)",
+    "display_failure_usb_recovery": "PASS (user confirmed)",
+    "persistent_state_and_power_cycles": "PASS (user confirmed)",
+    "display_editor_user_access_and_power_regressions": "PASS (user confirmed)"
+  },
+  "components_sha256": {
+    "loader": "9bc94973b70467f300e208984eae5bc22a7ace80bd0269bad5e62f560c17d88c",
+    "Image": "13b8e2a69b49d82302c5065f99bbf2fd7df8db5cc3d5e4fda9b1a10ff26aff21",
+    "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
+    "initramfs": "27ac13b46a75455b81d0734c5a6aa41c79e71d508db4bc3a75c8534532c53936",
+    "rootfs.sqfs": "dd3ccba4f0c95dd418fc5662f888ef02ce0b60370b89f73866f0db5363e9e747"
+  },
+  "evidence_note": "Confirmation was supplied without a new raw capture or measured timings. Firmware hashes identify the release supplied for validation; the subsequent notice consolidation changes packaging only."
+}

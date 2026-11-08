@@ -3,7 +3,7 @@
 Gaijin boots native RV32 NOMMU Linux from a Tanmatsu AppFS loader, then gives
 Linux ownership of USB, SD, display refresh and MCU input/backlight. The base and FAT stay read-only;
 validated ext2 image sectors provide persistent state. The current release is
-application 0.5.18 / AppFS revision 32 / Linux 6.18.35-gaijin-m5, targeting
+application 0.5.19 / AppFS revision 33 / Linux 6.18.35-gaijin-m5, targeting
 Tanmatsu rev7, ESP-IDF v6.0.2, BSP 1.6.4, Launcher 0.2.8, Radio 3.4.0 and MCU r9.
 
 This document owns boot, memory, console, ABI and build contracts. Detailed
@@ -88,11 +88,15 @@ and checks the current loader boot arguments.
 Bootargs:
 
 ```text
-earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=tty0 console=ttyUJ0,115200n8 fbcon=rotate:1,font:10x18 consoleblank=0 rdinit=/init loglevel=7 panic=0
+console=ttyUJ0,115200n8 console=tty0 fbcon=rotate:1,font:10x18 consoleblank=0 rdinit=/init loglevel=7 panic=0
 ```
 
-The kernel is non-SMP, so there is no `maxcpus=1`. Earlycon unregisters when
-the real console takes over; `keep_bootcon` is absent. The driver preserves
+The loader initially supplies USB-only recovery arguments, then selects the LCD
+as `/dev/console` after display setup succeeds. The kernel is non-SMP, so there
+is no `maxcpus=1`. Production boot omits earlycon. The optional loader setting
+`CONFIG_GAIJIN_USB_EARLYCON` adds best-effort early logging: a full FIFO drops
+characters immediately without polling or using a clock. Release packaging
+rejects that debug setting. `keep_bootcon` is absent. The driver preserves
 IDF PHY/clocks/enumeration, masks controller interrupts and polls every 4 ms.
 RX uses the TTY flip buffer/line discipline; TX uses serial-core queues and
 handles full-packet flushes, including a terminating short packet/ZLP. Port
@@ -107,8 +111,11 @@ Early init mounts procfs/sysfs; rcS mounts bounded tmpfs (1 MiB `/run`, 4 MiB `/
 and 1 MiB for `/usr/local`; `/root` and `/home` each get 1 MiB RAM fallback
 when persistence is unavailable),
 runs the ABI probe and prints memory. Inittab respawns login hush directly on
-`/dev/ttyUJ0` and `/dev/tty1`, each with a controlling terminal. USB also
-provides boot logs and `/dev/console`. Hush supports line editing, command/file
+`/dev/tty1` first and then `/dev/ttyUJ0`, each with a controlling terminal.
+BusyBox logs child startup before switching stdio to the child's terminal;
+the NOMMU vfork parent therefore does not depend on a USB child's log write.
+USB provides kernel logs and its own shell; init and rcS use the primary LCD
+when display setup succeeds. Hush supports line editing, command/file
 completion, a 128-entry saved history, reverse search and job control. Init
 still disables terminal software flow control immediately; the interactive
 shell sets its own input mode when reading a command.

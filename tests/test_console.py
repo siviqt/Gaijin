@@ -8,10 +8,11 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ConsoleTests(unittest.TestCase):
-    def test_boot_console_name_and_index(self):
+    @classmethod
+    def setUpClass(cls):
         source = ROOT / "build/linux-6.18.35/kernel/printk/printk.c"
         if not source.exists():
-            self.skipTest("pinned Linux source is not prepared")
+            raise unittest.SkipTest("pinned Linux source is not prepared")
         kernel = source.read_text()
         start = kernel.index("static int __init console_setup(char *str)")
         end = kernel.index('__setup("console=", console_setup);', start)
@@ -41,32 +42,33 @@ static int __add_preferred_console(const char *name, short idx,
 }
 '''
         suffix = r'''
-int main(void)
+int main(int argc, char **argv)
 {
-    const char *option = strstr(M0_BOOTARGS, " console=");
-    char buf[128];
-    if (!option) return 1;
-    option += strlen(" console=");
-    snprintf(buf, sizeof(buf), "%s", option);
-    char *space = strchr(buf, ' ');
-    if (space) *space = 0;
-    if (console_setup(buf) != 1) return 1;
-    option = strstr(option, " console=");
-    if (!option) return 1;
-    snprintf(buf, sizeof(buf), "%s", option + strlen(" console="));
-    space = strchr(buf, ' ');
-    if (space) *space = 0;
-    return console_setup(buf) == 1 ? 0 : 1;
+    char buf[512];
+    const char *args = argc > 1 && !strcmp(argv[1], "usb") ? M0_USB_BOOTARGS : M0_BOOTARGS;
+    snprintf(buf, sizeof(buf), "%s", args);
+    for (char *token = strtok(buf, " "); token; token = strtok(NULL, " "))
+        if (!strncmp(token, "console=", 8) && console_setup(token + 8) != 1)
+            return 1;
+    return 0;
 }
 '''
-        with tempfile.TemporaryDirectory() as temp:
-            base = Path(temp)
-            cfile = base / "console.c"
-            cfile.write_text(prefix + parser + suffix)
-            binary = base / "console"
-            subprocess.run(["cc", "-std=c11", "-Wall", "-Wextra", "-Werror", "-I", str(ROOT / "main"),
-                            str(cfile), "-o", str(binary)], check=True)
-            self.assertEqual(subprocess.check_output([str(binary)], text=True).strip(), "tty|0|\nttyUJ|0|115200n8")
+        temp = tempfile.TemporaryDirectory()
+        cls.addClassCleanup(temp.cleanup)
+        base = Path(temp.name)
+        cfile = base / "console.c"
+        cfile.write_text(prefix + parser + suffix)
+        cls.binary = base / "console"
+        subprocess.run(["cc", "-std=c11", "-Wall", "-Wextra", "-Werror", "-I", str(ROOT / "main"),
+                        str(cfile), "-o", str(cls.binary)], check=True)
+
+    def test_lcd_is_last_preferred_console(self):
+        self.assertEqual(subprocess.check_output([str(self.binary)], text=True).strip(),
+                         "ttyUJ|0|115200n8\ntty|0|")
+
+    def test_display_failure_selects_only_usb(self):
+        self.assertEqual(subprocess.check_output([str(self.binary), "usb"], text=True).strip(),
+                         "ttyUJ|0|115200n8")
 
 
 if __name__ == "__main__":

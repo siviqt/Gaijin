@@ -2487,14 +2487,14 @@
  }
  
  static void esp32_uart_start_tx(struct uart_port *port)
-@@ -600,6 +678,53 @@
+@@ -600,6 +678,51 @@
  	.data		= &esp32_uart_reg,
  };
  
 +/*
 + * The Stamp-P4 module USB-C is wired to the P4 USB-Serial/JTAG peripheral,
-+ * not UART0.  Keep an early console on that FIFO so a board without a
-+ * GPIO38/37 UART fixture still exposes kernel bring-up logs.
++ * not UART0. Explicit debug earlycon is best-effort: a missing USB reader
++ * must never stall a standalone boot, even before timekeeping is ready.
 + */
 +#define ESP32P4_USB_JTAG_EP1_REG	0x00
 +#define ESP32P4_USB_JTAG_EP1_CONF_REG	0x04
@@ -2504,12 +2504,10 @@
 +static void esp32p4_usb_jtag_putchar(struct uart_port *port, u8 c)
 +{
 +	void __iomem *base = port->membase;
-+	unsigned int timeout = 1000000;
 +
-+	while (!(readl(base + ESP32P4_USB_JTAG_EP1_CONF_REG) &
-+		 ESP32P4_USB_JTAG_DATA_FREE) && --timeout)
-+		cpu_relax();
-+	if (!timeout)
++	/* Drop immediately under backpressure; retry on the next character. */
++	if (!(readl(base + ESP32P4_USB_JTAG_EP1_CONF_REG) &
++	      ESP32P4_USB_JTAG_DATA_FREE))
 +		return;
 +
 +	writel(c, base + ESP32P4_USB_JTAG_EP1_REG);

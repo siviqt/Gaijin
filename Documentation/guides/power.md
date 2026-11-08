@@ -1,7 +1,9 @@
 # Linux power commands
 
-Application 0.5.18 / AppFS revision 32 uses the SD power cycle and supports
+Application 0.5.19 / AppFS revision 33 uses the SD power cycle and supports
 LCD and USB login shells. Use the matching loader and SD boot assets.
+The user confirmed all revision-33 device checks passed on 8 November 2026,
+including persistent-state and power-transition regressions.
 
 | Command | Result after cleanup |
 | --- | --- |
@@ -100,7 +102,7 @@ failure; they do not establish that the original hang is fixed on hardware.
 
 Select Gaijin from the updated SD card in Launcher. If it is already cached,
 use F4 Uncache before launching it, or use `make install` in BadgeLink mode
-for revision 32. Capture P4 USB Serial/JTAG at 115200 8N1 with flow control
+for revision 33. Capture P4 USB Serial/JTAG at 115200 8N1 with flow control
 off. Expect `LDO4 disabled, bypass off` and `LDO4 restored at 3.3 V`, then
 `gaijin#` prompts on the LCD and USB. The diagnostic backlight pulse has
 been removed.

@@ -1,7 +1,8 @@
-Application 0.5.18 / AppFS revision 32 includes the unnamed `vi` correction.
+Application 0.5.19 / AppFS revision 33 includes the unnamed `vi` correction.
 On revision 30 the device tests confirmed that named files open successfully,
-while bare `vi` freezes both consoles. The new complete image requires device
-validation; the LCD flicker investigation remains open.
+while bare `vi` freezes both consoles. The user confirmed all revision-33 device
+checks passed on 8 November 2026, including the editor and user-access checks.
+The LCD flicker investigation remains a separate follow-up.
 
 BusyBox patch `0002-vi-allow-unnamed-buffer.patch` treats a null filename as an
 empty buffer and skips the file-open request. Kernel patch
@@ -27,7 +28,7 @@ RV32 kernel string-copy objects into a freestanding harness and runs them under
 QEMU with valid, invalid and boundary addresses. These tests do not emulate P4
 bus behavior or replace device validation.
 
-After installing revision 32, perform the first pointer tests with
+After installing revision 33, perform the first pointer tests with
 persistence inactive:
 
 ```sh

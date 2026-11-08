@@ -1,0 +1,2 @@
+# Preserve upstream license formatting in the consolidated notices.
+THIRD_PARTY.md whitespace=-blank-at-eol

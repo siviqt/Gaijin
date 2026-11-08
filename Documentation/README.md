@@ -1,9 +1,9 @@
 # Gaijin documentation
 
 Use this index to find the current behavior, operate the application or change
-its implementation. The current build is application **0.5.18 / AppFS revision
-32 / Linux 6.18.35-gaijin-m5**. M1–M4 are accepted. M5 — Framebuffer and fbcon
-is implemented and awaits hardware acceptance.
+its implementation. The current build is application **0.5.19 / AppFS revision
+33 / Linux 6.18.35-gaijin-m5**. M1–M5 are accepted. The user confirmed all
+revision-33 device checks passed on 8 November 2026.
 
 ## Find the right document
 
@@ -15,7 +15,8 @@ is implemented and awaits hardware acceptance.
 | Return to Launcher, halt or power off | [Power commands](guides/power.md) |
 | Use the local console, framebuffer, backlight and M5 checks | [Display](guides/display.md) |
 | Validate the vi/kernel pointer fix | [User-access correction](guides/user-access.md) |
-| Review the application identifier repair and current device checks | [Revision 32 validation](validation/revision32.md) |
+| Validate standalone battery boot and late USB attachment | [Revision 33 validation](validation/revision33.md) |
+| Review the earlier application identifier repair | [Revision 32 validation](validation/revision32.md) |
 | Review the earlier vi and user-access build checks | [Revision 31 validation](validation/revision31.md) |
 | Understand keyboard mapping, repeat, recovery and the M4/M5 boundary | [Keyboard](guides/keyboard.md) |
 | Understand SD/DMA, root transition and storage regression checks | [SD storage](guides/sd-storage.md) |
@@ -40,7 +41,7 @@ NOMMU hush replacing the initially proposed ash.
 | M2 — Linux SD access | Closed PASS, accepted 29 October 2026; [SD results](validation/README.md#accepted-milestone-result--m2-linux-sd-closed--pass) |
 | M3 — Persistent state | Closed PASS, accepted 29 October 2026; [persistence results](validation/persistence.md) |
 | M4 — Keyboard | Complete through the keyboard work accepted early as M2 on 28 October; [29 October review](guides/keyboard.md#m4-completion-and-m5-handoff) |
-| M5 — Framebuffer and fbcon | Implemented; host checks and cross-builds pass; [hardware acceptance pending](guides/display.md#hardware-acceptance-procedure) |
+| M5 — Framebuffer and fbcon | Closed PASS, accepted 8 November 2026 by [user-confirmed revision-33 checks](validation/revision33.md) |
 | M6 — Wi-Fi | Planned; C6 transport/firmware compatibility, connectivity and recovery |
 | M7 — Package manager | Planned; signed index and .tpk lifecycle, ABI/corruption checks and interrupted activation |
 | M8 — LVGL tile shell | Planned after reliable local input/display and CLI foundations |
@@ -52,30 +53,24 @@ metadata are applied to the current release and checked during packaging.
 
 ## Open work
 
-1. **M5 hardware acceptance.** Validate landscape orientation and RGB order,
-   readability, backlight, local punctuation/modifiers/repeat, shell editing,
-   Ctrl-C and memory/input under display and SD load. Follow the
-   [display procedure](guides/display.md#hardware-acceptance-procedure).
-   F1–F6/Fn session, Launcher, GUI and power shortcuts remain unassigned.
-2. **Power-transition acceptance.** Validate Launcher return, physical
-   power-off and clean persistence on the device. Follow the
-   [power guide](guides/power.md#device-acceptance). RTC and power-key policy
-   remain separate follow-ups.
-3. **Conservative startup repair.** Validate image allocation/geometry, keep
+1. **Display polish and session policy.** Continue LCD flicker and refresh/cache
+   latency investigation beyond the accepted functional checks. F1–F6/Fn
+   session, Launcher, GUI and power shortcuts remain unassigned.
+2. **Conservative startup repair.** Validate image allocation/geometry, keep
    ext2 unmounted during checking, and mount only after successful repair.
    Never simply clear the dirty flag. The pinned Buildroot e2fsprogs package
    depends on MMU; a NOMMU checker needs execution, peak-RAM and interrupted
    repair testing. [Feasibility and evidence](validation/persistence.md#startup-repair-feasibility).
-4. **Provisioning and resize UX.** Decide first-start size selection, dedicated
+3. **Provisioning and resize UX.** Decide first-start size selection, dedicated
    versus shared card use, and offline/online resize scope. Current provisioning
    and offline growth are explicit host operations in the persistence guide.
-5. **USB and hardware stress.** Investigate timeouts/flow control, quantify
+4. **USB and hardware stress.** Investigate timeouts/flow control, quantify
    simultaneous SD/input/USB latency, run longer stress and wider card tests,
    and complete the keyboard guide's physical-key and fault follow-ups.
-6. **RTC/time initialization.** The clock currently starts at the Unix epoch.
+5. **RTC/time initialization.** The clock currently starts at the Unix epoch.
 
-These follow-ups preserve the accepted M1–M4 gates. The filesystem repair,
-shutdown and provisioning items become especially useful near a stable release.
+These follow-ups preserve the accepted M1–M5 gates. Filesystem repair and
+provisioning improvements remain useful near a stable release.
 
 ## Keeping the project compact
 

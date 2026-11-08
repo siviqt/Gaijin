@@ -44,6 +44,13 @@ class BootTests(unittest.TestCase):
         cls.lib.m0_check_image.argtypes = [C.c_void_p, C.c_size_t, C.c_uint32, C.POINTER(C.c_uint32)]
         cls.lib.m0_prepare_dtb.argtypes = [C.c_void_p, C.c_size_t, C.c_uint32]
         cls.lib.m5_enable_display.argtypes = [C.c_void_p]
+        subprocess.run(["cc", "-shared", "-fPIC", "-Wall", "-Wextra", "-Werror", "-O1",
+                        "-DGAIJIN_USB_EARLYCON=1", "-I", str(ROOT / "main"),
+                        "-I", str(ROOT / "components/libfdt"), "-o", str(cls.work / "boot-debug.so"),
+                        *map(str, sources)], check=True)
+        cls.debug_lib = C.CDLL(str(cls.work / "boot-debug.so"))
+        cls.debug_lib.m0_prepare_dtb.argtypes = [C.c_void_p, C.c_size_t, C.c_uint32]
+        cls.debug_lib.m5_enable_display.argtypes = [C.c_void_p]
         subprocess.run(["dtc", "-I", "dts", "-O", "dtb", "-o", str(cls.work / "tanmatsu.dtb"),
                         str(ROOT / "linux/tanmatsu.dts")], check=True)
         cls.dtb = (cls.work / "tanmatsu.dtb").read_bytes()
@@ -103,8 +110,9 @@ class BootTests(unittest.TestCase):
             output = self.work / "patched.dtb"
             output.write_bytes(dtb.raw)
             bootargs = subprocess.check_output(["fdtget", str(output), "/chosen", "bootargs"]).decode()
-            self.assertIn("earlycon=esp32p4usbjtag", bootargs)
+            self.assertNotIn("earlycon=", bootargs)
             self.assertIn("console=ttyUJ0,115200n8", bootargs)
+            self.assertNotIn("console=tty0", bootargs)
             self.assertIn("rdinit=/init", bootargs)
             self.assertNotIn("maxcpus", bootargs)
             self.assertNotIn("keep_bootcon", bootargs)
@@ -129,14 +137,17 @@ class BootTests(unittest.TestCase):
         def get(node, prop):
             return subprocess.check_output(["fdtget", "-t", "x", str(output), node, prop]).strip()
         self.assertEqual(get("/reserved-memory/framebuffer@48e00000", "reg"), b"48e00000 bc000")
-        self.assertIn(b"console=tty0 console=ttyUJ0,115200n8", subprocess.check_output(
-            ["fdtget", str(output), "/chosen", "bootargs"]))
-        self.assertIn(b"fbcon=rotate:1,font:10x18", subprocess.check_output(
+        self.assertNotIn(b"console=tty0", subprocess.check_output(
             ["fdtget", str(output), "/chosen", "bootargs"]))
         self.assertIn(b"disabled", subprocess.check_output(
             ["fdtget", str(output), "/soc/framebuffer@50081000", "status"]))
         self.assertEqual(self.lib.m5_enable_display(dtb), 0)
         output.write_bytes(dtb.raw)
+        bootargs = subprocess.check_output(["fdtget", str(output), "/chosen", "bootargs"])
+        self.assertTrue(bootargs.startswith(b"console=ttyUJ0,115200n8 console=tty0 "))
+        self.assertIn(b"fbcon=rotate:1,font:10x18", bootargs)
+        self.assertNotIn(b"earlycon=", bootargs)
+        self.assertEqual(get("/chosen", "linux,initrd-end"), b"4a000000")
         self.assertEqual(subprocess.check_output(
             ["fdtget", str(output), "/soc/framebuffer@50081000", "status"]).strip(), b"okay")
         # The input DTB must leave framebuffer initialization to the loader.
@@ -174,6 +185,34 @@ class BootTests(unittest.TestCase):
         blob = (boot / "tanmatsu.dtb").read_bytes()
         dtb = C.create_string_buffer(blob, 0x10000)
         self.assertEqual(self.lib.m0_prepare_dtb(dtb, len(blob), manifest.initrd.bytes), 0)
+
+    def test_debug_earlycon_is_explicit_for_both_display_modes(self):
+        dtb = C.create_string_buffer(self.dtb, 0x10000)
+        self.assertEqual(self.debug_lib.m0_prepare_dtb(dtb, len(self.dtb), 0), 0)
+        output = self.work / "debug.dtb"
+        for display_enabled in (False, True):
+            if display_enabled:
+                self.assertEqual(self.debug_lib.m5_enable_display(dtb), 0)
+            output.write_bytes(dtb.raw)
+            args = subprocess.check_output(["fdtget", str(output), "/chosen", "bootargs"]).decode().strip()
+            self.assertTrue(args.startswith("earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 "))
+            self.assertEqual("console=tty0" in args.split(), display_enabled)
+
+    def test_rejected_display_keeps_usb_recovery_console(self):
+        dtb = C.create_string_buffer(self.dtb, 0x10000)
+        self.assertEqual(self.lib.m0_prepare_dtb(dtb, len(self.dtb), 0), 0)
+        output = self.work / "bad-display.dtb"
+        output.write_bytes(dtb.raw)
+        subprocess.run(["fdtput", "-t", "s", str(output), "/soc/framebuffer@50081000",
+                        "compatible", "unsupported,panel"], check=True)
+        broken = C.create_string_buffer(output.read_bytes(), 0x10000)
+        self.assertEqual(self.lib.m5_enable_display(broken), -1)
+        output.write_bytes(broken.raw)
+        args = subprocess.check_output(["fdtget", str(output), "/chosen", "bootargs"]).decode()
+        self.assertIn("console=ttyUJ0,115200n8", args)
+        self.assertNotIn("console=tty0", args)
+        self.assertEqual(subprocess.check_output(["fdtget", str(output),
+                         "/soc/framebuffer@50081000", "status"]).strip(), b"disabled")
 
 
 if __name__ == "__main__":

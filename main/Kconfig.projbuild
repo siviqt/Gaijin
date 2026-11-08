@@ -1,0 +1,12 @@
+menu "Gaijin diagnostics"
+
+config GAIJIN_USB_EARLYCON
+    bool "Enable best-effort early Linux USB logging"
+    default n
+    help
+        Add the USB earlycon argument to the Linux command line. Output is
+        dropped when the USB FIFO is full so boot never waits for a reader.
+        Keep disabled for release packages; normal kernel logging and the
+        USB login shell remain available without this option.
+
+endmenu

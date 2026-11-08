@@ -1,8 +1,11 @@
 # Install the current Gaijin build
 
-Current build is **M5 (Framebuffer and fbcon) / application 0.5.18 / AppFS revision 32**.
+Current build is **M5 (Framebuffer and fbcon) / application 0.5.19 / AppFS revision 33**.
 Expect **Linux 6.18.35-gaijin-m5**, framebuffer output, and login shells on
-LCD `tty1` and USB `ttyUJ0`. M5 hardware acceptance is pending.
+LCD `tty1` and USB `ttyUJ0`. The user confirmed all revision-33 device checks
+passed on 8 November 2026; M5 is accepted.
+Revision 33 prefers the LCD after panel setup and removes the default USB early
+console. See the [standalone boot checks](Documentation/validation/revision33.md).
 
 Use one complete set: the project's `build/` directory, or one extraction of
 `build/gaijin-current.zip`. The instructions below use paths relative to that
@@ -27,20 +30,20 @@ folder. Do not combine files from separate directories or downloads.
    [persistence instructions](Documentation/guides/persistence.md). Without it, the system uses RAM.
    Provisioning is explicit and never part of an application update.
 
-   Revision 32 corrects the application identifier to `com.github.siviqt.gaijin`.
+   Revision 33 retains the corrected application identifier `com.github.siviqt.gaijin`.
    Revision 31 incorrectly compiled `com.github.siviq.gaijin`, which fails to
    boot when installed under the correct repository directory. Replace the loader,
    initramfs and rootfs together; renaming the folder alone does not repair the
    revision-31 binaries for the correct identifier. Remove
    the old cached application entry in Launcher to avoid selecting it, then
-   launch Gaijin from the SD card so Launcher copies the revision-32 executable
+   launch Gaijin from the SD card so Launcher copies the revision-33 executable
    into AppFS. The package declares all boot assets and requires SD installation.
 
 3. Enter **BadgeLink mode**. Upload the loader from this same set:
 
    ```sh
    /path/to/tanmatsu-sdk/tools/badgelink.sh appfs upload \
-     com.github.siviqt.gaijin "Gaijin" 32 \
+     com.github.siviqt.gaijin "Gaijin" 33 \
      sd/apps/com.github.siviqt.gaijin/linux-loader.bin
    ```
 
@@ -51,17 +54,22 @@ folder. Do not combine files from separate directories or downloads.
    is optional. Keep Launcher and the device's system firmware installed.
    This application does not require flashing a bootloader or partition table.
 
-4. Switch to **P4 USB Serial/JTAG debugging mode**, open the appropriate
-   `/dev/ttyACM*` port at 115200 and launch Gaijin through Launcher. Disable
-   host hardware/software flow control and local echo; use one serial monitor.
+4. Launch Gaijin through Launcher. First verify standalone startup with USB
+   disconnected: the LCD should reach `gaijin#` and accept keyboard input.
+   For a USB capture, switch to **P4 USB Serial/JTAG debugging mode** and open
+   the appropriate `/dev/ttyACM*` port at 115200. The USB shell can also be
+   attached after startup. Disable host hardware/software flow control and
+   local echo; use one serial monitor.
    M3 Persistent State is CLOSED — PASS, accepted on 29 October 2026;
    captured results and the recovery procedure are retained in the M3 guide.
    Record `Gaijin SD reset`, `SD reference: loader LBA0` and Linux `LBA0 dma=... sg=...` lines.
-   For this build, expect `Gaijin M5`, `console=ttyUJ0,115200n8`, an enabled ttyUJ0
-   console, disabled early bootconsole, the startup banner and automatic ABI
+   For this build, expect `Gaijin M5`, `console=ttyUJ0,115200n8 console=tty0`, enabled
+   ttyUJ0 and tty0 consoles, no earlycon argument, the startup banner and automatic ABI
    PASS. The startup banner is `Gaijin`, the prompt is `gaijin#`, and ABI
    text states validation with the pinned toolchain. The initial-console
-   warning should be absent.
+   warning should be absent. When loader display setup fails, boot arguments
+   select only ttyUJ0 for recovery. Boot timing and unplugged behavior require
+   the revision-33 checks when validating a new installation.
 
 5. In the target shell, run:
 

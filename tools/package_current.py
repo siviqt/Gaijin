@@ -24,19 +24,22 @@ ICON_SIZES = (16, 32, 64)
 APP_ICONS = tuple(f"icon{size}.png" for size in ICON_SIZES)
 APP_ASSETS = ("README.md", "LICENSE", "boot/manifest.bin", "boot/Image", "boot/tanmatsu.dtb",
               "boot/initramfs", "boot/rootfs.sqfs", "boot/rootfs.sqfs.sha256",
-              "boot/userspace-abi.json", "THIRD_PARTY.md") + tuple(
-                  "LICENSES/" + path.name for path in sorted((ROOT / "LICENSES").glob("*.txt"))) + APP_ICONS
+              "boot/userspace-abi.json", "THIRD_PARTY.md") + APP_ICONS
 
 
-def bootargs():
-    return re.search(r'^#define M0_BOOTARGS "([^"]+)"',
+def bootargs(usb_only=False):
+    name = "M0_USB_BOOTARGS" if usb_only else "M0_BOOTARGS"
+    return re.search(r'^#define ' + name + r' "([^"]+)"',
                      (ROOT / "main/boot_contract.h").read_text(), re.M)[1]
 
 
 def check_loader(loader):
     data = loader.read_bytes()
     check_release_branding(loader.name, data)
-    if (bootargs().encode() + b"\0" not in data or b"Gaijin M5 contract=1" not in data or
+    if b"earlycon=esp32p4usbjtag," in data:
+        raise ValueError("release loader must disable CONFIG_GAIJIN_USB_EARLYCON; run make loader")
+    if (any(bootargs(usb_only).encode() + b"\0" not in data for usb_only in (False, True)) or
+            b"Gaijin M5 contract=1" not in data or
             b"Linux owns DMA refresh" not in data or b"LDO4 disabled, bypass off" not in data or
             b"tanmatsu,appfs-boot-selection" in data or
             f"/sd/apps/{APP_ID}/boot/".encode() not in data):
@@ -45,12 +48,14 @@ def check_loader(loader):
 
 def check_userspace_paths(archive):
     entries, _ = read_newc(archive)
-    for name in ("sbin/gaijin-sd-root", "usr/bin/m2-sd-test"):
+    for name in ("init", "etc/inittab", "etc/init.d/rcS", "sbin/gaijin-sd-root", "usr/bin/m2-sd-test"):
         _, item = resolve_path(entries, name)
-        paths = set(re.findall(rb"/sd/apps/([^/\s]+)/boot", item["data"]))
-        if (paths != {APP_ID.encode()} or
-                item["data"] != (ROOT / "userspace/overlay" / name).read_bytes()):
-            raise ValueError(f"stale userspace application path in {name}; run make userspace")
+        if name in ("sbin/gaijin-sd-root", "usr/bin/m2-sd-test"):
+            paths = set(re.findall(rb"/sd/apps/([^/\s]+)/boot", item["data"]))
+            if paths != {APP_ID.encode()}:
+                raise ValueError(f"stale userspace application path in {name}; run make userspace")
+        if item["data"] != (ROOT / "userspace/overlay" / name).read_bytes():
+            raise ValueError(f"stale userspace startup script {name}; run make userspace")
 
 
 def file_record(path):
@@ -65,7 +70,7 @@ def launcher_metadata():
     if metadata.get("icon") != {f"{size}x{size}": f"icon{size}.png" for size in ICON_SIZES}:
         raise ValueError("metadata must use the three Penguin icons at the application root")
     app = metadata["application"][0]
-    expected = dict(targets=["tanmatsu"], type="appfs", executable="linux-loader.bin", revision=32,
+    expected = dict(targets=["tanmatsu"], type="appfs", executable="linux-loader.bin", revision=33,
                     external_only=True, assets=[dict(source_file=name, target_file=name) for name in APP_ASSETS])
     if app != expected:
         raise ValueError("metadata must match Tanmatsu Launcher 0.2.8 AppFS installation")
@@ -81,7 +86,6 @@ def stage_launcher(loader, output):
                          (ROOT / "LICENSE", "LICENSE"), (ROOT / "THIRD_PARTY.md", "THIRD_PARTY.md"),
                          (loader, "linux-loader.bin")):
         shutil.copyfile(source, output / name)
-    shutil.copytree(ROOT / "LICENSES", output / "LICENSES", dirs_exist_ok=True)
     for name in APP_ICONS:
         target = output / name
         target.parent.mkdir(parents=True, exist_ok=True)
@@ -168,6 +172,10 @@ def check_application(app):
     for name in (*APP_ASSETS, "linux-loader.bin"):
         if not (app / name).is_file():
             raise ValueError(f"application asset missing: {name}")
+    if any((app / name).exists() for name in ("LICENSES", "licenses")):
+        raise ValueError("application must use the consolidated THIRD_PARTY.md; remove separate license directories")
+    if (app / "THIRD_PARTY.md").read_bytes() != (ROOT / "THIRD_PARTY.md").read_bytes():
+        raise ValueError("application third-party notices differ from source; run make package")
     if {path.relative_to(app).as_posix() for path in app.rglob("*.png")} != set(APP_ICONS):
         raise ValueError("application must contain only the three Penguin PNGs")
     check_loader(app / "linux-loader.bin")
@@ -193,6 +201,7 @@ def check_application(app):
 def check_current(build):
     report = json.loads((build / "CURRENT.json").read_text())
     if (report.get("format") != 1 or report.get("bootargs") != bootargs() or
+            report.get("usb_recovery_bootargs") != bootargs(usb_only=True) or
             report.get("application_id") != APP_ID):
         raise ValueError("current build record is incompatible; run make package")
     files = report["files"]
@@ -263,18 +272,15 @@ def publish(build):
         destination = build / name
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(source, destination)
-    licenses = build / "licenses"
-    shutil.copytree(ROOT / "LICENSES", licenses)
-    shutil.copyfile(build / "userspace/build/busybox-1.37.0/LICENSE", licenses / "BusyBox.txt")
-    shutil.copyfile(build / "userspace/build/uclibc-1.0.57/COPYING.LIB", licenses / "uClibc-LGPL-2.1.txt")
-    paths = [p for directory in (build / "sd", licenses) for p in directory.rglob("*") if p.is_file()]
+    paths = [p for p in (build / "sd").rglob("*") if p.is_file()]
     paths += [build / name for name in documents]
     files = {p.relative_to(build).as_posix(): file_record(p) for p in sorted(paths)}
     metadata = json.loads((build / APP / "metadata.json").read_text())
     report = dict(format=1, version=metadata["version"], appfs_revision=metadata["application"][0]["revision"],
                   application_id=APP_ID,
                   kernel_release=(build / "kernel/include/config/kernel.release").read_text().strip(),
-                  abi=ABI, bootargs=bootargs(), sd_root="sd", appfs_binary=str(APP / "linux-loader.bin"),
+                  abi=ABI, bootargs=bootargs(), usb_recovery_bootargs=bootargs(usb_only=True),
+                  sd_root="sd", appfs_binary=str(APP / "linux-loader.bin"),
                   verification="Host integrity record; hardware results are in Documentation/validation/README.md",
                   files=files)
     (build / "CURRENT.json").write_text(json.dumps(report, indent=2) + "\n")

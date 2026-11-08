@@ -166,8 +166,8 @@ def verify(archive, elfs, readelf, busybox_config=None):
     if not stat.S_ISCHR(console.get("mode", 0)) or console.get("rdev") != (5, 1):
         raise ValueError("initramfs must supply /dev/console c 5 1 before /init")
     inittab = entries.get("etc/inittab", {}).get("data", b"").splitlines()
-    if inittab != [b"::sysinit:/etc/init.d/rcS", b"ttyUJ0::respawn:-/bin/sh", b"tty1::respawn:-/bin/sh"]:
-        raise ValueError("init must start direct login shells on ttyUJ0 and tty1")
+    if inittab != [b"::sysinit:/etc/init.d/rcS", b"tty1::respawn:-/bin/sh", b"ttyUJ0::respawn:-/bin/sh"]:
+        raise ValueError("init must start direct login shells on tty1 before ttyUJ0")
     _, startup = resolve_path(entries, "etc/init.d/rcS")
     if b"stty " in startup["data"]:
         raise ValueError("rcS must use init's immediate terminal setup")

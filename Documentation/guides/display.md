@@ -1,8 +1,10 @@
 # Display and local console
 
 M5 implements the Tanmatsu rev7 ST7701 framebuffer, landscape fbcon and MCU
-backlight control. Application 0.5.18 / AppFS revision 32 uses Linux
+backlight control. Application 0.5.19 / AppFS revision 33 uses Linux
 6.18.35-gaijin-m5 with login shells on LCD tty1 and USB ttyUJ0.
+The user confirmed all revision-33 device checks passed on 8 November 2026;
+see the [acceptance record](../validation/revision33.md).
 
 ## Ownership and memory
 
@@ -55,8 +57,11 @@ item; run `m5-display-test` and record underrun counters under boot/scroll load.
 
 ## Shell, keyboard and backlight
 
-Bootargs enable `console=tty0` and then `console=ttyUJ0,115200n8`; USB stays the
-preferred `/dev/console`, including storage rescue. `fbcon=rotate:1,font:10x18`
+After successful panel setup, bootargs enable `console=ttyUJ0,115200n8` and then
+`console=tty0`; the LCD becomes the preferred `/dev/console`, including storage
+rescue. Failed display setup keeps USB as the only recovery console. Local tty1
+login starts before USB ttyUJ0, and production boot has no USB earlycon wait.
+`fbcon=rotate:1,font:10x18`
 selects 90-degree landscape rotation: 800x480, 80 columns by
 26 rows. `consoleblank=0` keeps the local text visible.
 The first device boot showed that `rotate:3` was upside-down; Linux fbcon's
@@ -68,7 +73,7 @@ echo 1 > /sys/class/graphics/fbcon/rotate_all
 ```
 
 The permanent setting is supplied by the AppFS loader, so install the updated
-revision-32 loader as well as copying the updated SD application files.
+revision-33 loader as well as copying the updated SD application files.
 
 
 Revision 21 tested one direct login shell on USB ttyUJ0 with display refresh.
@@ -97,14 +102,16 @@ still starts at the Unix epoch. See [persistent state](persistence.md).
 ## Hardware acceptance procedure
 
 Install the complete matching loader/kernel/userspace set using
-[installation](../../INSTALL.md), retaining a USB capture. Complete the
-following checks before marking M5 accepted.
+[installation](../../INSTALL.md), retaining a USB capture. The following
+procedure remains the regression checklist after revision-33 acceptance.
 
 1. Cold start from Launcher and repeat after physical reset. Check the M5
    loader banner, enabled tty0 and ttyUJ0, `fb0: 480x800 RGB565`, local prompt,
    upright landscape output, readable 80x26 text and all four screen edges.
    Verify red/green/blue pixel order with a framebuffer pattern, and test the
    backlight at 0, 80, 160 and 255, returning it to 160.
+   Also complete the [revision-33 battery and USB checks](../validation/revision33.md)
+   with no USB reader present during startup.
 2. Run `m5-display-test` locally and through USB. It prints geometry and memory,
    scrolls 100 lines on tty1 and requires increasing frame count with zero
    DMA errors and zero observed DSI underruns. Its PASS covers refresh only.

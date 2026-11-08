@@ -18,7 +18,14 @@
 #define M5_FB_DESC (M5_FB_BASE + M5_FB_BYTES)
 #define M5_FB_RESERVE UINT32_C(0x000bc000)
 #define M0_MANIFEST_BYTES 140
-#define M0_BOOTARGS "earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=tty0 console=ttyUJ0,115200n8 fbcon=rotate:1,font:10x18 consoleblank=0 rdinit=/init loglevel=7 panic=0"
+// The last console owns PID 1's stdio. Prefer the LCD only after panel setup.
+#define M0_BOOTARGS "console=ttyUJ0,115200n8 console=tty0 fbcon=rotate:1,font:10x18 consoleblank=0 rdinit=/init loglevel=7 panic=0"
+#define M0_USB_BOOTARGS "console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0"
+#ifdef GAIJIN_USB_EARLYCON
+#define M0_EARLYCON_BOOTARG "earlycon=esp32p4usbjtag,mmio32,0x500d2000 "
+#else
+#define M0_EARLYCON_BOOTARG ""
+#endif
 
 struct m0_asset { uint32_t bytes; uint8_t sha256[32]; };
 struct m0_manifest { struct m0_asset image, dtb, initrd; };

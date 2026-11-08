@@ -1,18 +1,20 @@
 # Gaijin
 
 Native RV32 NOMMU Linux for Tanmatsu rev7, launched from AppFS. The current
-build is **application 0.5.18 / AppFS revision 32 / Linux 6.18.35-gaijin-m5**.
+build is **application 0.5.19 / AppFS revision 33 / Linux 6.18.35-gaijin-m5**.
 
 This build includes the [user-access and vi correction](Documentation/guides/user-access.md).
-LCD flicker and hardware validation of the updated editor remain open.
+Revision 33 removes the USB-reader dependency from early boot, prefers the LCD
+console after panel setup and starts the local shell first. The user confirmed
+all [revision-33 device checks](Documentation/validation/revision33.md) passed on
+8 November 2026, including standalone boot and late USB attachment.
 The AppFS identifier and SD directory are `com.github.siviqt.gaijin`.
 Revision 32 repairs the identifier mismatch in revision 31; see the
 [repair and validation record](Documentation/validation/revision32.md).
 The [Penguin launcher icons](launcher/ICONS.md) are bundled at 16, 32 and 64 pixels.
-It starts login shells on the LCD and USB consoles.
+It starts login shells on the LCD and USB consoles; an open USB terminal is optional.
 The loader explicitly cycles SD power before mounting the card. Linux uses the
-SD-backed read-only base and persistent home directories. M1–M4 are accepted. **M5 —
-Framebuffer and fbcon is implemented, with hardware acceptance pending**.
+SD-backed read-only base and persistent home directories. **M1–M5 are accepted**.
 
 Start with the [documentation index](Documentation/README.md) for guides,
 milestone status and open work, or [installation instructions](INSTALL.md)
@@ -50,7 +52,7 @@ for provisioning, RAM fallback and offline recovery.
 | [Documentation/](Documentation/README.md) | Architecture, guides, roadmap and validation evidence |
 | `build/` | Generated components, dependency caches and current installation set |
 | [sources.lock.json](sources.lock.json) | Source pins and acceptance provenance |
-| [THIRD_PARTY.md](THIRD_PARTY.md), `LICENSES/` | Third-party notices and licenses |
+| [THIRD_PARTY.md](THIRD_PARTY.md) | Third-party provenance, notices and complete license texts |
 
 Hardware targets: BSP 1.6.4, Launcher 0.2.8, Radio 3.4.0 and Coprocessor r9.
 USB `ttyUJ0` provides boot logs and a login shell alongside LCD `tty1`.

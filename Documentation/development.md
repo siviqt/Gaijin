@@ -75,7 +75,7 @@ start with `/`.
 | Path | Authoritative content |
 | --- | --- |
 | `main/` | Loader, boot contract, handoff and BSP SD diagnostic |
-| `components/libfdt/`, `LICENSES/` | Vendored FDT implementation and license material |
+| `components/libfdt/`, `THIRD_PARTY.md` | Vendored FDT implementation and consolidated third-party notices/license texts |
 | `launcher/` | AppFS metadata and icon |
 | `linux/tanmatsu_defconfig`, `linux/tanmatsu.dts` | Supported board configuration and wiring |
 | `linux/patches/` | Ordered board and user-access kernel patches |
@@ -89,6 +89,13 @@ start with `/`.
 `tests/kernel_source.py` extracts drivers from the current patch for host
 fault injection. `tools/verify_userspace.py` checks NOMMU ABI/archive bounds;
 `tools/package_current.py` owns the public release inventory, hashes and ZIP.
+The normal loader omits Linux earlycon and selects the LCD console after
+successful display setup. For explicit bring-up diagnostics, enable
+`Gaijin diagnostics -> Enable best-effort early Linux USB logging` in
+`idf.py -B build/loader menuconfig` and rebuild the loader. This sets
+`CONFIG_GAIJIN_USB_EARLYCON`; full USB FIFOs drop early output immediately.
+Disable it and rebuild the loader before packaging a production release.
+The package verifier rejects a loader containing the debug earlycon argument.
 Do not hand-edit their generated output or prepared dependency sources.
 
 ## Generated outputs and caches
@@ -99,7 +106,7 @@ Do not hand-edit their generated output or prepared dependency sources.
 | `build/gaijin-current.zip` | Single downloadable installation bundle |
 | `build/CURRENT.json`, `build/SHA256SUMS` | Release identity and complete public-file inventory/hashes |
 | `build/loader/`, `build/kernel/`, `build/userspace/` | Current component workspaces and ABI intermediates |
-| `build/Documentation/`, `build/tools/`, `build/licenses/` | Generated release mirrors |
+| `build/Documentation/`, `build/tools/` | Generated release mirrors |
 | `build/README.md`, `build/INSTALL.md`, `build/sources.lock.json`, `build/THIRD_PARTY.md` | Generated copies of their source files |
 | `build/VERIFICATION.json`, `build/current-tests.log`, `build/current-package.log` | Latest workspace verification and check output |
 | `build/linux-6.18.35/`, `build/linux-6.18.35.tar.xz` | Prepared runtime kernel source and pinned offline archive |
@@ -123,7 +130,7 @@ resolved `sdkconfig` and Python caches were removed after the revision-30
 build, verification and SD update. Rebuilding recreates them; initial builds
 need network access or externally retained source/download caches.
 
-The revision-32 rebuild recreates these generated workspaces in the Git checkout;
+The revision-33 rebuild uses these generated workspaces in the Git checkout;
 they remain excluded from source control and can be retained for incremental builds.
 
 The successful native U-mode adapter is part of the canonical kernel patch.

@@ -22,7 +22,7 @@ ARCHIVE = "gaijin-current.zip"
 REPOSITORY_URL = "https://github.com/siviqt/Gaijin"
 ICON_SIZES = (16, 32, 64)
 APP_ICONS = tuple(f"icon{size}.png" for size in ICON_SIZES)
-APP_ASSETS = ("LICENSE", "boot/manifest.bin", "boot/Image", "boot/tanmatsu.dtb",
+APP_ASSETS = ("README.md", "LICENSE", "boot/manifest.bin", "boot/Image", "boot/tanmatsu.dtb",
               "boot/initramfs", "boot/rootfs.sqfs", "boot/rootfs.sqfs.sha256",
               "boot/userspace-abi.json", "THIRD_PARTY.md") + tuple(
                   "LICENSES/" + path.name for path in sorted((ROOT / "LICENSES").glob("*.txt"))) + APP_ICONS
@@ -77,6 +77,7 @@ def stage_launcher(loader, output):
     launcher_metadata()
     output.mkdir(parents=True, exist_ok=True)
     for source, name in ((ROOT / "launcher/metadata.json", "metadata.json"),
+                         (ROOT / "launcher/README.md", "README.md"),
                          (ROOT / "LICENSE", "LICENSE"), (ROOT / "THIRD_PARTY.md", "THIRD_PARTY.md"),
                          (loader, "linux-loader.bin")):
         shutil.copyfile(source, output / name)

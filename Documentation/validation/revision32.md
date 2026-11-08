@@ -42,3 +42,17 @@ entry, confirm that it loads Image, DTB and initramfs and reaches both login
 consoles, then run `m1-smoke`, `m2-sd-test`, `gaijin-persist status` and
 `m5-umode-probe`. Continue the [user-access checks](../guides/user-access.md).
 The remaining LCD flicker and M5 hardware acceptance stay open.
+
+## Metadata and Penguin icon update
+
+The manually edited repository and SD metadata contained trailing commas after
+the last asset, application entry and top-level property. Strict JSON parsing
+rejects those commas. The source URL was already present in the committed source;
+it is retained near the top of the corrected metadata as
+`"repository_url": "https://github.com/siviqt/Gaijin"`.
+
+Only the Penguin `icon16.png`, `icon32.png` and `icon64.png` are shipped, directly
+in the application directory. Metadata paths, declared assets, source files,
+package checks and installation instructions use that layout. The metadata is
+checked against the upstream application repository schema. Firmware and boot
+asset bytes retain their verified revision-32 hashes.

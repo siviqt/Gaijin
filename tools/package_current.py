@@ -19,9 +19,9 @@ APP_ID = re.search(r'^#define GAIJIN_APP_ID "([^"]+)"',
                    (ROOT / "main/boot_contract.h").read_text(), re.M)[1]
 APP = Path("sd/apps") / APP_ID
 ARCHIVE = "gaijin-current.zip"
-ICON_SETS = ("terminal", "penguin", "g-chip")
+REPOSITORY_URL = "https://github.com/siviqt/Gaijin"
 ICON_SIZES = (16, 32, 64)
-APP_ICONS = tuple(f"icons/{name}/icon{size}.png" for name in ICON_SETS for size in ICON_SIZES)
+APP_ICONS = tuple(f"icon{size}.png" for size in ICON_SIZES)
 APP_ASSETS = ("LICENSE", "boot/manifest.bin", "boot/Image", "boot/tanmatsu.dtb",
               "boot/initramfs", "boot/rootfs.sqfs", "boot/rootfs.sqfs.sha256",
               "boot/userspace-abi.json", "THIRD_PARTY.md") + tuple(
@@ -58,17 +58,25 @@ def file_record(path):
     return dict(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
 
 
-def stage_launcher(loader, output):
-    """Stage only application metadata/assets; never invent a kernel manifest."""
+def launcher_metadata():
     metadata = json.loads((ROOT / "launcher/metadata.json").read_text())
+    if metadata.get("repository_url") != REPOSITORY_URL:
+        raise ValueError(f"metadata must declare repository_url: {REPOSITORY_URL}")
+    if metadata.get("icon") != {f"{size}x{size}": f"icon{size}.png" for size in ICON_SIZES}:
+        raise ValueError("metadata must use the three Penguin icons at the application root")
     app = metadata["application"][0]
     expected = dict(targets=["tanmatsu"], type="appfs", executable="linux-loader.bin", revision=32,
                     external_only=True, assets=[dict(source_file=name, target_file=name) for name in APP_ASSETS])
     if app != expected:
         raise ValueError("metadata must match Tanmatsu Launcher 0.2.8 AppFS installation")
+    return metadata
+
+
+def stage_launcher(loader, output):
+    """Stage only application metadata/assets; never invent a kernel manifest."""
+    launcher_metadata()
     output.mkdir(parents=True, exist_ok=True)
     for source, name in ((ROOT / "launcher/metadata.json", "metadata.json"),
-                         (ROOT / "launcher/icon.png", "icon.png"),
                          (ROOT / "LICENSE", "LICENSE"), (ROOT / "THIRD_PARTY.md", "THIRD_PARTY.md"),
                          (loader, "linux-loader.bin")):
         shutil.copyfile(source, output / name)
@@ -154,11 +162,13 @@ def check_application(app):
     if app.name != APP_ID:
         raise ValueError(f"application directory must be named {APP_ID}")
     metadata = json.loads((app / "metadata.json").read_text())
-    if metadata != json.loads((ROOT / "launcher/metadata.json").read_text()):
+    if metadata != launcher_metadata():
         raise ValueError("application metadata differs from source; run make package")
-    for name in (*APP_ASSETS, "icon.png", "linux-loader.bin"):
+    for name in (*APP_ASSETS, "linux-loader.bin"):
         if not (app / name).is_file():
             raise ValueError(f"application asset missing: {name}")
+    if {path.relative_to(app).as_posix() for path in app.rglob("*.png")} != set(APP_ICONS):
+        raise ValueError("application must contain only the three Penguin PNGs")
     check_loader(app / "linux-loader.bin")
     check_userspace_paths(app / "boot/initramfs")
     # Check the boot manifest independently of CURRENT.json.

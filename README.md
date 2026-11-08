@@ -8,8 +8,7 @@ LCD flicker and hardware validation of the updated editor remain open.
 The AppFS identifier and SD directory are `com.github.siviqt.gaijin`.
 Revision 32 repairs the identifier mismatch in revision 31; see the
 [repair and validation record](Documentation/validation/revision32.md).
-Three [launcher icon sets](launcher/ICONS.md) are bundled at 16, 32 and 64 pixels;
-Penguin is selected.
+The [Penguin launcher icons](launcher/ICONS.md) are bundled at 16, 32 and 64 pixels.
 It starts login shells on the LCD and USB consoles.
 The loader explicitly cycles SD power before mounting the card. Linux uses the
 SD-backed read-only base and persistent home directories. M1–M4 are accepted. **M5 —

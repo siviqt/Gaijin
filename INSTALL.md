@@ -18,7 +18,8 @@ folder. Do not combine files from separate directories or downloads.
 2. Replace the SD card's `/apps/com.github.siviqt.gaijin/` directory with
    `sd/apps/com.github.siviqt.gaijin/` from this set. The resulting application
    directory is `/apps/com.github.siviqt.gaijin/`, containing `metadata.json`,
-   `linux-loader.bin`, `icon.png`, `LICENSE` and `boot/` with Image, DTB,
+   `linux-loader.bin`, the Penguin `icon16.png`, `icon32.png` and `icon64.png`,
+   `LICENSE` and `boot/` with Image, DTB,
    initramfs, manifest, rootfs.sqfs and rootfs.sqfs.sha256.
    The SD card need not be formatted; unrelated files can remain. Replace the full application directory and upload its loader together.
    Keep `/gaijin/userdata.ext2` outside this replaceable directory and preserve it

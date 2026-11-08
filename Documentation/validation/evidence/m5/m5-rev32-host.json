@@ -31,5 +31,22 @@
     "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
     "initramfs": "da284ca66bf2dab86172c4f0be0bd279e119adca908cec59ea3c3b5e4f32ebb4",
     "rootfs.sqfs": "88889dd1cd582aa1380c2aee721b89953e51510da2582d8c6fc818730e62ef23"
+  },
+  "metadata_and_icons": {
+    "repository_url": "https://github.com/siviqt/Gaijin",
+    "schema_url": "https://github.com/Nicolai-Electronics/app-repository/blob/83e2df438b5b537635b03e38b4fbb3693f75b9aa/.validator/schema.json",
+    "schema_sha256": "d7bc68421418a49153fcc2b52dcb98b5560bc53a23858eb5e29cf9d5b7234c90",
+    "validation": "PASS: strict JSON and current upstream Draft 7 schema",
+    "icons": {
+      "16x16": "icon16.png",
+      "32x32": "icon32.png",
+      "64x64": "icon64.png"
+    },
+    "host_tests": {
+      "run": 95,
+      "passed": 95,
+      "skipped": 0
+    },
+    "boot_assets_unchanged": true
   }
 }

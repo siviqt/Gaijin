@@ -1,24 +1,13 @@
 # Gaijin launcher icons
 
-Penguin is the selected set. All three choices are included in the AppFS
-package as RGBA PNG files at exactly 16, 32 and 64 pixels square.
+Penguin is the only bundled icon set. The application root contains RGBA PNG
+files `icon16.png`, `icon32.png` and `icon64.png`, at exactly 16, 32 and 64 pixels
+square. The metadata's `icon` entries and declared assets use these filenames.
 
-| Choice | Directory | Design |
-| --- | --- | --- |
-| A — Terminal | `icons/terminal/` | Mint terminal prompt on charcoal |
-| B — Penguin | `icons/penguin/` | Penguin face on navy; selected |
-| C — G Chip | `icons/g-chip/` | Ivory G on a violet chip |
+The artwork is the original Penguin face on a navy tile. The Terminal and G Chip
+variants and the duplicate `icon.png` have been removed from current sources and
+installation sets. The generation prompt is retained in `launcher/icon-prompts.json`.
 
-Each directory contains `icon16.png`, `icon32.png` and `icon64.png`. The
-metadata's `icon` entries point to Penguin at all three sizes. `icon.png`
-is a compatibility copy of the selected 32-pixel icon.
-
-To select another bundled set, change the three `icon` paths in
-`launcher/metadata.json`, update the compatibility copy and repackage. The
-firmware version and AppFS executable revision can stay unchanged when an update
-changes icon assets only. The identifier repair uses 0.5.18 / revision 32.
-
-The artwork was created with built-in image generation and exported to exact
-RGBA dimensions. The generation prompts are recorded in
-`launcher/icon-prompts.json`. High-resolution working masters are kept outside
-the source tree; the nine release PNGs are the authoritative shipped assets.
+This metadata and icon update keeps application 0.5.18 / executable revision 32.
+It preserves `repository_url` as `https://github.com/siviqt/Gaijin` and uses strict
+JSON, with no trailing commas or backslash before the URL's colon.

@@ -265,14 +265,12 @@
     },
     "host_validation": {
       "report": "Documentation/validation/evidence/m5/m5-rev32-host.json",
-      "report_sha256": "0ebe8f859b088b450ea79cc15672ea743d7f80dbf22ea72c22f83912e7791fd3"
+      "report_sha256": "eacd2e10d2c429211e53795713f2396d5ea40d649d7c4e21f72cd15204374ab7"
     },
     "launcher_icons": {
       "selected": "penguin",
       "choices": [
-        "terminal",
-        "penguin",
-        "g-chip"
+        "penguin"
       ],
       "sizes": [
         16,
@@ -280,7 +278,12 @@
         64
       ],
       "prompts": "launcher/icon-prompts.json",
-      "assets_unchanged_in_revision_32": true
+      "files": [
+        "icon16.png",
+        "icon32.png",
+        "icon64.png"
+      ],
+      "layout": "Penguin PNGs at the application root"
     },
     "application_id_fix": {
       "date": "2026-11-08",

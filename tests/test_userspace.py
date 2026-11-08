@@ -233,7 +233,13 @@ class UserspaceTests(unittest.TestCase):
         meta = json.loads((output / "metadata.json").read_text())
         self.assertEqual(meta["application"][0]["revision"], 32)
         self.assertTrue(meta['application'][0]['external_only'])
-        self.assertEqual((output / "icon.png").read_bytes()[16:24], struct.pack(">II", 32, 32))
+        self.assertEqual(meta["repository_url"], "https://github.com/siviqt/Gaijin")
+        self.assertEqual(meta["icon"], {f"{size}x{size}": f"icon{size}.png" for size in (16, 32, 64)})
+        self.assertEqual({path.name for path in output.rglob("*.png")},
+                         {"icon16.png", "icon32.png", "icon64.png"})
+        for size in (16, 32, 64):
+            self.assertEqual((output / f"icon{size}.png").read_bytes()[16:24],
+                             struct.pack(">II", size, size))
         self.assertFalse((output / "boot/manifest.bin").exists())
         kernel = self.work / "kernel"
         kernel.mkdir()

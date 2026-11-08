@@ -6,6 +6,8 @@ build is **application 0.5.17 / AppFS revision 31 / Linux 6.18.35-gaijin-m5**.
 This build includes the [user-access and vi correction](Documentation/guides/user-access.md).
 LCD flicker and hardware validation of the updated editor remain open.
 The AppFS identifier and SD directory are `com.github.siviq.gaijin`.
+Three [launcher icon sets](launcher/ICONS.md) are bundled at 16, 32 and 64 pixels;
+Penguin is selected.
 It starts login shells on the LCD and USB consoles.
 The loader explicitly cycles SD power before mounting the card. Linux uses the
 SD-backed read-only base and persistent home directories. M1–M4 are accepted. **M5 —

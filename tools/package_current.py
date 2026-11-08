@@ -19,10 +19,13 @@ APP_ID = re.search(r'^#define GAIJIN_APP_ID "([^"]+)"',
                    (ROOT / "main/boot_contract.h").read_text(), re.M)[1]
 APP = Path("sd/apps") / APP_ID
 ARCHIVE = "gaijin-current.zip"
+ICON_SETS = ("terminal", "penguin", "g-chip")
+ICON_SIZES = (16, 32, 64)
+APP_ICONS = tuple(f"icons/{name}/icon{size}.png" for name in ICON_SETS for size in ICON_SIZES)
 APP_ASSETS = ("LICENSE", "boot/manifest.bin", "boot/Image", "boot/tanmatsu.dtb",
               "boot/initramfs", "boot/rootfs.sqfs", "boot/rootfs.sqfs.sha256",
               "boot/userspace-abi.json", "THIRD_PARTY.md") + tuple(
-                  "LICENSES/" + path.name for path in sorted((ROOT / "LICENSES").glob("*.txt")))
+                  "LICENSES/" + path.name for path in sorted((ROOT / "LICENSES").glob("*.txt"))) + APP_ICONS
 
 
 def bootargs():
@@ -60,6 +63,10 @@ def stage_launcher(loader, output):
                          (loader, "linux-loader.bin")):
         shutil.copyfile(source, output / name)
     shutil.copytree(ROOT / "LICENSES", output / "LICENSES", dirs_exist_ok=True)
+    for name in APP_ICONS:
+        target = output / name
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / "launcher" / name, target)
 
 
 def stage_application(loader, kernel, userspace, output):
@@ -184,6 +191,8 @@ def release_files():
         "INSTALL.md": ROOT / "INSTALL.md",
         "sources.lock.json": ROOT / "sources.lock.json",
         "THIRD_PARTY.md": ROOT / "THIRD_PARTY.md",
+        "launcher/ICONS.md": ROOT / "launcher/ICONS.md",
+        "launcher/icon-prompts.json": ROOT / "launcher/icon-prompts.json",
         "tools/create_state.py": ROOT / "tools/create_state.py",
         "tools/check_state.py": ROOT / "tools/check_state.py",
     }

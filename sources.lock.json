@@ -266,6 +266,21 @@
     "host_validation": {
       "report": "Documentation/validation/evidence/m5/m5-rev31-host.json",
       "report_sha256": "b1963199f554a4ebc4dcc1579d0955af53930e9721b07a39eb995b8b9df6a21f"
+    },
+    "launcher_icons": {
+      "selected": "penguin",
+      "choices": [
+        "terminal",
+        "penguin",
+        "g-chip"
+      ],
+      "sizes": [
+        16,
+        32,
+        64
+      ],
+      "prompts": "launcher/icon-prompts.json",
+      "firmware_unchanged": true
     }
   },
   "power_control": {

@@ -1,0 +1,23 @@
+{
+  "generator": "OpenAI built-in image_gen",
+  "selected": "penguin",
+  "sizes": [
+    16,
+    32,
+    64
+  ],
+  "prompts": [
+    {
+      "name": "A — Terminal",
+      "prompt": "Use case: logo-brand. Create a single square app-launcher icon for Gaijin, a native Linux console on a handheld computer. Direction A: Terminal. A bold mint-green terminal chevron and short block cursor on a deep charcoal rounded-square tile. Original, exceptionally simple pixel-art design with a tightly controlled four-color palette. Large solid shapes, crisp grid-aligned edges, generous separation between glyph strokes; the mark must remain recognizable when exported at 16, 32 and 64 pixels. Center the icon and let the tile occupy almost the whole square, with transparent outer corners. No letters, no words, no labels, no presentation sheet, no gradients, no shadows, no glow, no tiny decorative circuitry. One icon only. Transparent background outside the tile."
+    },
+    {
+      "name": "B — Penguin",
+      "prompt": "Use case: logo-brand. Create a single square app-launcher icon for Gaijin, a native Linux console on a handheld computer. Direction B: Penguin. An original friendly stylized penguin face: simple black cap, broad white cheek shapes, two clear eyes and a warm golden-yellow beak, centered on a deep navy rounded-square tile. Polished minimal pixel art with large bold shapes and a tightly controlled five-color palette. Designed for excellent readability as a 16-pixel launcher icon and matching 32- and 64-pixel exports. Make the face fill most of the tile; omit feet, body, feathers and small details. Transparent outer corners. No words, no labels, no letters, no presentation sheet, no gradients, no shadows, no glow. One icon only. Transparent background outside the tile."
+    },
+    {
+      "name": "C — G Chip",
+      "prompt": "Use case: logo-brand. Create a single square app-launcher icon for Gaijin, a native Linux console on a handheld computer. Direction C: G Chip. A bold ivory capital G carved into a violet microchip-shaped block on a deep charcoal rounded-square tile. The G is the main feature and must read clearly at 16 pixels. Use just two short large chip pins per edge, chunky geometric shapes, crisp pixel-art edges and a tightly controlled four-color palette. Make a simple original recognizable app mark that scales consistently to 16, 32 and 64 pixels. Center the large symbol; transparent outer corners. No text other than the G, no words, no labels, no presentation sheet, no fine circuitry, no gradients, no shadows, no glow. One icon only. Transparent background outside the tile."
+    }
+  ]
+}

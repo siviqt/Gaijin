@@ -1,0 +1,4 @@
+source "$BR2_EXTERNAL_GAIJIN_PATH/package/gaijin-abi-check/Config.in"
+source "$BR2_EXTERNAL_GAIJIN_PATH/package/gaijin-input-test/Config.in"
+
+source "$BR2_EXTERNAL_GAIJIN_PATH/package/gaijin-state/Config.in"

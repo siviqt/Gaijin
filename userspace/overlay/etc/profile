@@ -1,0 +1,17 @@
+export PATH=/usr/bin:/usr/sbin:/bin:/sbin
+export HOME=/root
+: "${TERM:=vt100}"
+export TERM
+export PS1='gaijin# '
+export HISTFILE=/root/.hush_history HISTFILESIZE=128
+cd /root
+if [ -f /run/gaijin-prompt ]; then
+    # Builtin read avoids re-executing BusyBox for a NOMMU command substitution.
+    gaijin_prompt=
+    IFS= read -r gaijin_prompt < /run/gaijin-prompt
+    case "$gaijin_prompt" in
+        *[!a-zA-Z0-9_.-]*|'') ;;
+        *) [ "${#gaijin_prompt}" -gt 32 ] || export PS1="$gaijin_prompt# " ;;
+    esac
+    unset gaijin_prompt
+fi

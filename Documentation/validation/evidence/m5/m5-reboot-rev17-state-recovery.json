@@ -1,0 +1,15 @@
+{
+  "sha256": "8e19f16aebddd6f26c9c290ba37c6401dbf09013264bc9717901f35c8c79ee27",
+  "bytes": 67108864,
+  "backup": "backups/userdata-post-rev17-reboot-8e19f16aebdd.ext2.gz",
+  "state": 0,
+  "fsck_exit": 0,
+  "repaired_sha256": "c8d70772f9ad342131dac45bc4e67e063727d8a2372f9f35ca10732487c81c20",
+  "changed_bytes": 8,
+  "applied": true,
+  "card_fsck_exit": 0,
+  "other_files_unchanged": true,
+  "date": "2026-10-29",
+  "outside_primary_superblock_unchanged": true,
+  "interpretation": "No structural errors found. Second boot mounted state successfully, so later forced power-off can explain the new unclean flag. Post-repair device remount pending."
+}

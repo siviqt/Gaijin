@@ -1,0 +1,20 @@
+#!/bin/sh
+[ -f /run/gaijin-persist ] || { echo 'M3 state FAIL: persistence inactive'; exit 1; }
+case "$1" in
+    prepare)
+        [ ! -e /home/m3-proof ] || { echo 'M3 state FAIL: proof already exists'; exit 1; }
+        mkdir /home/m3-proof || exit 1
+        printf 'Gaijin M3 persisted\n' > /home/m3-proof/value || exit 1
+        chmod 600 /home/m3-proof/value || exit 1
+        ln -s value /home/m3-proof/link || exit 1
+        printf 'm3proof\n' > /persist/settings/prompt || exit 1
+        sync || exit 1
+        echo 'M3 prepared. cd /; gaijin-persist stop; reset and run m3-state-test verify.' ;;
+    verify)
+        [ "$(cat /home/m3-proof/link)" = 'Gaijin M3 persisted' ] &&
+        [ -L /home/m3-proof/link ] &&
+        [ "$(stat -c %a /home/m3-proof/value)" = 600 ] &&
+        [ "$(cat /run/gaijin-prompt)" = m3proof ] || { echo 'M3 state FAIL'; exit 1; }
+        echo 'M3 state PASS: content, symlink, permissions and setting survived reboot' ;;
+    *) echo 'usage: m3-state-test prepare|verify'; exit 1 ;;
+esac

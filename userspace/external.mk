@@ -1,0 +1,8 @@
+BUSYBOX_FLAT_STACKSIZE = 65536
+include $(sort $(wildcard $(BR2_EXTERNAL_GAIJIN_PATH)/package/*/*.mk))
+
+define GAIJIN_BUSYBOX_PATCH_INIT
+	$(APPLY_PATCHES) $(@D) $(BR2_EXTERNAL_GAIJIN_PATH)/patches/busybox '*.patch'
+endef
+BUSYBOX_POST_PATCH_HOOKS += GAIJIN_BUSYBOX_PATCH_INIT
+

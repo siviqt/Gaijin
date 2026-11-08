@@ -1,0 +1,33 @@
+{
+  "card_image": "/media/siv/CARD-UUID/gaijin/userdata.ext2",
+  "original_sha256": "606874a03a11d0200f75402223789e78fe389ca766efc659b247c70a28102df1",
+  "backup": "backups/userdata-unclean-m5-606874a03a11.ext2.gz",
+  "original_state": 0,
+  "bytes": 67108864,
+  "fsck": [
+    {
+      "mode": "-fn",
+      "file": "original.ext2",
+      "exit": 0
+    },
+    {
+      "mode": "-fp",
+      "file": "repaired.ext2",
+      "exit": 1
+    },
+    {
+      "mode": "-fn",
+      "file": "repaired.ext2",
+      "exit": 0
+    }
+  ],
+  "repaired_sha256": "269201fa3dbffbedac455936b990f584c03dda09feba41b0ed922d238ccdaba5",
+  "changed_bytes": 8,
+  "card_fsck_exit": 0,
+  "unrelated_card_files_verified": 11,
+  "applied_in_place": true,
+  "date": "2026-10-29",
+  "unrelated_files_unchanged": 11,
+  "data_outside_primary_superblock_unchanged": true,
+  "hardware_remount_verification": "Pending after this repair"
+}

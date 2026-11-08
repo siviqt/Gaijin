@@ -1,0 +1,241 @@
+I (2408) Gaijin M2: handoff -> Linux 0x48000000 a0=0 a1=0x48800000; reset recovers launcher
+[    0.000000] Linux version 6.18.35-gaijin-m3.1 (user@host) (riscv32-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0, GNU ld (crosstool-NG esp-15.2.0_20251204) 2.45) #19 Thu Oct 29 14:27:43 EET 2026
+[    0.000000] Machine model: Tanmatsu rev7 Gaijin M3.1
+[    0.000000] earlycon: esp32p4usbjtag0 at MMIO32 0x500d2000 (options '')
+[    0.000000] printk: legacy bootconsole [esp32p4usbjtag0] enabled
+[    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acim
+[    0.000000] riscv: ELF capabilities acim
+[    0.000000] Ticket spinlock: enabled
+[    0.000000] Kernel command line: earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+[    0.000000] printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+[    0.000000] Dentry cache hash table entries: 4096 (order: 2, 16384 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8192
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 32 local interrupts mapped
+[    0.000000] esp32p4-clic: 240 IRQ slots, INTMTX routing enabled
+[    0.000000] clocksource: esp32p4-systimer: mask: 0xfffffffffffff max_cycles: 0x3b0a9be80, max_idle_ns: 440795202120 ns
+[    0.000005] sched_clock: 52 bits at 16MHz, resolution 62ns, wraps every 2199023255531ns
+[    0.002955] esp32p4-systimer: SYSTIMER @ 16000000 Hz, IRQ 17 (CLIC slot 17)
+[    0.005335] Calibrating delay loop (skipped), value calculated using timer frequency.. 32.00 BogoMIPS (lpj=64000)
+[    0.008885] pid_max: default: 4096 minimum: 301
+[    0.010733] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.013181] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.020876] Memory: 28996K/32768K available (1805K kernel code, 299K rwdata, 277K rodata, 118K init, 106K bss, 3548K reserved, 0K cma-reserved)
+[    0.027047] devtmpfs: initialized
+[    0.031890] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.035444] posixtimers hash table entries: 512 (order: 0, 2048 bytes, linear)
+[    0.037963] futex hash table entries: 16 (256 bytes on 1 NUMA nodes, total 0 KiB, linear).
+[    0.065012] cpu0: Ratio of byte access time to unaligned word access is 1.47, unaligned accesses are fast
+[    0.068241] esp32p4_cache: registered ROM-thunk noncoherent ops, block=64
+[    0.077575] clocksource: Switched to clocksource esp32p4-systimer
+[    0.087907] Unpacking initramfs...
+[    0.092981] workingset: timestamp_bits=30 max_order=13 bucket_order=0
+[    0.095879] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.098176] io scheduler mq-deadline registered
+[    0.099762] io scheduler kyber registered
+[    0.101094] io scheduler bfq registered
+[    0.429422] Freeing initrd memory: 540K
+[    0.452717] 500d2000.serial: ttyUJ0 at MMIO 0x500d2000 (irq = 0, base_baud = 3000000) is a P4 USB Serial/JTAG
+[    0.456233] printk: legacy console [ttyUJ0] enabled
+[    0.456233] printk: legacy console [ttyUJ0] enabled
+[    0.459490] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.459490] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.464558] esp32p4-usb-serial-jtag 500d2000.serial: polled USB console: ttyUJ0 (4 ms)
+[    0.480992] loop: module loaded
+[    0.483683] device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+[    0.513666] tanmatsu-sd 50083000.mmc: slot 0 polled IDMAC, file-sector write gate, 1MHz maximum; no hotplug
+[    0.539210] input: Tanmatsu MCU keyboard as /devices/platform/i2c/i2c-0/0-005f/input/input0
+[    0.543879] tanmatsu-mcu 0-005f: MCU r9 input: 20 ms polling, software repeat 400/50 ms
+[    0.546963] i2c-gpio i2c: using lines 521 (SDA) and 522 (SCL)
+[    0.552509] clk: Disabling unused clocks
+[    0.556658] Freeing unused kernel image (initmem) memory: 116K
+[    0.558948] This architecture does not have kernel memory protection.
+[    0.561109] Run /init as init process
+[    0.774696] mmc0: new SDHC card at address 0003
+[    0.779323] mmcblk0: mmc0:0003 SD16G 14.5 GiB
+[    0.788613] tanmatsu-sd 50083000.mmc: LBA0 dma=b700eedc sg=b700eedc nonzero=13 sig=55aa idsts=00000102 card-bytes=512 host-bytes=512
+[    0.803560]  mmcblk0: p1
+[   17.386807] loop0: detected capacity change from 0 to 1112
+Gaijin SD: verified read-only base on /dev/loop0; switching root
+starting pid 43, tty '': '/etc/init.d/rcS'
+Gaijin state: fresh ext2 superblock failed (errno=22); image preserved
+Gaijin state: RAM fallback; image preserved for offline recovery
+
+Gaijin — Tanmatsu rev7 USB shell
+Linux (none) 6.18.35-gaijin-m3.1 #19 Thu Oct 29 14:27:43 EET 2026 riscv32 GNU/Linux
+gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1
+RV32 NOMMU; 32-bit pointers/long; little endian; soft-float calling convention.
+Hardware F/D instructions and ilp32f/ilp32d binaries are unsupported.
+Validated on Tanmatsu rev7 with the pinned RV32IMAC/ilp32 uClibc-ng bFLT toolchain.
+ABI validation accepted 2026-10-28; compatibility is limited to this toolchain.
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+Gaijin: userspace ABI probe PASS
+              total        used        free      shared  buff/cache   available
+Mem:          29876        4508       19288           0        6080       22808
+Read-only base; see /run/gaijin-persist for state status. Before reset: cd /; gaijin-persist stop.
+Type m1-smoke, m2-sd-test and m3-state-test for checks.
+
+starting pid 60, tty '/dev/ttyUJ0': '-/bin/sh'
+gaijin# pwd
+/root
+gaijin# cd /
+gaijin# ;s
+sh: can't execute 's': No such file or directory
+gaijin# ls
+bin      home     lib32    mnt      persist  run      sys      var
+dev      init     linuxrc  newroot  proc     sbin     tmp
+etc      lib      media    opt      root     sd       usr
+gaijin# ps
+  PID USER       VSZ STAT COMMAND
+    1 root       608 S    init
+    2 root         0 SW   [kthreadd]
+    3 root         0 SW   [pool_workqueue_]
+    4 root         0 IW<  [kworker/R-slub_]
+    5 root         0 IW   [kworker/0:0-eve]
+    6 root         0 IW<  [kworker/0:0H-kb]
+    7 root         0 IW   [kworker/u4:0-ev]
+    8 root         0 IW<  [kworker/R-mm_pe]
+    9 root         0 SW   [ksoftirqd/0]
+   10 root         0 IW   [kworker/0:1-eve]
+   11 root         0 SW   [kdevtmpfs]
+   12 root         0 IW<  [kworker/R-write]
+   13 root         0 IW<  [kworker/R-kbloc]
+   14 root         0 SW   [kswapd0]
+   15 root         0 IW   [kworker/u4:1]
+   16 root         0 IW<  [kworker/u5:0]
+   17 root         0 IW   [kworker/0:2-pm]
+   18 root         0 IW   [kworker/u4:2-ev]
+   26 root         0 IW<  [kworker/R-mmc_c]
+   27 root         0 IW<  [kworker/0:1H]
+   60 root       608 S    -/bin/sh
+   63 root       604 R    ps
+gaijin# df
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/mmcblk0p1        15164128     69664  15094464   0% /sd
+/dev/loop0                 576       576         0 100% /
+gaijin# m1-smoke 
+Linux (none) 6.18.35-gaijin-m3.1 #19 Thu Oct 29 14:27:43 EET 2026 riscv32 GNU/Linux
+earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+processor	: 0
+hart		: 0
+isa		: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+mmu		: none
+mvendorid	: 0x612
+marchid		: 0x80000003
+mimpid		: 0x1
+hart isa	: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+pipeline-ok
+tmpfs-ok
+speed 115200 baud;stty: standard input
+ line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>;
+eol2 = <undef>; swtch = <undef>; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+werase = ^W; lnext = ^V; flush = ^O; min = 1; time = 0;
+-parenb -parodd -cmspar cs8 hupcl -cstopb cread clocal -crtscts
+-ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon ixoff
+-iuclc -ixany -imaxbel -iutf8
+opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt
+echoctl echoke -flusho
+              total        used        free      shared  buff/cache   available
+Mem:          29876        5124       18604           0        6148       22224
+MemTotal:          29876 kB
+MemFree:           18540 kB
+MemAvailable:      22168 kB
+Buffers:            3788 kB
+Cached:             1312 kB
+SwapCached:            0 kB
+Active:             4820 kB
+Inactive:            276 kB
+Active(anon):          0 kB
+Inactive(anon):        0 kB
+Active(file):       4820 kB
+Inactive(file):      276 kB
+Unevictable:           4 kB
+Mlocked:               0 kB
+MmapCopy:           2408 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:                 0 kB
+Writeback:             0 kB
+AnonPages:             0 kB
+Mapped:                0 kB
+Shmem:                 0 kB
+KReclaimable:       1048 kB
+Slab:               3092 kB
+SReclaimable:       1048 kB
+SUnreclaim:         2044 kB
+KernelStack:         184 kB
+PageTables:            0 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:       14936 kB
+Committed_AS:          0 kB
+VmallocTotal:          0 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+Percpu:               32 kB
+Balloon:               0 kB
+M1 smoke PASS (20 external execs). Check Ctrl-C, editing, shell exit and USB reconnect manually.
+gaijin# m2-
+m2-input-test  m2-sd-test
+gaijin# m2-sd
+sh: can't execute 'm2-sd': No such file or directory
+gaijin# m2-sd-test 
+[   52.951560] m2-sd-test (119): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+[   55.054913] m2-sd-test (119): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+[   57.155923] m2-sd-test (119): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+/dev/loop0: 0 /sd/apps/tanmatsu-linux/boot/rootfs.sqfs
+devtmpfs /dev devtmpfs rw,nosuid,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+/dev/mmcblk0p1 /sd vfat ro,nosuid,nodev,noexec,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,errors=remount-ro 0 0
+/dev/loop0 / squashfs ro,nosuid,nodev,relatime,errors=continue 0 0
+tmpfs /run tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev,relatime,mode=1777 0 0
+tmpfs /root tmpfs rw,nosuid,nodev,relatime,mode=700 0 0
+tmpfs /home tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /usr/local tmpfs rw,nosuid,nodev,relatime 0 0
+              total        used        free      shared  buff/cache   available
+Mem:          29876        5160       22988           0        1728       22808
+M2 SD PASS: live read-only root, preserved FAT/loop backing and three hash/exec runs
+gaijin# ls
+bin      home     lib32    mnt      persist  run      sys      var
+dev      init     linuxrc  newroot  proc     sbin     tmp
+etc      lib      media    opt      root     sd       usr
+gaijin# ls home/
+gaijin# ls sd
+apps     gaijin   plugins
+gaijin# ls sd/gaijin/
+userdata.ext2
+gaijin# ls sd/plugins/
+gaijin# ls sd/apps/
+tanmatsu-linux
+gaijin# ls sd/apps/tanmatsu-linux/
+LICENSE           icon.png          metadata.json
+boot              linux-loader.bin
+gaijin# gaijin-persist start
+Gaijin state: fresh ext2 superblock failed (errno=22); image preserved
+gaijin# m3-state-test prepare
+M3 state FAIL: persistence inactive
+gaijin# m3-state-test
+M3 state FAIL: persistence inactive
+gaijin# 

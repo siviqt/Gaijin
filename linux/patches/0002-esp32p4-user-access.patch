@@ -1,0 +1,38 @@
+ESP32-P4 has RAM above a large unmapped address hole. Generic NOMMU
+access_ok() accepts every address and TASK_SIZE_MAX is ULONG_MAX, allowing
+open(NULL) to issue an unrecoverable low-address load from the kernel.
+
+Bound checked user accesses to the contiguous Linux RAM bank. The generic
+string helpers also use TASK_SIZE_MAX to stop at the RAM boundary before
+calling user_read_access_begin(), preserving short strings near its end.
+This is an address-validity check, not per-process memory protection.
+
+--- a/arch/riscv/include/asm/uaccess.h
++++ b/arch/riscv/include/asm/uaccess.h
+@@ -488,6 +488,26 @@
+ 		goto label;
+ 
+ #else /* CONFIG_MMU */
++#ifdef CONFIG_SOC_ESP32P4
++/* All Linux userspace allocations live in the one contiguous PSRAM bank.
++ * MMIO, ROM and the low address hole are not user-copy buffers. The
++ * memcpy-based NOMMU accessors cannot recover from accesses to that hole.
++ */
++extern void *high_memory;
++#define TASK_SIZE_MAX ((unsigned long)high_memory)
++
++static inline int __access_ok(const void __user *ptr, unsigned long size)
++{
++	unsigned long addr = (unsigned long)ptr;
++	unsigned long limit = TASK_SIZE_MAX;
++
++	/* Subtract only after checking addr, so a wrapping size is rejected.
++	 * A zero-length range at the end of RAM is permitted.
++	 */
++	return addr >= PAGE_OFFSET && addr <= limit && size <= limit - addr;
++}
++#define __access_ok __access_ok
++#endif
+ #include <asm-generic/uaccess.h>
+ #endif /* CONFIG_MMU */
+ #endif /* _ASM_RISCV_UACCESS_H */

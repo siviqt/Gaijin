@@ -1,0 +1,2055 @@
+-- Waiting for the device to reconnect.
+I (1256) main_task: Started on CPU0
+I (1256) main_task: Calling app_main()
+I (1256) Gaijin M2: Gaijin M2.8 contract=1 board=7 BSP=1.6.4 launcher=0.2.8 radio=3.4.0 MCU=r9 (target)
+I (1256) Gaijin M2: PSRAM=32 MiB unmanaged; hart0 M-mode; hart1 held by IDF unicore startup
+I (1256) sdcard: Initializing SD card
+I (1256) sdcard: Power cycling SD card...
+W (1256) ldo: The voltage value 0 is out of the recommended range [500, 2700]
+I (1556) sdcard: Allocating SD DMA buffer
+I (1856) sdcard: Mounted SD at '/sd'
+I (1856) SD reference: BSP LBA0 fnv1a=b700eedc nonzero=13 signature=55aa FAT-start=63
+I (1856) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+I (1856) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+I (1856) Gaijin M2: load Image: 2464864 bytes -> 0x48000000
+I (2426) Gaijin M2: load tanmatsu.dtb: 1972 bytes -> 0x48800000
+I (2426) Gaijin M2: load initramfs: 512208 bytes -> 0x49000000
+I (2546) sdcard: SD card unmounted
+I (2546) Gaijin M2: verified Image memory=2574744; DTB=0x48800000; initrd=512208
+I (2546) Gaijin M2: handoff -> Linux 0x48000000 a0=0 a1=0x48800000; reset recovers launcher
+[    0.000000] Linux version 6.18.35-gaijin-m2.8 (user@host) (riscv32-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0, GNU ld (crosstool-NG esp-15.2.0_20251204) 2.45) #16 Thu Oct 29 01:48:27 EET 2026
+[    0.000000] Machine model: Tanmatsu rev7 Gaijin M2.8
+[    0.000000] earlycon: esp32p4usbjtag0 at MMIO32 0x500d2000 (options '')
+[    0.000000] printk: legacy bootconsole [esp32p4usbjtag0] enabled
+[    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acim
+[    0.000000] riscv: ELF capabilities acim
+[    0.000000] Ticket spinlock: enabled
+[    0.000000] Kernel command line: earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+[    0.000000] printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+[    0.000000] Dentry cache hash table entries: 4096 (order: 2, 16384 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8192
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 32 local interrupts mapped
+[    0.000000] esp32p4-clic: 240 IRQ slots, INTMTX routing enabled
+[    0.000000] clocksource: esp32p4-systimer: mask: 0xfffffffffffff max_cycles: 0x3b0a9be80, max_idle_ns: 440795202120 ns
+[    0.000005] sched_clock: 52 bits at 16MHz, resolution 62ns, wraps every 2199023255531ns
+[    0.002857] esp32p4-systimer: SYSTIMER @ 16000000 Hz, IRQ 17 (CLIC slot 17)
+[    0.005211] Calibrating delay loop (skipped), value calculated using timer frequency.. 32.00 BogoMIPS (lpj=64000)
+[    0.008633] pid_max: default: 4096 minimum: 301
+[    0.010569] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.013175] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.020700] Memory: 29136K/32768K available (1728K kernel code, 298K rwdata, 260K rodata, 115K init, 106K bss, 3408K reserved, 0K cma-reserved)
+[    0.026822] devtmpfs: initialized
+[    0.031762] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.035268] posixtimers hash table entries: 512 (order: 0, 2048 bytes, linear)
+[    0.037659] futex hash table entries: 16 (256 bytes on 1 NUMA nodes, total 0 KiB, linear).
+[    0.064648] cpu0: Ratio of byte access time to unaligned word access is 1.47, unaligned accesses are fast
+[    0.067936] esp32p4_cache: registered ROM-thunk noncoherent ops, block=64
+[    0.077256] clocksource: Switched to clocksource esp32p4-systimer
+[    0.087876] Unpacking initramfs...
+[    0.092945] workingset: timestamp_bits=30 max_order=13 bucket_order=0
+[    0.095796] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.097873] io scheduler mq-deadline registered
+[    0.099364] io scheduler kyber registered
+[    0.100711] io scheduler bfq registered
+[    0.406105] Freeing initrd memory: 500K
+[    0.440379] 500d2000.serial: ttyUJ0 at MMIO 0x500d2000 (irq = 0, base_baud = 3000000) is a P4 USB Serial/JTAG
+[    0.444008] printk: legacy console [ttyUJ0] enabled
+[    0.444008] printk: legacy console [ttyUJ0] enabled
+[    0.447215] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.447215] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.452319] esp32p4-usb-serial-jtag 500d2000.serial: polled USB console: ttyUJ0 (4 ms)
+[    0.469064] loop: module loaded
+[    0.497308] tanmatsu-sd 50083000.mmc: slot 0 read-only polled IDMAC, 1MHz maximum; no hotplug
+[    0.522745] input: Tanmatsu MCU keyboard as /devices/platform/i2c/i2c-0/0-005f/input/input0
+[    0.527254] tanmatsu-mcu 0-005f: MCU r9 input: 20 ms polling, software repeat 400/50 ms
+[    0.530457] i2c-gpio i2c: using lines 521 (SDA) and 522 (SCL)
+[    0.535914] clk: Disabling unused clocks
+[    0.540060] Freeing unused kernel image (initmem) memory: 112K
+[    0.542292] This architecture does not have kernel memory protection.
+[    0.544455] Run /init as init process
+[    0.790161] mmc0: new SDHC card at address 0003
+[    0.794831] mmcblk0: mmc0:0003 SD16G 14.5 GiB (ro)
+[    0.803268] tanmatsu-sd 50083000.mmc: LBA0 dma=b700eedc sg=b700eedc nonzero=13 sig=55aa idsts=00000102 card-bytes=512 host-bytes=512
+[    0.818819]  mmcblk0: p1
+[   17.556098] loop0: detected capacity change from 0 to 1024
+Gaijin SD: verified read-only base on /dev/loop0; switching root
+starting pid 43, tty '': '/etc/init.d/rcS'
+
+Gaijin — Tanmatsu rev7 USB shell
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1
+RV32 NOMMU; 32-bit pointers/long; little endian; soft-float calling convention.
+Hardware F/D instructions and ilp32f/ilp32d binaries are unsupported.
+Validated on Tanmatsu rev7 with the pinned RV32IMAC/ilp32 uClibc-ng bFLT toolchain.
+ABI validation accepted 2026-10-28; compatibility is limited to this toolchain.
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+Gaijin: userspace ABI probe PASS
+              total        used        free      shared  buff/cache   available
+Mem:          29972        4476       19576           0        5920       22936
+Read-only SD base or RAM rescue; no persistence. Reset returns to Launcher.
+Type m1-smoke and m2-sd-test for checks.
+
+starting pid 55, tty '/dev/ttyUJ0': '-/bin/sh'
+gaijin# m2-sd-test 
+[   31.050607] m2-sd-test (56): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, [   33.084849] m2-sd-test (56): drop_caches: 3
+relocation, 256KiB malloc, vfork/exec/wait
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, [   35.116855] m2-sd-test (56): drop_caches: 3
+relocation, 256KiB malloc, vfork/exec/wait
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+/dev/loop0: 0 /sd/apps/tanmatsu-linux/boot/rootfs.sqfs
+devtmpfs /dev devtmpfs rw,nosuid,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+/dev/mmcblk0p1 /sd vfat ro,nosuid,nodev,noexec,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,errors=remount-ro 0 0
+/dev/loop0 / squashfs ro,nosuid,nodev,relatime,errors=continue 0 0
+tmpfs /run tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev,relatime,mode=1777 0 0
+tmpfs /root tmpfs rw,nosuid,nodev,relatime,mode=700 0 0
+tmpfs /home tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /usr/local tmpfs rw,nosuid,nodev,relatime 0 0
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5112       23188           0        1672       22996
+M2 SD PASS: live read-only root, preserved FAT/loop backing and three hash/exec runs
+gaijin# --- Error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+--- Waiting for the device to reconnect......
+I (1481) esp_psram: SPI SRAM memory test OK
+I (1490) cpu_start: Pro cpu start user code
+I (1490) cpu_start: cpu freq: 360000000 Hz
+I (1490) app_init: Application information:
+I (1490) app_init: Project name:     launcher
+I (1491) app_init: App version:      v0.2.8
+I (1491) app_init: Compile time:     Oct 23 2026 21:22:09
+I (1491) app_init: ELF file SHA256:  3beb84712...
+--- Warning: Checksum mismatch between flashed and built applications. Checksum of built application is f28526da66cfc905a8c0138cde0c86f1ac9d47e1fcc7570c9ed7ee45ed99114d
+I (1491) app_init: ESP-IDF:          v6.0.2
+I (1491) efuse_init: Min chip rev:     v0.1
+I (1491) efuse_init: Max chip rev:     v1.99 
+I (1492) efuse_init: Chip rev:         v1.0
+I (1492) heap_init: Initializing. RAM available for dynamic allocation:
+I (1492) heap_init: At 4FF24DC0 len 00016200 (88 KiB): RETENT_RAM
+I (1492) heap_init: At 4FF3AFC0 len 00004BF0 (18 KiB): RAM
+I (1493) heap_init: At 4FF40000 len 00060000 (384 KiB): RAM
+I (1493) heap_init: At 501081A4 len 00007E5C (31 KiB): RTCRAM
+I (1493) heap_init: At 30100374 len 00001C8C (7 KiB): SPM
+I (1494) esp_psram: Adding pool of 32768K of PSRAM memory to heap allocator
+I (1494) spi_flash: detected chip: winbond
+I (1495) spi_flash: flash io: qio
+I (1496) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1497) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1498) H_SDIO_DRV: sdio_data_to_rx_buf_task started
+I (1498) main_task: Started on CPU0
+I (1498) esp_psram: Reserving pool of 64K of internal memory for DMA/internal allocations
+I (1498) main_task: Calling app_main()
+I (1528) ST7701 panel: Install MIPI DSI LCD control IO
+I (1528) ST7701 panel: Install MIPI DSI LCD data panel
+I (1528) st7701: version: 2.0.2
+I (1668) ST7701 panel: VCOM value programmed into NVM/OTP: 0x40
+I (1668) st7701_mipi: LCD ID: FF FF FF
+I (1668) st7701_mipi:  st7701->madctl_val: 0x0, st7701->colmod_val: 0x77
+I (1888) BSP display: Applied LCD VCOM from NVS: 0x46
+I (1888) ES8156: ES8156 detected, chip version: 0x1
+STARTUP: Applying settings...
+STARTUP: Checking bootloader...
+I (3348) spi_flash: flash io: qio
+STARTUP: Bootloader is up-to-date
+I (3368) Bootloader update: Bootloader is up to date, no update needed
+STARTUP: Mounting FAT filesystem...
+STARTUP: Loading icons...
+STARTUP: Checking I2C bus...
+STARTUP: Initializing coprocessor...
+STARTUP: Mounting AppFS filesystem...
+I (3858) appfs: Meta page 0: valid (serial 700)
+I (3858) appfs: Meta page 1: valid (serial 699)
+I (3858) appfs: Using page 0 as current.
+STARTUP: Initializing clock...
+STARTUP: Initializing event handler...
+I (3888) Event: SD card inserted
+I (3888) sdcard: Initializing SD card
+I (3888) sdcard: Power cycling SD card...
+W (3888) ldo: The voltage value 0 is out of the recommended range [500, 2700]
+I (4188) sdcard: Allocating SD DMA buffer
+I (4488) sdcard: Mounted SD at '/sd'
+I (4488) Event: Audio jack removed
+STARTUP: Initializing certificate store...
+I (4498) Custom certificates: Adding Letsencrypt ISRG ROOT X1 certificate to CA store
+I (4508) Custom certificates: Adding Letsencrypt ISRG ROOT X2 certificate to CA store
+I (4508) Custom certificates: Adding Tanmatsu APPS certificate to CA store
+I (4508) Custom certificates: Adding Tanmatsu OTA certificate to CA store
+STARTUP: Initializing radio...
+W (4618) WiFi remote: Starting ESP hosted...
+
+I (4618) transport: Attempt connection with slave: retry[0]
+I (4618) sdio_wrapper: SDIO master: Slot 1, Data-Lines: 4-bit Freq(KHz)[40000 KHz]
+I (4618) sdio_wrapper: GPIOs: CLK[17] CMD[16] D0[18] D1[19] D2[20] D3[21] Slave_Reset[4294967295]
+I (4618) sdio_wrapper: Queues: Tx[20] Rx[20] SDIO-Rx-Mode[1]
+E (4848) sdio_wrapper: sdio_card_fn_init failed
+E (4968) sdmmc_common: sdmmc_init_ocr: send_op_cond (1) returned 0x107
+E (4968) sdio_wrapper: sdmmc_card_init failed
+I (5098) sdio_wrapper: Function 0 Blocksize: 512
+I (5098) sdio_wrapper: Function 1 Blocksize: 512
+E (5188) i2c.master: I2C hardware timeout detected
+E (5188) Tanmatsu coprocessor: tanmatsu_coprocessor_get_interrupt(309): Communication fault
+Previous interrupt coprocessor read failed!
+I (5198) H_SDIO_DRV: Card init success, TRANSPORT_RX_ACTIVE
+I (5198) transport: set_transport_state: 1
+I (5198) transport: Waiting for esp_hosted slave to be ready
+I (5298) H_SDIO_DRV: Starting SDIO process rx task
+I (5298) H_SDIO_DRV: SDIO Host operating in STREAMING MODE
+I (5298) H_SDIO_DRV: Open data path at slave
+I (5778) H_SDIO_DRV: Received ESP_PRIV_IF type message
+I (5778) transport: Received INIT event from ESP32 peripheral
+I (5778) transport: EVENT: 12
+I (5778) transport: Identified slave [esp32c6]
+I (5778) transport: SDIO mode: slave: streaming, host: streaming
+I (5778) transport: EVENT: 11
+I (5778) transport: capabilities: 0xd
+I (5778) transport: Features supported are:
+I (5778) transport: 	 * WLAN
+I (5778) transport: 	   - HCI over SDIO
+I (5778) transport: 	   - BLE only
+I (5778) transport: EVENT: 13
+I (5778) transport: ESP board type is : 13 
+
+I (5778) transport: Base transport is set-up, TRANSPORT_TX_ACTIVE
+I (5778) H_API: Transport active
+I (5778) transport: Slave chip Id[12]
+I (5778) transport: raw_tp_dir[-], flow_ctrl: low[60] high[80]
+I (5778) transport: transport_delayed_init
+I (5778) esp_cli: Registering command: crash
+I (5778) esp_cli: Registering command: reboot
+I (5778) esp_cli: Registering command: mem-dump
+I (5778) esp_cli: Registering command: task-dump
+I (5778) esp_cli: Registering command: cpu-dump
+I (5778) esp_cli: Registering command: heap-trace
+I (5778) esp_cli: Registering command: sock-dump
+I (5778) esp_cli: Registering command: host-power-save
+I (5778) hci_stub_drv: Host BT Support: Disabled
+I (5778) H_SDIO_DRV: Received INIT event
+I (5778) H_SDIO_DRV: Event type: 0x22
+I (5778) H_SDIO_DRV: Write thread started
+I (6498) RPC_WRAP: Coprocessor Boot-up
+STARTUP: Initializing BadgeLink...
+I (6518) main: WiFi task started
+I (6528) main: LoRa radio version string: SX1261 V2D 2D02
+I (6528) main: Configured radio
+I (6528) main: LoRa mode: 1
+W (6528) main: SX1262 LoRa radio detected
+W (6538) rpc_rsp: Hosted RPC_Resp [0x21b], uid [7], resp code [12290]
+I (6538) main: LoRa set to standby mode
+I (6548) USB device: USB initialization
+I (6548) tusb_desc: 
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 0           │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 0           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 0           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x16d0      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0xf9a       │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x4         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+I (6548) TinyUSB: TinyUSB Driver installed on port 0
+I (6548) USB device: USB initialization DONE
+I (6558) USB device: USB debug listener task started
+STARTUP: Detecting Add-On boards...
+I (6558) main: LoRa configuration set
+W (6568) Add-on: No add-on detected
+W (6568) Add-on: No add-on detected
+I (6598) hid_kbd: Waiting for HID Device to be connected
+STARTUP: Initializing audio mixer...
+I (6608) audio_mixer: Audio mixer started (chunk=256 frames, 8 streams max)
+STARTUP: Initializing plugins...
+I (6628) plugin_mgr: Initializing plugin manager
+I (6628) plugin_mgr: Loading autostart plugins...
+I (6628) audio_mixer: Audio idle and DMA drained — entering power-saving state, disabling amplifier and I2S
+I (6628) plugin_mgr: No plugins found for autostart
+I (6628) pm: Frequency switching config: CPU_MAX: 360, APB_MAX: 90, APB_MIN: 40, Light sleep: ENABLED
+I (6638) RPC_WRAP: ESP Event: wifi station started
+I (6638) WiFi connection: Connecting to WiFi...
+I (6638) WiFi connection: Connecting to network in slot 0
+I (6638) RPC_WRAP: ESP Event: wifi station started
+I (6638) main: LoRa set to RX mode
+I (6638) H_API: esp_wifi_remote_connect
+I (6818) RPC_WRAP: ESP Event: Station mode: Connected
+I (6818) esp_wifi_remote: esp_wifi_internal_reg_rxcb: sta: 0x400c937a
+I (7638) WiFi connection: WiFi started
+I (7638) main: LoRa mode (after setting to RX): 5
+I (7828) esp_netif_handlers: sta ip: 192.168.88.17, mask: 255.255.255.0, gw: 192.168.88.1
+I (7828) WiFi connection: Connected to WiFi
+Starting tanmatsu-linux (from /sd/apps)...
+--- Error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+--- Waiting for the device to reconnect.
+I (1259) main_task: Started on CPU0
+I (1259) main_task: Calling app_main()
+I (1259) Gaijin M2: Gaijin M2.8 contract=1 board=7 BSP=1.6.4 launcher=0.2.8 radio=3.4.0 MCU=r9 (target)
+I (1259) Gaijin M2: PSRAM=32 MiB unmanaged; hart0 M-mode; hart1 held by IDF unicore startup
+I (1259) sdcard: Initializing SD card
+I (1259) sdcard: Power cycling SD card...
+W (1259) ldo: The voltage value 0 is out of the recommended range [500, 2700]
+I (1559) sdcard: Allocating SD DMA buffer
+I (1859) sdcard: Mounted SD at '/sd'
+I (1859) SD reference: BSP LBA0 fnv1a=b700eedc nonzero=13 signature=55aa FAT-start=63
+I (1859) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+I (1859) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+I (1859) Gaijin M2: load Image: 2464864 bytes -> 0x48000000
+I (2429) Gaijin M2: load tanmatsu.dtb: 1972 bytes -> 0x48800000
+I (2429) Gaijin M2: load initramfs: 512208 bytes -> 0x49000000
+I (2549) sdcard: SD card unmounted
+I (2549) Gaijin M2: verified Image memory=2574744; DTB=0x48800000; initrd=512208
+I (2549) Gaijin M2: handoff -> Linux 0x48000000 a0=0 a1=0x48800000; reset recovers launcher
+[    0.000000] Linux version 6.18.35-gaijin-m2.8 (user@host) (riscv32-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0, GNU ld (crosstool-NG esp-15.2.0_20251204) 2.45) #16 Thu Oct 29 01:48:27 EET 2026
+[    0.000000] Machine model: Tanmatsu rev7 Gaijin M2.8
+[    0.000000] earlycon: esp32p4usbjtag0 at MMIO32 0x500d2000 (options '')
+[    0.000000] printk: legacy bootconsole [esp32p4usbjtag0] enabled
+[    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acim
+[    0.000000] riscv: ELF capabilities acim
+[    0.000000] Ticket spinlock: enabled
+[    0.000000] Kernel command line: earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+[    0.000000] printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+[    0.000000] Dentry cache hash table entries: 4096 (order: 2, 16384 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8192
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 32 local interrupts mapped
+[    0.000000] esp32p4-clic: 240 IRQ slots, INTMTX routing enabled
+[    0.000000] clocksource: esp32p4-systimer: mask: 0xfffffffffffff max_cycles: 0x3b0a9be80, max_idle_ns: 440795202120 ns
+[    0.000005] sched_clock: 52 bits at 16MHz, resolution 62ns, wraps every 2199023255531ns
+[    0.002857] esp32p4-systimer: SYSTIMER @ 16000000 Hz, IRQ 17 (CLIC slot 17)
+[    0.005235] Calibrating delay loop (skipped), value calculated using timer frequency.. 32.00 BogoMIPS (lpj=64000)
+[    0.008661] pid_max: default: 4096 minimum: 301
+[    0.010573] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.013127] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.020624] Memory: 29136K/32768K available (1728K kernel code, 298K rwdata, 260K rodata, 115K init, 106K bss, 3408K reserved, 0K cma-reserved)
+[    0.026776] devtmpfs: initialized
+[    0.031716] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.035199] posixtimers hash table entries: 512 (order: 0, 2048 bytes, linear)
+[    0.037587] futex hash table entries: 16 (256 bytes on 1 NUMA nodes, total 0 KiB, linear).
+[    0.064603] cpu0: Ratio of byte access time to unaligned word access is 1.47, unaligned accesses are fast
+[    0.067912] esp32p4_cache: registered ROM-thunk noncoherent ops, block=64
+[    0.077230] clocksource: Switched to clocksource esp32p4-systimer
+[    0.087854] Unpacking initramfs...
+[    0.092921] workingset: timestamp_bits=30 max_order=13 bucket_order=0
+[    0.095772] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.097849] io scheduler mq-deadline registered
+[    0.099340] io scheduler kyber registered
+[    0.100687] io scheduler bfq registered
+[    0.408413] Freeing initrd memory: 500K
+[    0.444698] 500d2000.serial: ttyUJ0 at MMIO 0x500d2000 (irq = 0, base_baud = 3000000) is a P4 USB Serial/JTAG
+[    0.448183] printk: legacy console [ttyUJ0] enabled
+[    0.448183] printk: legacy console [ttyUJ0] enabled
+[    0.451389] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.451389] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.456440] esp32p4-usb-serial-jtag 500d2000.serial: polled USB console: ttyUJ0 (4 ms)
+[    0.473189] loop: module loaded
+[    0.501283] tanmatsu-sd 50083000.mmc: slot 0 read-only polled IDMAC, 1MHz maximum; no hotplug
+[    0.526736] input: Tanmatsu MCU keyboard as /devices/platform/i2c/i2c-0/0-005f/input/input0
+[    0.531235] tanmatsu-mcu 0-005f: MCU r9 input: 20 ms polling, software repeat 400/50 ms
+[    0.534431] i2c-gpio i2c: using lines 521 (SDA) and 522 (SCL)
+[    0.539889] clk: Disabling unused clocks
+[    0.544044] Freeing unused kernel image (initmem) memory: 112K
+[    0.546316] This architecture does not have kernel memory protection.
+[    0.548482] Run /init as init process
+[    0.794143] mmc0: new SDHC card at address 0003
+[    0.798798] mmcblk0: mmc0:0003 SD16G 14.5 GiB (ro)
+[    0.807251] tanmatsu-sd 50083000.mmc: LBA0 dma=b700eedc sg=b700eedc nonzero=13 sig=55aa idsts=00000102 card-bytes=512 host-bytes=512
+[    0.822791]  mmcblk0: p1
+[   17.555999] loop0: detected capacity change from 0 to 1024
+Gaijin SD: verified read-only base on /dev/loop0; switching root
+starting pid 43, tty '': '/etc/init.d/rcS'
+
+Gaijin — Tanmatsu rev7 USB shell
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1
+RV32 NOMMU; 32-bit pointers/long; little endian; soft-float calling convention.
+Hardware F/D instructions and ilp32f/ilp32d binaries are unsupported.
+Validated on Tanmatsu rev7 with the pinned RV32IMAC/ilp32 uClibc-ng bFLT toolchain.
+ABI validation accepted 2026-10-28; compatibility is limited to this toolchain.
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+Gaijin: userspace ABI probe PASS
+              total        used        free      shared  buff/cache   available
+Mem:          29972        4476       19568           0        5928       22932
+Read-only SD base or RAM rescue; no persistence. Reset returns to Launcher.
+Type m1-smoke and m2-sd-test for checks.
+
+starting pid 55, tty '/dev/ttyUJ0': '-/bin/sh'
+gaijin# m2-sd-test 
+[   25.726416] m2-sd-test (56): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, [   27.761015] m2-sd-test (56): drop_caches: 3
+relocation, 256KiB malloc, vfork/exec/wait
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+[   29.793951] m2-sd-test (56): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+/dev/loop0: 0 /sd/apps/tanmatsu-linux/boot/rootfs.sqfs
+devtmpfs /dev devtmpfs rw,nosuid,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+/dev/mmcblk0p1 /sd vfat ro,nosuid,nodev,noexec,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,errors=remount-ro 0 0
+/dev/loop0 / squashfs ro,nosuid,nodev,relatime,errors=continue 0 0
+tmpfs /run tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev,relatime,mode=1777 0 0
+tmpfs /root tmpfs rw,nosuid,nodev,relatime,mode=700 0 0
+tmpfs /home tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /usr/local tmpfs rw,nosuid,nodev,relatime 0 0
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5104       23188           0        1680       23000
+M2 SD PASS: live read-only root, preserved FAT/loop backing and three hash/exec runs
+gaijin# m1-smoke 
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+processor	: 0
+hart		: 0
+isa		: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+mmu		: none
+mvendorid	: 0x612
+marchid		: 0x80000003
+mimpid		: 0x1
+hart isa	: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+--- Warning: Writing to serial is timing out. Please make sure that your application supports an interactive console and that you have picked the correct console for serial communication.
+--- Warning: Writing to serial is timing out. Please make sure that your application supports an interactive console and that you have picked the correct console for serial communication.
+--- Warning: Writing to serial is timing out. Please make sure that your application supports an interactive console and that you have picked the correct console for serial communication.
+--- Warning: Writing to serial is timing out. Please make sure that your application supports an interactive console and that you have picked the correct console for serial communication.
+--- Warning: Writing to serial is timing out. Please make sure that your application supports an interactive console and that you have picked the correct console for serial communication.
+--- Error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+--- Waiting for the device to reconnect........
+I (1481) esp_psram: SPI SRAM memory test OK
+I (1490) cpu_start: Pro cpu start user code
+I (1490) cpu_start: cpu freq: 360000000 Hz
+I (1490) app_init: Application information:
+I (1490) app_init: Project name:     launcher
+I (1491) app_init: App version:      v0.2.8
+I (1491) app_init: Compile time:     Oct 23 2026 21:22:09
+I (1491) app_init: ELF file SHA256:  3beb84712...
+--- Warning: Checksum mismatch between flashed and built applications. Checksum of built application is f28526da66cfc905a8c0138cde0c86f1ac9d47e1fcc7570c9ed7ee45ed99114d
+I (1491) app_init: ESP-IDF:          v6.0.2
+I (1491) efuse_init: Min chip rev:     v0.1
+I (1492) efuse_init: Max chip rev:     v1.99 
+I (1492) efuse_init: Chip rev:         v1.0
+I (1492) heap_init: Initializing. RAM available for dynamic allocation:
+I (1492) heap_init: At 4FF24DC0 len 00016200 (88 KiB): RETENT_RAM
+I (1493) heap_init: At 4FF3AFC0 len 00004BF0 (18 KiB): RAM
+I (1493) heap_init: At 4FF40000 len 00060000 (384 KiB): RAM
+I (1493) heap_init: At 501081A4 len 00007E5C (31 KiB): RTCRAM
+I (1493) heap_init: At 30100374 len 00001C8C (7 KiB): SPM
+I (1494) esp_psram: Adding pool of 32768K of PSRAM memory to heap allocator
+I (1495) spi_flash: detected chip: winbond
+I (1495) spi_flash: flash io: qio
+I (1497) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1497) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1498) H_SDIO_DRV: sdio_data_to_rx_buf_task started
+I (1498) main_task: Started on CPU0
+I (1498) esp_psram: Reserving pool of 64K of internal memory for DMA/internal allocations
+I (1498) main_task: Calling app_main()
+I (1528) ST7701 panel: Install MIPI DSI LCD control IO
+I (1528) ST7701 panel: Install MIPI DSI LCD data panel
+I (1528) st7701: version: 2.0.2
+I (1668) ST7701 panel: VCOM value programmed into NVM/OTP: 0x40
+I (1668) st7701_mipi: LCD ID: FF FF FF
+I (1668) st7701_mipi:  st7701->madctl_val: 0x0, st7701->colmod_val: 0x77
+I (1888) BSP display: Applied LCD VCOM from NVS: 0x46
+I (1888) ES8156: ES8156 detected, chip version: 0x1
+STARTUP: Applying settings...
+STARTUP: Checking bootloader...
+I (3348) spi_flash: flash io: qio
+STARTUP: Bootloader is up-to-date
+I (3368) Bootloader update: Bootloader is up to date, no update needed
+STARTUP: Mounting FAT filesystem...
+STARTUP: Loading icons...
+STARTUP: Checking I2C bus...
+STARTUP: Initializing coprocessor...
+STARTUP: Mounting AppFS filesystem...
+I (3858) appfs: Meta page 0: valid (serial 700)
+I (3858) appfs: Meta page 1: valid (serial 699)
+I (3858) appfs: Using page 0 as current.
+STARTUP: Initializing clock...
+STARTUP: Initializing event handler...
+I (3888) Event: SD card inserted
+I (3888) sdcard: Initializing SD card
+I (3888) sdcard: Power cycling SD card...
+W (3888) ldo: The voltage value 0 is out of the recommended range [500, 2700]
+I (4188) sdcard: Allocating SD DMA buffer
+I (4488) sdcard: Mounted SD at '/sd'
+I (4488) Event: Audio jack removed
+STARTUP: Initializing certificate store...
+I (4498) Custom certificates: Adding Letsencrypt ISRG ROOT X1 certificate to CA store
+I (4508) Custom certificates: Adding Letsencrypt ISRG ROOT X2 certificate to CA store
+I (4508) Custom certificates: Adding Tanmatsu APPS certificate to CA store
+I (4508) Custom certificates: Adding Tanmatsu OTA certificate to CA store
+STARTUP: Initializing radio...
+W (4618) WiFi remote: Starting ESP hosted...
+
+I (4618) transport: Attempt connection with slave: retry[0]
+I (4618) sdio_wrapper: SDIO master: Slot 1, Data-Lines: 4-bit Freq(KHz)[40000 KHz]
+I (4618) sdio_wrapper: GPIOs: CLK[17] CMD[16] D0[18] D1[19] D2[20] D3[21] Slave_Reset[4294967295]
+I (4618) sdio_wrapper: Queues: Tx[20] Rx[20] SDIO-Rx-Mode[1]
+E (4848) sdio_wrapper: sdio_card_fn_init failed
+I (4978) sdio_wrapper: Function 0 Blocksize: 512
+I (4978) sdio_wrapper: Function 1 Blocksize: 512
+I (5078) H_SDIO_DRV: Card init success, TRANSPORT_RX_ACTIVE
+I (5078) transport: set_transport_state: 1
+I (5078) transport: Waiting for esp_hosted slave to be ready
+I (5098) H_SDIO_DRV: SDIO Host operating in STREAMING MODE
+I (5098) H_SDIO_DRV: Open data path at slave
+I (5098) H_SDIO_DRV: Starting SDIO process rx task
+E (5188) i2c.master: I2C hardware timeout detected
+E (5188) Tanmatsu coprocessor: tanmatsu_coprocessor_get_interrupt(309): Communication fault
+Previous interrupt coprocessor read failed!
+I (5758) H_SDIO_DRV: Received ESP_PRIV_IF type message
+I (5758) transport: Received INIT event from ESP32 peripheral
+I (5758) transport: EVENT: 12
+I (5758) transport: Identified slave [esp32c6]
+I (5758) transport: SDIO mode: slave: streaming, host: streaming
+I (5758) transport: EVENT: 11
+I (5758) transport: capabilities: 0xd
+I (5758) transport: Features supported are:
+I (5758) transport: 	 * WLAN
+I (5758) transport: 	   - HCI over SDIO
+I (5758) transport: 	   - BLE only
+I (5758) transport: EVENT: 13
+I (5758) transport: ESP board type is : 13 
+
+I (5758) transport: Base transport is set-up, TRANSPORT_TX_ACTIVE
+I (5758) H_API: Transport active
+I (5758) transport: Slave chip Id[12]
+I (5758) transport: raw_tp_dir[-], flow_ctrl: low[60] high[80]
+I (5758) transport: transport_delayed_init
+I (5758) esp_cli: Registering command: crash
+I (5758) esp_cli: Registering command: reboot
+I (5758) esp_cli: Registering command: mem-dump
+I (5758) esp_cli: Registering command: task-dump
+I (5758) esp_cli: Registering command: cpu-dump
+I (5758) esp_cli: Registering command: heap-trace
+I (5758) esp_cli: Registering command: sock-dump
+I (5758) esp_cli: Registering command: host-power-save
+I (5758) hci_stub_drv: Host BT Support: Disabled
+I (5758) H_SDIO_DRV: Received INIT event
+I (5758) H_SDIO_DRV: Event type: 0x22
+I (5758) H_SDIO_DRV: Write thread started
+I (6498) RPC_WRAP: Coprocessor Boot-up
+STARTUP: Initializing BadgeLink...
+I (6518) main: WiFi task started
+I (6528) main: LoRa radio version string: SX1261 V2D 2D02
+I (6528) main: Configured radio
+I (6528) main: LoRa mode: 1
+W (6528) main: SX1262 LoRa radio detected
+W (6538) rpc_rsp: Hosted RPC_Resp [0x21b], uid [7], resp code [12290]
+I (6538) main: LoRa set to standby mode
+I (6548) USB device: USB initialization
+I (6548) tusb_desc: 
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 0           │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 0           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 0           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x16d0      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0xf9a       │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x4         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+I (6548) TinyUSB: TinyUSB Driver installed on port 0
+I (6548) USB device: USB initialization DONE
+I (6558) USB device: USB debug listener task started
+STARTUP: Detecting Add-On boards...
+I (6558) main: LoRa configuration set
+W (6578) Add-on: No add-on detected
+W (6578) Add-on: No add-on detected
+I (6608) hid_kbd: Waiting for HID Device to be connected
+STARTUP: Initializing audio mixer...
+I (6618) audio_mixer: Audio mixer started (chunk=256 frames, 8 streams max)
+STARTUP: Initializing plugins...
+I (6638) plugin_mgr: Initializing plugin manager
+I (6638) plugin_mgr: Loading autostart plugins...
+I (6638) RPC_WRAP: ESP Event: wifi station started
+I (6638) main: LoRa set to RX mode
+I (6638) WiFi connection: Connecting to WiFi...
+I (6638) RPC_WRAP: ESP Event: wifi station started
+I (6638) WiFi connection: Connecting to network in slot 0
+I (6638) audio_mixer: Audio idle and DMA drained — entering power-saving state, disabling amplifier and I2S
+I (6648) plugin_mgr: No plugins found for autostart
+I (6648) H_API: esp_wifi_remote_connect
+I (6648) pm: Frequency switching config: CPU_MAX: 360, APB_MAX: 90, APB_MIN: 40, Light sleep: ENABLED
+I (6798) RPC_WRAP: ESP Event: Station mode: Connected
+I (6798) esp_wifi_remote: esp_wifi_internal_reg_rxcb: sta: 0x400c937a
+I (7638) WiFi connection: WiFi started
+I (7638) main: LoRa mode (after setting to RX): 5
+I (7808) esp_netif_handlers: sta ip: 192.168.88.17, mask: 255.255.255.0, gw: 192.168.88.1
+I (7808) WiFi connection: Connected to WiFi
+I (8708) main: NTP time sync succesful, RTC updated
+Starting tanmatsu-linux (from /sd/apps)...
+--- Error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+--- Waiting for the device to reconnect.
+I (1256) main_task: Started on CPU0
+I (1256) main_task: Calling app_main()
+I (1256) Gaijin M2: Gaijin M2.8 contract=1 board=7 BSP=1.6.4 launcher=0.2.8 radio=3.4.0 MCU=r9 (target)
+I (1256) Gaijin M2: PSRAM=32 MiB unmanaged; hart0 M-mode; hart1 held by IDF unicore startup
+I (1256) sdcard: Initializing SD card
+I (1256) sdcard: Power cycling SD card...
+W (1256) ldo: The voltage value 0 is out of the recommended range [500, 2700]
+I (1556) sdcard: Allocating SD DMA buffer
+I (1856) sdcard: Mounted SD at '/sd'
+I (1856) SD reference: BSP LBA0 fnv1a=b700eedc nonzero=13 signature=55aa FAT-start=63
+I (1856) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+I (1856) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+I (1856) Gaijin M2: load Image: 2464864 bytes -> 0x48000000
+I (2426) Gaijin M2: load tanmatsu.dtb: 1972 bytes -> 0x48800000
+I (2426) Gaijin M2: load initramfs: 512208 bytes -> 0x49000000
+I (2546) sdcard: SD card unmounted
+I (2546) Gaijin M2: verified Image memory=2574744; DTB=0x48800000; initrd=512208
+I (2546) Gaijin M2: handoff -> Linux 0x48000000 a0=0 a1=0x48800000; reset recovers launcher
+[    0.000000] Linux version 6.18.35-gaijin-m2.8 (user@host) (riscv32-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0, GNU ld (crosstool-NG esp-15.2.0_20251204) 2.45) #16 Thu Oct 29 01:48:27 EET 2026
+[    0.000000] Machine model: Tanmatsu rev7 Gaijin M2.8
+[    0.000000] earlycon: esp32p4usbjtag0 at MMIO32 0x500d2000 (options '')
+[    0.000000] printk: legacy bootconsole [esp32p4usbjtag0] enabled
+[    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acim
+[    0.000000] riscv: ELF capabilities acim
+[    0.000000] Ticket spinlock: enabled
+[    0.000000] Kernel command line: earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+[    0.000000] printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+[    0.000000] Dentry cache hash table entries: 4096 (order: 2, 16384 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8192
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 32 local interrupts mapped
+[    0.000000] esp32p4-clic: 240 IRQ slots, INTMTX routing enabled
+[    0.000000] clocksource: esp32p4-systimer: mask: 0xfffffffffffff max_cycles: 0x3b0a9be80, max_idle_ns: 440795202120 ns
+[    0.000005] sched_clock: 52 bits at 16MHz, resolution 62ns, wraps every 2199023255531ns
+[    0.002829] esp32p4-systimer: SYSTIMER @ 16000000 Hz, IRQ 17 (CLIC slot 17)
+[    0.005208] Calibrating delay loop (skipped), value calculated using timer frequency.. 32.00 BogoMIPS (lpj=64000)
+[    0.008633] pid_max: default: 4096 minimum: 301
+[    0.010594] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.013148] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.020645] Memory: 29136K/32768K available (1728K kernel code, 298K rwdata, 260K rodata, 115K init, 106K bss, 3408K reserved, 0K cma-reserved)
+[    0.026872] devtmpfs: initialized
+[    0.031813] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.035294] posixtimers hash table entries: 512 (order: 0, 2048 bytes, linear)
+[    0.037684] futex hash table entries: 16 (256 bytes on 1 NUMA nodes, total 0 KiB, linear).
+[    0.064698] cpu0: Ratio of byte access time to unaligned word access is 1.47, unaligned accesses are fast
+[    0.068009] esp32p4_cache: registered ROM-thunk noncoherent ops, block=64
+[    0.077330] clocksource: Switched to clocksource esp32p4-systimer
+[    0.087953] Unpacking initramfs...
+[    0.093018] workingset: timestamp_bits=30 max_order=13 bucket_order=0
+[    0.095870] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.097946] io scheduler mq-deadline registered
+[    0.099437] io scheduler kyber registered
+[    0.100784] io scheduler bfq registered
+[    0.410703] Freeing initrd memory: 500K
+[    0.440132] 500d2000.serial: ttyUJ0 at MMIO 0x500d2000 (irq = 0, base_baud = 3000000) is a P4 USB Serial/JTAG
+[    0.443648] printk: legacy console [ttyUJ0] enabled
+[    0.443648] printk: legacy console [ttyUJ0] enabled
+[    0.446991] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.446991] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.452118] esp32p4-usb-serial-jtag 500d2000.serial: polled USB console: ttyUJ0 (4 ms)
+[    0.468733] loop: module loaded
+[    0.497383] tanmatsu-sd 50083000.mmc: slot 0 read-only polled IDMAC, 1MHz maximum; no hotplug
+[    0.522784] input: Tanmatsu MCU keyboard as /devices/platform/i2c/i2c-0/0-005f/input/input0
+[    0.527280] tanmatsu-mcu 0-005f: MCU r9 input: 20 ms polling, software repeat 400/50 ms
+[    0.530482] i2c-gpio i2c: using lines 521 (SDA) and 522 (SCL)
+[    0.535937] clk: Disabling unused clocks
+[    0.540114] Freeing unused kernel image (initmem) memory: 112K
+[    0.542364] This architecture does not have kernel memory protection.
+[    0.544528] Run /init as init process
+[    0.790235] mmc0: new SDHC card at address 0003
+[    0.794903] mmcblk0: mmc0:0003 SD16G 14.5 GiB (ro)
+[    0.803342] tanmatsu-sd 50083000.mmc: LBA0 dma=b700eedc sg=b700eedc nonzero=13 sig=55aa idsts=00000102 card-bytes=512 host-bytes=512
+[    0.818886]  mmcblk0: p1
+[   17.547271] loop0: detected capacity change from 0 to 1024
+Gaijin SD: verified read-only base on /dev/loop0; switching root
+starting pid 43, tty '': '/etc/init.d/rcS'
+
+Gaijin — Tanmatsu rev7 USB shell
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1
+RV32 NOMMU; 32-bit pointers/long; little endian; soft-float calling convention.
+Hardware F/D instructions and ilp32f/ilp32d binaries are unsupported.
+Validated on Tanmatsu rev7 with the pinned RV32IMAC/ilp32 uClibc-ng bFLT toolchain.
+ABI validation accepted 2026-10-28; compatibility is limited to this toolchain.
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+Gaijin: userspace ABI probe PASS
+              total        used        free      shared  buff/cache   available
+Mem:          29972        4476       19580           0        5916       22940
+Read-only SD base or RAM rescue; no persistence. Reset returns to Launcher.
+Type m1-smoke and m2-sd-test for checks.
+
+starting pid 55, tty '/dev/ttyUJ0': '-/bin/sh'
+gaijin# m1-smoke 
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+processor	: 0
+hart		: 0
+isa		: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+mmu		: none
+mvendorid	: 0x612
+marchid		: 0x80000003
+mimpid		: 0x1
+hart isa	: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+pipeline-ok
+tmpfs-ok
+speed 115200 baud;stty: standard input
+ line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>;
+eol2 = <undef>; swtch = <undef>; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+werase = ^W; lnext = ^V; flush = ^O; min = 1; time = 0;
+-parenb -parodd -cmspar cs8 hupcl -cstopb cread clocal -crtscts
+-ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon ixoff
+-iuclc -ixany -imaxbel -iutf8
+opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt
+echoctl echoke -flusho
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5100       18928           0        5944       22364
+MemTotal:          29972 kB
+MemFree:           18864 kB
+MemAvailable:      22308 kB
+Buffers:            3772 kB
+Cached:             1180 kB
+SwapCached:            0 kB
+Active:             4752 kB
+Inactive:            196 kB
+Active(anon):          0 kB
+Inactive(anon):        0 kB
+Active(file):       4752 kB
+Inactive(file):      196 kB
+Unevictable:           4 kB
+Mlocked:               0 kB
+MmapCopy:           2400 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:                 0 kB
+Writeback:             0 kB
+AnonPages:             0 kB
+Mapped:                0 kB
+Shmem:                 0 kB
+KReclaimable:        992 kB
+Slab:               3024 kB
+SReclaimable:        992 kB
+SUnreclaim:         2032 kB
+KernelStack:         184 kB
+PageTables:            0 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:       14984 kB
+Committed_AS:          0 kB
+VmallocTotal:          0 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+Percpu:               32 kB
+Balloon:               0 kB
+M1 smoke PASS (20 external execs). Check Ctrl-C, editing, shell exit and USB reconnect manually.
+gaijin# m2-input-test 
+M2 INPUT /dev/input/event0: Tanmatsu MCU keyboard; 30 seconds
+REPEAT delay=400 period=50 ms; EV_KEY value 0=up 1=down 2=repeat
+STATE keys:; switches:
+EVENT type=1 code=34 value=1
+EVENT type=1 code=23 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=33 value=1
+EVENT type=1 code=24 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=34 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=23 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=32 value=1
+EVENT type=1 code=25 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=18 value=1
+EVENT type=1 code=33 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=32 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=24 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=18 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=4 value=1
+EVENT type=1 code=25 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=4 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=63 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=64 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=59 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=63 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=12 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=59 value=0
+EVENT type=1 code=3 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=2 value=1
+EVENT type=1 code=3 value=0
+EVENT type=1 code=64 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=16 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=2 value=0
+EVENT type=1 code=26 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=12 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=27 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=30 value=1
+EVENT type=1 code=26 value=0
+EVENT type=1 code=27 value=0
+EVENT type=1 code=40 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=16 value=0
+EVENT type=1 code=31 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=30 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=103 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=31 value=0
+EVENT type=1 code=46 value=1
+EVENT type=1 code=39 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=53 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=47 value=1
+EVENT type=1 code=40 value=0
+EVENT type=1 code=103 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=46 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=39 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=52 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=47 value=0
+EVENT type=1 code=53 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=52 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=52 value=1
+EVENT type=1 code=100 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=46 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=45 value=1
+EVENT type=1 code=46 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=44 value=1
+EVENT type=1 code=45 value=0
+EVENT type=1 code=53 value=1
+EVENT type=1 code=100 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=52 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=42 value=1
+EVENT type=1 code=44 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=53 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=29 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=42 value=0
+EVENT type=1 code=125 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=29 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=56 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=125 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=43 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=56 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=43 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=105 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=43 value=1
+EVENT type=1 code=105 value=0
+EVENT type=1 code=57 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=108 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=56 value=1
+EVENT type=1 code=43 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=56 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=108 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=106 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=42 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=54 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=54 value=0
+EVENT type=1 code=106 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=42 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=41 value=1
+EVENT type=1 code=14 value=1
+EVENT type=1 code=13 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=12 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=14 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=27 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=15 value=1
+EVENT type=1 code=12 value=0
+EVENT type=1 code=26 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=13 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=41 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=28 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=1
+EVENT type=1 code=26 value=0
+EVENT type=1 code=40 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=15 value=0
+EVENT type=1 code=27 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=30 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=42 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=0
+EVENT type=1 code=30 value=0
+EVENT type=1 code=44 value=1
+EVENT type=1 code=103 value=1
+EVENT type=1 code=54 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=42 value=0
+EVENT type=1 code=40 value=0
+EVENT type=1 code=28 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=125 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=44 value=0
+EVENT type=1 code=56 value=1
+EVENT type=1 code=54 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=125 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=53 value=1
+EVENT type=1 code=108 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=43 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=103 value=0
+EVENT type=1 code=105 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=108 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=56 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=53 value=0
+EVENT type=1 code=100 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=43 value=0
+EVENT type=1 code=105 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=100 value=0
+EVENT type=1 code=57 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=59 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=2 value=1
+EVENT type=1 code=11 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=25 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=3 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=11 value=0
+EVENT type=1 code=24 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=2 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=59 value=0
+EVENT type=1 code=25 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=3 value=0
+EVENT type=1 code=4 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=18 value=1
+EVENT type=1 code=38 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=4 value=0
+EVENT type=1 code=19 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=37 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=18 value=0
+EVENT type=1 code=24 value=0
+EVENT type=1 code=23 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=38 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=19 value=0
+EVENT type=1 code=23 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=34 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=36 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=34 value=0
+EVENT type=1 code=37 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=36 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=23 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=23 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=1
+EVENT type=1 code=23 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=23 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=15 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=15 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=15 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=15 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=15 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=15 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=22 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=63 value=1
+EVENT type=1 code=9 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=63 value=0
+EVENT type=1 code=9 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+[   38.860297] random: crng init done
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=2
+EVENT type=0 code=0 value=1
+EVENT type=1 code=464 value=2
+EVENT type=0 code=0 value=1
+EVENT type=1 code=464 value=2
+EVENT type=0 code=0 value=1
+EVENT type=1 code=464 value=2
+EVENT type=0 code=0 value=1
+EVENT type=1 code=464 value=2
+EVENT type=0 code=0 value=1
+EVENT type=1 code=60 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=60 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=61 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=62 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=63 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=63 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=464 value=0
+EVENT type=1 code=64 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=64 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=29 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=29 value=0
+EVENT type=1 code=51 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=38 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=52 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=38 value=0
+EVENT type=1 code=52 value=0
+EVENT type=1 code=51 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=43 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=43 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=33 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=57 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=33 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=19 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=19 value=0
+EVENT type=1 code=37 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=37 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=20 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=37 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=37 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=20 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=20 value=1
+EVENT type=1 code=37 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=37 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=20 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=37 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=37 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=34 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=38 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=34 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=38 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=48 value=1
+EVENT type=1 code=49 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=52 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=48 value=0
+EVENT type=1 code=49 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=52 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=53 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=105 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=105 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=53 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=40 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=19 value=1
+EVENT type=1 code=20 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=40 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=19 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=20 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=26 value=1
+EVENT type=1 code=40 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=26 value=0
+EVENT type=1 code=40 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=27 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=5 value=1
+EVENT type=1 code=19 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=27 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=5 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=19 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=27 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=27 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=4 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=26 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=4 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=26 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=19 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=25 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=19 value=0
+EVENT type=1 code=25 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=25 value=1
+EVENT type=1 code=38 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=38 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=25 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=38 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=48 value=1
+EVENT type=0 code=0 value=0
+EVENT type=1 code=34 value=1
+EVENT type=1 code=38 value=0
+EVENT type=0 code=0 value=0
+EVENT type=1 code=34 value=0
+EVENT type=1 code=48 value=0
+EVENT type=0 code=0 value=0
+STATE keys:; switches:
+M2 INPUT capture complete: events=603 overflows=0 (manual key comparison required)
+gaijin# m1-smoke 
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+processor	: 0
+hart		: 0
+isa		: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+mmu		: none
+mvendorid	: 0x612
+marchid		: 0x80000003
+mimpid		: 0x1
+hart isa	: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+pipeline-ok
+tmpfs-ok
+speed 115200 baud;stty: standard input
+ line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>;
+eol2 = <undef>; swtch = <undef>; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+werase = ^W; lnext = ^V; flush = ^O; min = 1; time = 0;
+-parenb -parodd -cmspar cs8 hupcl -cstopb cread clocal -crtscts
+-ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon ixoff
+-iuclc -ixany -imaxbel -iutf8
+opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt
+echoctl echoke -flusho
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5100       18872           0        6000       22364
+MemTotal:          29972 kB
+MemFree:           18808 kB
+MemAvailable:      22308 kB
+Buffers:            3772 kB
+Cached:             1236 kB
+SwapCached:            0 kB
+Active:             4784 kB
+Inactive:            220 kB
+Active(anon):          0 kB
+Inactive(anon):        0 kB
+Active(file):       4784 kB
+Inactive(file):      220 kB
+Unevictable:           4 kB
+Mlocked:               0 kB
+MmapCopy:           2400 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:                 0 kB
+Writeback:             0 kB
+AnonPages:             0 kB
+Mapped:                0 kB
+Shmem:                 0 kB
+KReclaimable:        992 kB
+Slab:               3024 kB
+SReclaimable:        992 kB
+SUnreclaim:         2032 kB
+KernelStack:         184 kB
+PageTables:            0 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:       14984 kB
+Committed_AS:          0 kB
+VmallocTotal:          0 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+Percpu:               32 kB
+Balloon:               0 kB
+M1 smoke PASS (20 external execs). Check Ctrl-C, editing, shell exit and USB reconnect manually.
+gaijin# m2-sd-test 
+[   65.889724] m2-sd-test (163): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, [   67.924928] m2-sd-test (163): drop_caches: 3
+relocation, 256KiB malloc, vfork/exec/wait
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+[   69.957948] m2-sd-test (163): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+/dev/loop0: 0 /sd/apps/tanmatsu-linux/boot/rootfs.sqfs
+devtmpfs /dev devtmpfs rw,nosuid,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+/dev/mmcblk0p1 /sd vfat ro,nosuid,nodev,noexec,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,errors=remount-ro 0 0
+/dev/loop0 / squashfs ro,nosuid,nodev,relatime,errors=continue 0 0
+tmpfs /run tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev,relatime,mode=1777 0 0
+tmpfs /root tmpfs rw,nosuid,nodev,relatime,mode=700 0 0
+tmpfs /home tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /usr/local tmpfs rw,nosuid,nodev,relatime 0 0
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5112       23192           0        1668       23000
+M2 SD PASS: live read-only root, preserved FAT/loop backing and three hash/exec runs
+gaijin# m1-smoke 
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+processor	: 0
+hart		: 0
+isa		: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+mmu		: none
+mvendorid	: 0x612
+marchid		: 0x80000003
+mimpid		: 0x1
+hart isa	: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+pipeline-ok
+tmpfs-ok
+speed 115200 baud;stty: standard input
+ line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>;
+eol2 = <undef>; swtch = <undef>; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+werase = ^W; lnext = ^V; flush = ^O; min = 1; time = 0;
+-parenb -parodd -cmspar cs8 hupcl -cstopb cread clocal -crtscts
+-ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon ixoff
+-iuclc -ixany -imaxbel -iutf8
+opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt
+echoctl echoke -flusho
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5100       23184           0        1688       23000
+MemTotal:          29972 kB
+MemFree:           23120 kB
+MemAvailable:      22944 kB
+Buffers:              12 kB
+Cached:             1136 kB
+SwapCached:            0 kB
+Active:              952 kB
+Inactive:            192 kB
+Active(anon):          0 kB
+Inactive(anon):        0 kB
+Active(file):        952 kB
+Inactive(file):      192 kB
+Unevictable:           4 kB
+Mlocked:               0 kB
+MmapCopy:           2400 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:                 0 kB
+Writeback:             0 kB
+AnonPages:             0 kB
+Mapped:                0 kB
+Shmem:                 0 kB
+KReclaimable:        540 kB
+Slab:               2572 kB
+SReclaimable:        540 kB
+SUnreclaim:         2032 kB
+KernelStack:         184 kB
+PageTables:            0 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:       14984 kB
+Committed_AS:          0 kB
+VmallocTotal:          0 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+Percpu:               32 kB
+Balloon:               0 kB
+M1 smoke PASS (20 external execs). Check Ctrl-C, editing, shell exit and USB reconnect manually.
+gaijin# m2-
+m2-input-test  m2-sd-test
+gaijin# m2-sd-test 
+[   84.150943] m2-sd-test (236): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+[   86.184083] m2-sd-test (236): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+[   88.217929] m2-sd-test (236): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+/dev/loop0: 0 /sd/apps/tanmatsu-linux/boot/rootfs.sqfs
+devtmpfs /dev devtmpfs rw,nosuid,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+/dev/mmcblk0p1 /sd vfat ro,nosuid,nodev,noexec,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,errors=remount-ro 0 0
+/dev/loop0 / squashfs ro,nosuid,nodev,relatime,errors=continue 0 0
+tmpfs /run tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev,relatime,mode=1777 0 0
+tmpfs /root tmpfs rw,nosuid,nodev,relatime,mode=700 0 0
+tmpfs /home tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /usr/local tmpfs rw,nosuid,nodev,relatime 0 0
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5112       23196           0        1664       23000
+M2 SD PASS: live read-only root, preserved FAT/loop backing and three hash/exec runs
+gaijin# m1-smoke 
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+processor	: 0
+hart		: 0
+isa		: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+mmu		: none
+mvendorid	: 0x612
+marchid		: 0x80000003
+mimpid		: 0x1
+hart isa	: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+pipeline-ok
+tmpfs-ok
+speed 115200 baud;stty: standard input
+ line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>;
+eol2 = <undef>; swtch = <undef>; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+werase = ^W; lnext = ^V; flush = ^O; min = 1; time = 0;
+-parenb -parodd -cmspar cs8 hupcl -cstopb cread clocal -crtscts
+-ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon ixoff
+-iuclc -ixany -imaxbel -iutf8
+opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt
+echoctl echoke -flusho
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5100       23188           0        1684       23000
+MemTotal:          29972 kB
+MemFree:           23124 kB
+MemAvailable:      22944 kB
+Buffers:              12 kB
+Cached:             1136 kB
+SwapCached:            0 kB
+Active:              952 kB
+Inactive:            192 kB
+Active(anon):          0 kB
+Inactive(anon):        0 kB
+Active(file):        952 kB
+Inactive(file):      192 kB
+Unevictable:           4 kB
+Mlocked:               0 kB
+MmapCopy:           2400 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:                 0 kB
+Writeback:             0 kB
+AnonPages:             0 kB
+Mapped:                0 kB
+Shmem:                 0 kB
+KReclaimable:        536 kB
+Slab:               2568 kB
+SReclaimable:        536 kB
+SUnreclaim:         2032 kB
+KernelStack:         184 kB
+PageTables:            0 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:       14984 kB
+Committed_AS:          0 kB
+VmallocTotal:          0 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+Percpu:               32 kB
+Balloon:               0 kB
+M1 smoke PASS (20 external execs). Check Ctrl-C, editing, shell exit and USB reconnect manually.
+gaijin# exit
+process '-/bin/sh' (pid 55) exited. Scheduling for restart.
+starting pid 309, tty '/dev/ttyUJ0': '-/bin/sh'
+gaijin# 
+gaijin# 
+gaijin# 
+gaijin# cat /sys/block/mmcblk0/ro
+1
+gaijin# --- Error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+--- Waiting for the device to reconnect........
+I (1480) esp_psram: SPI SRAM memory test OK
+I (1489) cpu_start: Pro cpu start user code
+I (1489) cpu_start: cpu freq: 360000000 Hz
+I (1489) app_init: Application information:
+I (1489) app_init: Project name:     launcher
+I (1490) app_init: App version:      v0.2.8
+I (1490) app_init: Compile time:     Oct 23 2026 21:22:09
+I (1490) app_init: ELF file SHA256:  3beb84712...
+--- Warning: Checksum mismatch between flashed and built applications. Checksum of built application is f28526da66cfc905a8c0138cde0c86f1ac9d47e1fcc7570c9ed7ee45ed99114d
+I (1490) app_init: ESP-IDF:          v6.0.2
+I (1490) efuse_init: Min chip rev:     v0.1
+I (1491) efuse_init: Max chip rev:     v1.99 
+I (1491) efuse_init: Chip rev:         v1.0
+I (1491) heap_init: Initializing. RAM available for dynamic allocation:
+I (1491) heap_init: At 4FF24DC0 len 00016200 (88 KiB): RETENT_RAM
+I (1492) heap_init: At 4FF3AFC0 len 00004BF0 (18 KiB): RAM
+I (1492) heap_init: At 4FF40000 len 00060000 (384 KiB): RAM
+I (1492) heap_init: At 501081A4 len 00007E5C (31 KiB): RTCRAM
+I (1493) heap_init: At 30100374 len 00001C8C (7 KiB): SPM
+I (1493) esp_psram: Adding pool of 32768K of PSRAM memory to heap allocator
+I (1494) spi_flash: detected chip: winbond
+I (1494) spi_flash: flash io: qio
+I (1496) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (1496) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (1497) H_SDIO_DRV: sdio_data_to_rx_buf_task started
+I (1497) main_task: Started on CPU0
+I (1497) esp_psram: Reserving pool of 64K of internal memory for DMA/internal allocations
+I (1497) main_task: Calling app_main()
+I (1527) ST7701 panel: Install MIPI DSI LCD control IO
+I (1527) ST7701 panel: Install MIPI DSI LCD data panel
+I (1527) st7701: version: 2.0.2
+I (1667) ST7701 panel: VCOM value programmed into NVM/OTP: 0x40
+I (1667) st7701_mipi: LCD ID: FF FF FF
+I (1667) st7701_mipi:  st7701->madctl_val: 0x0, st7701->colmod_val: 0x77
+I (1887) BSP display: Applied LCD VCOM from NVS: 0x46
+I (1887) ES8156: ES8156 detected, chip version: 0x1
+STARTUP: Applying settings...
+STARTUP: Checking bootloader...
+I (3347) spi_flash: flash io: qio
+STARTUP: Bootloader is up-to-date
+I (3367) Bootloader update: Bootloader is up to date, no update needed
+STARTUP: Mounting FAT filesystem...
+STARTUP: Loading icons...
+STARTUP: Checking I2C bus...
+STARTUP: Initializing coprocessor...
+STARTUP: Mounting AppFS filesystem...
+I (3857) appfs: Meta page 0: valid (serial 700)
+I (3857) appfs: Meta page 1: valid (serial 699)
+I (3857) appfs: Using page 0 as current.
+STARTUP: Initializing clock...
+STARTUP: Initializing event handler...
+I (3897) Event: SD card inserted
+I (3897) sdcard: Initializing SD card
+I (3897) sdcard: Power cycling SD card...
+W (3897) ldo: The voltage value 0 is out of the recommended range [500, 2700]
+I (4197) sdcard: Allocating SD DMA buffer
+I (4497) sdcard: Mounted SD at '/sd'
+I (4497) Event: Audio jack removed
+STARTUP: Initializing certificate store...
+I (4507) Custom certificates: Adding Letsencrypt ISRG ROOT X1 certificate to CA store
+I (4517) Custom certificates: Adding Letsencrypt ISRG ROOT X2 certificate to CA store
+I (4517) Custom certificates: Adding Tanmatsu APPS certificate to CA store
+I (4517) Custom certificates: Adding Tanmatsu OTA certificate to CA store
+STARTUP: Initializing radio...
+W (4627) WiFi remote: Starting ESP hosted...
+
+I (4627) transport: Attempt connection with slave: retry[0]
+I (4627) sdio_wrapper: SDIO master: Slot 1, Data-Lines: 4-bit Freq(KHz)[40000 KHz]
+I (4627) sdio_wrapper: GPIOs: CLK[17] CMD[16] D0[18] D1[19] D2[20] D3[21] Slave_Reset[4294967295]
+I (4627) sdio_wrapper: Queues: Tx[20] Rx[20] SDIO-Rx-Mode[1]
+E (4857) sdio_wrapper: sdio_card_fn_init failed
+I (4987) sdio_wrapper: Function 0 Blocksize: 512
+I (4987) sdio_wrapper: Function 1 Blocksize: 512
+I (5087) H_SDIO_DRV: Card init success, TRANSPORT_RX_ACTIVE
+I (5087) transport: set_transport_state: 1
+I (5087) transport: Waiting for esp_hosted slave to be ready
+I (5097) H_SDIO_DRV: Starting SDIO process rx task
+I (5097) H_SDIO_DRV: SDIO Host operating in STREAMING MODE
+I (5097) H_SDIO_DRV: Open data path at slave
+E (5187) i2c.master: I2C hardware timeout detected
+E (5187) Tanmatsu coprocessor: tanmatsu_coprocessor_get_interrupt(309): Communication fault
+Previous interrupt coprocessor read failed!
+I (5657) H_SDIO_DRV: Received ESP_PRIV_IF type message
+I (5657) transport: Received INIT event from ESP32 peripheral
+I (5657) transport: EVENT: 12
+I (5657) transport: Identified slave [esp32c6]
+I (5657) transport: SDIO mode: slave: streaming, host: streaming
+I (5657) transport: EVENT: 11
+I (5657) transport: capabilities: 0xd
+I (5657) transport: Features supported are:
+I (5657) transport: 	 * WLAN
+I (5657) transport: 	   - HCI over SDIO
+I (5657) transport: 	   - BLE only
+I (5657) transport: EVENT: 13
+I (5657) transport: ESP board type is : 13 
+
+I (5657) transport: Base transport is set-up, TRANSPORT_TX_ACTIVE
+I (5657) H_API: Transport active
+I (5657) transport: Slave chip Id[12]
+I (5657) transport: raw_tp_dir[-], flow_ctrl: low[60] high[80]
+I (5657) transport: transport_delayed_init
+I (5657) esp_cli: Registering command: crash
+I (5657) esp_cli: Registering command: reboot
+I (5657) esp_cli: Registering command: mem-dump
+I (5657) esp_cli: Registering command: task-dump
+I (5657) esp_cli: Registering command: cpu-dump
+I (5657) esp_cli: Registering command: heap-trace
+I (5657) esp_cli: Registering command: sock-dump
+I (5657) esp_cli: Registering command: host-power-save
+I (5657) hci_stub_drv: Host BT Support: Disabled
+I (5657) H_SDIO_DRV: Received INIT event
+I (5657) H_SDIO_DRV: Event type: 0x22
+I (5657) H_SDIO_DRV: Write thread started
+I (6497) RPC_WRAP: Coprocessor Boot-up
+STARTUP: Initializing BadgeLink...
+I (6517) main: WiFi task started
+I (6527) main: LoRa radio version string: SX1261 V2D 2D02
+I (6527) main: Configured radio
+I (6527) main: LoRa mode: 1
+W (6527) main: SX1262 LoRa radio detected
+W (6537) rpc_rsp: Hosted RPC_Resp [0x21b], uid [7], resp code [12290]
+I (6537) main: LoRa set to standby mode
+I (6547) USB device: USB initialization
+I (6547) tusb_desc: 
+┌─────────────────────────────────┐
+│  USB Device Descriptor Summary  │
+├───────────────────┬─────────────┤
+│bDeviceClass       │ 0           │
+├───────────────────┼─────────────┤
+│bDeviceSubClass    │ 0           │
+├───────────────────┼─────────────┤
+│bDeviceProtocol    │ 0           │
+├───────────────────┼─────────────┤
+│bMaxPacketSize0    │ 64          │
+├───────────────────┼─────────────┤
+│idVendor           │ 0x16d0      │
+├───────────────────┼─────────────┤
+│idProduct          │ 0xf9a       │
+├───────────────────┼─────────────┤
+│bcdDevice          │ 0x100       │
+├───────────────────┼─────────────┤
+│iManufacturer      │ 0x1         │
+├───────────────────┼─────────────┤
+│iProduct           │ 0x2         │
+├───────────────────┼─────────────┤
+│iSerialNumber      │ 0x4         │
+├───────────────────┼─────────────┤
+│bNumConfigurations │ 0x1         │
+└───────────────────┴─────────────┘
+I (6557) TinyUSB: TinyUSB Driver installed on port 0
+I (6557) USB device: USB initialization DONE
+I (6557) USB device: USB debug listener task started
+STARTUP: Detecting Add-On boards...
+I (6557) main: LoRa configuration set
+W (6577) Add-on: No add-on detected
+W (6577) Add-on: No add-on detected
+I (6607) hid_kbd: Waiting for HID Device to be connected
+STARTUP: Initializing audio mixer...
+I (6617) audio_mixer: Audio mixer started (chunk=256 frames, 8 streams max)
+STARTUP: Initializing plugins...
+I (6637) plugin_mgr: Initializing plugin manager
+I (6637) plugin_mgr: Loading autostart plugins...
+I (6637) RPC_WRAP: ESP Event: wifi station started
+I (6637) WiFi connection: Connecting to WiFi...
+I (6637) WiFi connection: Connecting to network in slot 0
+I (6637) RPC_WRAP: ESP Event: wifi station started
+I (6637) main: LoRa set to RX mode
+I (6637) audio_mixer: Audio idle and DMA drained — entering power-saving state, disabling amplifier and I2S
+I (6637) plugin_mgr: No plugins found for autostart
+I (6647) pm: Frequency switching config: CPU_MAX: 360, APB_MAX: 90, APB_MIN: 40, Light sleep: ENABLED
+I (6647) H_API: esp_wifi_remote_connect
+I (6797) RPC_WRAP: ESP Event: Station mode: Connected
+I (6797) esp_wifi_remote: esp_wifi_internal_reg_rxcb: sta: 0x400c937a
+I (7637) WiFi connection: WiFi started
+I (7637) main: LoRa mode (after setting to RX): 5
+I (7817) esp_netif_handlers: sta ip: 192.168.88.17, mask: 255.255.255.0, gw: 192.168.88.1
+I (7817) WiFi connection: Connected to WiFi
+I (9887) main: NTP time sync succesful, RTC updated
+Starting tanmatsu-linux (from /sd/apps)...
+--- Error: device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+--- Waiting for the device to reconnect.
+I (1256) main_task: Started on CPU0
+I (1256) main_task: Calling app_main()
+I (1256) Gaijin M2: Gaijin M2.8 contract=1 board=7 BSP=1.6.4 launcher=0.2.8 radio=3.4.0 MCU=r9 (target)
+I (1256) Gaijin M2: PSRAM=32 MiB unmanaged; hart0 M-mode; hart1 held by IDF unicore startup
+I (1256) sdcard: Initializing SD card
+I (1256) sdcard: Power cycling SD card...
+W (1256) ldo: The voltage value 0 is out of the recommended range [500, 2700]
+I (1556) sdcard: Allocating SD DMA buffer
+I (1856) sdcard: Mounted SD at '/sd'
+I (1856) SD reference: BSP LBA0 fnv1a=b700eedc nonzero=13 signature=55aa FAT-start=63
+I (1856) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+I (1856) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+I (1856) Gaijin M2: load Image: 2464864 bytes -> 0x48000000
+I (2426) Gaijin M2: load tanmatsu.dtb: 1972 bytes -> 0x48800000
+I (2426) Gaijin M2: load initramfs: 512208 bytes -> 0x49000000
+I (2546) sdcard: SD card unmounted
+I (2546) Gaijin M2: verified Image memory=2574744; DTB=0x48800000; initrd=512208
+I (2546) Gaijin M2: handoff -> Linux 0x48000000 a0=0 a1=0x48800000; reset recovers launcher
+[    0.000000] Linux version 6.18.35-gaijin-m2.8 (user@host) (riscv32-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0, GNU ld (crosstool-NG esp-15.2.0_20251204) 2.45) #16 Thu Oct 29 01:48:27 EET 2026
+[    0.000000] Machine model: Tanmatsu rev7 Gaijin M2.8
+[    0.000000] earlycon: esp32p4usbjtag0 at MMIO32 0x500d2000 (options '')
+[    0.000000] printk: legacy bootconsole [esp32p4usbjtag0] enabled
+[    0.000000] OF: reserved mem: Reserved memory: No reserved-memory node in the DT
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acim
+[    0.000000] riscv: ELF capabilities acim
+[    0.000000] Ticket spinlock: enabled
+[    0.000000] Kernel command line: earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+[    0.000000] printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+[    0.000000] Dentry cache hash table entries: 4096 (order: 2, 16384 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8192
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 32 local interrupts mapped
+[    0.000000] esp32p4-clic: 240 IRQ slots, INTMTX routing enabled
+[    0.000000] clocksource: esp32p4-systimer: mask: 0xfffffffffffff max_cycles: 0x3b0a9be80, max_idle_ns: 440795202120 ns
+[    0.000005] sched_clock: 52 bits at 16MHz, resolution 62ns, wraps every 2199023255531ns
+[    0.002989] esp32p4-systimer: SYSTIMER @ 16000000 Hz, IRQ 17 (CLIC slot 17)
+[    0.005361] Calibrating delay loop (skipped), value calculated using timer frequency.. 32.00 BogoMIPS (lpj=64000)
+[    0.008914] pid_max: default: 4096 minimum: 301
+[    0.010748] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.013201] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.020828] Memory: 29136K/32768K available (1728K kernel code, 298K rwdata, 260K rodata, 115K init, 106K bss, 3408K reserved, 0K cma-reserved)
+[    0.026947] devtmpfs: initialized
+[    0.031886] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.035395] posixtimers hash table entries: 512 (order: 0, 2048 bytes, linear)
+[    0.037912] futex hash table entries: 16 (256 bytes on 1 NUMA nodes, total 0 KiB, linear).
+[    0.064934] cpu0: Ratio of byte access time to unaligned word access is 1.47, unaligned accesses are fast
+[    0.068182] esp32p4_cache: registered ROM-thunk noncoherent ops, block=64
+[    0.077508] clocksource: Switched to clocksource esp32p4-systimer
+[    0.088024] Unpacking initramfs...
+[    0.093100] workingset: timestamp_bits=30 max_order=13 bucket_order=0
+[    0.095977] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.098202] io scheduler mq-deadline registered
+[    0.099842] io scheduler kyber registered
+[    0.101188] io scheduler bfq registered
+[    0.410623] Freeing initrd memory: 500K
+[    0.442882] 500d2000.serial: ttyUJ0 at MMIO 0x500d2000 (irq = 0, base_baud = 3000000) is a P4 USB Serial/JTAG
+[    0.446335] printk: legacy console [ttyUJ0] enabled
+[    0.446335] printk: legacy console [ttyUJ0] enabled
+[    0.449699] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.449699] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.454796] esp32p4-usb-serial-jtag 500d2000.serial: polled USB console: ttyUJ0 (4 ms)
+[    0.471416] loop: module loaded
+[    0.497559] tanmatsu-sd 50083000.mmc: slot 0 read-only polled IDMAC, 1MHz maximum; no hotplug
+[    0.522808] input: Tanmatsu MCU keyboard as /devices/platform/i2c/i2c-0/0-005f/input/input0
+[    0.527462] tanmatsu-mcu 0-005f: MCU r9 input: 20 ms polling, software repeat 400/50 ms
+[    0.530605] i2c-gpio i2c: using lines 521 (SDA) and 522 (SCL)
+[    0.535947] clk: Disabling unused clocks
+[    0.540104] Freeing unused kernel image (initmem) memory: 112K
+[    0.542368] This architecture does not have kernel memory protection.
+[    0.544532] Run /init as init process
+[    0.790416] mmc0: new SDHC card at address 0003
+[    0.795212] mmcblk0: mmc0:0003 SD16G 14.5 GiB (ro)
+[    0.803760] tanmatsu-sd 50083000.mmc: LBA0 dma=b700eedc sg=b700eedc nonzero=13 sig=55aa idsts=00000102 card-bytes=512 host-bytes=512
+[    0.819336]  mmcblk0: p1
+[   17.562434] loop0: detected capacity change from 0 to 1024
+Gaijin SD: verified read-only base on /dev/loop0; switching root
+starting pid 43, tty '': '/etc/init.d/rcS'
+
+Gaijin — Tanmatsu rev7 USB shell
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1
+RV32 NOMMU; 32-bit pointers/long; little endian; soft-float calling convention.
+Hardware F/D instructions and ilp32f/ilp32d binaries are unsupported.
+Validated on Tanmatsu rev7 with the pinned RV32IMAC/ilp32 uClibc-ng bFLT toolchain.
+ABI validation accepted 2026-10-28; compatibility is limited to this toolchain.
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+Gaijin: userspace ABI probe PASS
+              total        used        free      shared  buff/cache   available
+Mem:          29972        4476       19576           0        5920       22936
+Read-only SD base or RAM rescue; no persistence. Reset returns to Launcher.
+Type m1-smoke and m2-sd-test for checks.
+
+starting pid 55, tty '/dev/ttyUJ0': '-/bin/sh'
+gaijin# m2-sd-test 
+[   35.954546] m2-sd-test (56): drop_caches: 3
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, [   37.988944] m2-sd-test (56): drop_caches: 3
+relocation, 256KiB malloc, vfork/exec/wait
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, [   40.021256] m2-sd-test (56): drop_caches: 3
+relocation, 256KiB malloc, vfork/exec/wait
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+/dev/loop0: 0 /sd/apps/tanmatsu-linux/boot/rootfs.sqfs
+devtmpfs /dev devtmpfs rw,nosuid,relatime 0 0
+proc /proc proc rw,nosuid,nodev,noexec,relatime 0 0
+sysfs /sys sysfs rw,nosuid,nodev,noexec,relatime 0 0
+/dev/mmcblk0p1 /sd vfat ro,nosuid,nodev,noexec,relatime,fmask=0022,dmask=0022,codepage=437,iocharset=ascii,shortname=mixed,errors=remount-ro 0 0
+/dev/loop0 / squashfs ro,nosuid,nodev,relatime,errors=continue 0 0
+tmpfs /run tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /tmp tmpfs rw,nosuid,nodev,relatime,mode=1777 0 0
+tmpfs /root tmpfs rw,nosuid,nodev,relatime,mode=700 0 0
+tmpfs /home tmpfs rw,nosuid,nodev,relatime 0 0
+tmpfs /usr/local tmpfs rw,nosuid,nodev,relatime 0 0
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5112       23188           0        1672       22996
+M2 SD PASS: live read-only root, preserved FAT/loop backing and three hash/exec runs
+gaijin# m1-smoke 
+Linux (none) 6.18.35-gaijin-m2.8 #16 Thu Oct 29 01:48:27 EET 2026 riscv32 GNU/Linux
+earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0
+processor	: 0
+hart		: 0
+isa		: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+mmu		: none
+mvendorid	: 0x612
+marchid		: 0x80000003
+mimpid		: 0x1
+hart isa	: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+pipeline-ok
+tmpfs-ok
+speed 115200 baud;stty: standard input
+ line = 0;
+intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>;
+eol2 = <undef>; swtch = <undef>; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+werase = ^W; lnext = ^V; flush = ^O; min = 1; time = 0;
+-parenb -parodd -cmspar cs8 hupcl -cstopb cread clocal -crtscts
+-ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl ixon ixoff
+-iuclc -ixany -imaxbel -iutf8
+opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt
+echoctl echoke -flusho
+              total        used        free      shared  buff/cache   available
+Mem:          29972        5100       23180           0        1692       22996
+MemTotal:          29972 kB
+MemFree:           23116 kB
+MemAvailable:      22940 kB
+Buffers:              12 kB
+Cached:             1136 kB
+SwapCached:            0 kB
+Active:              952 kB
+Inactive:            192 kB
+Active(anon):          0 kB
+Inactive(anon):        0 kB
+Active(file):        952 kB
+Inactive(file):      192 kB
+Unevictable:           4 kB
+Mlocked:               0 kB
+MmapCopy:           2400 kB
+SwapTotal:             0 kB
+SwapFree:              0 kB
+Dirty:                 0 kB
+Writeback:             0 kB
+AnonPages:             0 kB
+Mapped:                0 kB
+Shmem:                 0 kB
+KReclaimable:        544 kB
+Slab:               2576 kB
+SReclaimable:        544 kB
+SUnreclaim:         2032 kB
+KernelStack:         184 kB
+PageTables:            0 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:       14984 kB
+Committed_AS:          0 kB
+VmallocTotal:          0 kB
+VmallocUsed:           0 kB
+VmallocChunk:          0 kB
+Percpu:               32 kB
+Balloon:               0 kB
+M1 smoke PASS (20 external execs). Check Ctrl-C, editing, shell exit and USB reconnect manually.
+gaijin# exit
+process '-/bin/sh' (pid 55) exited. Scheduling for restart.
+starting pid 129, tty '/dev/ttyUJ0': '-/bin/sh'
+gaijin# date
+Thu Jan  1 00:00:49 UTC 1970
+gaijin# pwd
+/root
+gaijin# ^C
+gaijin# 

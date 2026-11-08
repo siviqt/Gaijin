@@ -1,0 +1,113 @@
+// SPDX-License-Identifier: GPL-2.0-only
+/dts-v1/;
+/ {
+    #address-cells = <1>;
+    #size-cells = <1>;
+    model = "Tanmatsu rev7 Gaijin M5";
+    compatible = "tanmatsu,gaijin-v1", "espressif,esp32p4";
+    tanmatsu,board-revision = <7>;
+    cpus {
+        #address-cells = <1>;
+        #size-cells = <0>;
+        timebase-frequency = <16000000>;
+        cpu@0 {
+            device_type = "cpu";
+            compatible = "riscv";
+            reg = <0>;
+            // Linux's FPU context support requires D; P4 has F only.
+            // Deliberately expose the supported soft-float execution subset.
+            riscv,isa = "rv32imac";
+            mmu-type = "riscv,none";
+            status = "okay";
+            interrupt-controller {
+                compatible = "riscv,cpu-intc";
+                #interrupt-cells = <1>;
+                #address-cells = <0>;
+                interrupt-controller;
+            };
+        };
+    };
+    memory@48000000 {
+        device_type = "memory";
+        reg = <0x48000000 0x02000000>;
+    };
+    reserved-memory {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        ranges;
+        display_mem: framebuffer@48e00000 {
+            reg = <0x48e00000 0x000bc000>; // RGB565 pixels + one DMA descriptor
+        };
+    };
+    chosen {
+        stdout-path = "/soc/serial@500d2000";
+        // Loader supplies bootargs and optional external initrd addresses.
+    };
+    i2c {
+        compatible = "i2c-gpio";
+        #address-cells = <1>;
+        #size-cells = <0>;
+        sda-gpios = <&m2_gpio 9 6>; // active-high, open-drain
+        scl-gpios = <&m2_gpio 10 6>;
+        i2c-gpio,delay-us = <5>; // approximately 100 kHz, clock stretching
+        i2c-gpio,timeout-ms = <10>;
+        management@5f {
+            compatible = "tanmatsu,management-mcu-r9";
+            reg = <0x5f>;
+            volume-down-gpios = <&m2_gpio 35 1>; // active-low
+            // GPIO1 MCU IRQ remains masked; M2 polls full snapshots.
+        };
+    };
+    soc {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        compatible = "simple-bus";
+        ranges;
+        power-controller@5010800c {
+            compatible = "tanmatsu,rev7-power";
+            reg = <0x5010800c 0x100>; // IDF rtc_retain_mem_t.custom (CRC excluded)
+        };
+        framebuffer@50081000 {
+            compatible = "tanmatsu,rev7-fb";
+            reg = <0x50081000 0x1000>, <0x500a0800 0x100>;
+            memory-region = <&display_mem>;
+            dma-noncoherent;
+            interrupts-extended = <&clic 18 24 4>; // DW-GDMA, level-high
+            // Loader enables only after successful panel and DMA setup.
+            status = "disabled";
+        };
+        m2_gpio: gpio@500e0000 {
+            compatible = "tanmatsu,rev7-m2-gpio";
+            reg = <0x500e0000 0x800>, <0x500e1000 0x100>,
+                  <0x5012b000 0x54>;
+            gpio-controller;
+            #gpio-cells = <2>;
+        };
+        // Native slot 0: D0..D3 GPIO39..42, CLK43, CMD44; LDO4 retained.
+        mmc@50083000 {
+            compatible = "tanmatsu,rev7-sd";
+            // IDMAC cannot snoop CPU caches covering PSRAM.
+            dma-noncoherent;
+            reg = <0x50083000 0x400>, <0x500e6018 0x24>,
+                  <0x501151d8 0x4>, <0x500e10a0 0x18>;
+            reg-names = "host", "clock", "ldo4", "iomux";
+        };
+        clic: interrupt-controller@20801000 {
+            compatible = "espressif,esp32p4-clic";
+            reg = <0x20801000 0x3c0>, <0x500d6000 0x200>;
+            #interrupt-cells = <3>;
+            #address-cells = <0>;
+            interrupt-controller;
+        };
+        timer@500e2000 {
+            compatible = "espressif,esp32p4-systimer";
+            reg = <0x500e2000 0x100>;
+            interrupts-extended = <&clic 17 53 4>; // level-high, not edge
+        };
+        serial@500d2000 {
+            compatible = "espressif,esp32p4-usb-serial-jtag";
+            reg = <0x500d2000 0x1000>;
+            // Earlycon hands over to the polled ttyUJ0 console in M1.1.
+        };
+    };
+};

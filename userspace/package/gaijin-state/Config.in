@@ -1,0 +1,4 @@
+config BR2_PACKAGE_GAIJIN_STATE
+	bool "Gaijin persistent state and power commands"
+	help
+	  Validate and map preallocated state-image sectors on read-only FAT.

@@ -1,0 +1,71 @@
+{
+  "version": "0.5.16",
+  "appfs_revision": 30,
+  "kernel_release": "6.18.35-gaijin-m5",
+  "font": "10x18; landscape 80x26",
+  "source_patch_sha256": "af849d66dc077541e958dee6d5984e808d0a2e6ba4bb69c49607cb6ae0fe48d1",
+  "checks": {
+    "host_tests": 87,
+    "clic_model_cases": 60,
+    "clic_negative_control": "PASS",
+    "loader_rebuilt_from_defaults": "PASS; rev1/PSRAM200M/64-byte cache-line/unicore/USB settings match",
+    "kernel_userspace_builds": "PASS",
+    "package_manifest_and_card_readback": "PASS",
+    "user_image_fsck_and_clean_flag": "PASS; state=1"
+  },
+  "state_repair": {
+    "original_sha256": "17a78e1c9d33471c90aabbe48a7c6b9202d3a81e64a7ba50a0eab4dcacf361e3",
+    "repaired_sha256": "5a45a13633b7c80007ce8746335852f495017848b6277c0e71c3bff2fe96e4d2",
+    "original_state": 0,
+    "repaired_state": 1,
+    "bytes": 67108864,
+    "fsck_exit": 1
+  },
+  "hardware_limits": "Prior -umode2 CSR/SIGILL probe and RAM-only power cycles passed. Revision-30 font/cache changes and active-persistence power cycles still need device validation.",
+  "application_files": {
+    "sd/apps/tanmatsu-linux/LICENSE": {
+      "bytes": 1234,
+      "sha256": "6f5e7e1112162dfe57b3d33edb6f37914db303b975398a523fe45d9bee5ee8e6"
+    },
+    "sd/apps/tanmatsu-linux/boot/Image": {
+      "bytes": 2709976,
+      "sha256": "8ddecf95a9c37f7aaf21e012a637a980282435dccfe08a589dcd3b2f46268a03"
+    },
+    "sd/apps/tanmatsu-linux/boot/initramfs": {
+      "bytes": 647383,
+      "sha256": "d2e01a1108c592b436eb8367da5b742aafe6b02f4fc3f1413652f19e96a40c0e"
+    },
+    "sd/apps/tanmatsu-linux/boot/manifest.bin": {
+      "bytes": 140,
+      "sha256": "095bc90257048887ec1b3864e5900e9fde6ab8d76f1ee33ae54560c88697ec20"
+    },
+    "sd/apps/tanmatsu-linux/boot/rootfs.sqfs": {
+      "bytes": 659456,
+      "sha256": "11ee7370b7f506ee52be68bf5622a98c932c36cbd6d5b9bc2cd31f153d8b4b1c"
+    },
+    "sd/apps/tanmatsu-linux/boot/rootfs.sqfs.sha256": {
+      "bytes": 65,
+      "sha256": "6e28ed80f4f1f35ade78420d674bd020417917e1cc83d6dafdb839119b829996"
+    },
+    "sd/apps/tanmatsu-linux/boot/tanmatsu.dtb": {
+      "bytes": 2370,
+      "sha256": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df"
+    },
+    "sd/apps/tanmatsu-linux/boot/userspace-abi.json": {
+      "bytes": 3181,
+      "sha256": "bf05872358bf10c5bad7d0e36c3bef9deab92b2d087f82b61a9076eb10492daf"
+    },
+    "sd/apps/tanmatsu-linux/icon.png": {
+      "bytes": 168,
+      "sha256": "2e8751058b47580e980b9258c2b96ddfb387ab941a2347a2da6a0d019f5cf95f"
+    },
+    "sd/apps/tanmatsu-linux/linux-loader.bin": {
+      "bytes": 322192,
+      "sha256": "35968f177f94756885a8b1d2735a2055396512a1089d96a297e2bdce1f9d55b7"
+    },
+    "sd/apps/tanmatsu-linux/metadata.json": {
+      "bytes": 483,
+      "sha256": "26bb73953eb9d7c881971761f9cc8dc74348ceaeaf9e9220a32b8542808262e5"
+    }
+  }
+}

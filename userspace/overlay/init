@@ -1,0 +1,10 @@
+#!/bin/sh
+# PID 1 preserves SD/loop backing mounts, or starts the initramfs rescue shell.
+export PATH=/usr/bin:/usr/sbin:/bin:/sbin
+export HOME=/root TERM=vt100
+/bin/mount -t devtmpfs -o nosuid devtmpfs /dev || echo 'Gaijin: devtmpfs mount failed'
+/bin/mount -t proc -o nosuid,nodev,noexec proc /proc
+/bin/mount -t sysfs -o nosuid,nodev,noexec sysfs /sys
+. /sbin/gaijin-sd-root
+echo 'Gaijin SD: RAM rescue shell; inspect dmesg, reset to return to Launcher'
+exec /sbin/init

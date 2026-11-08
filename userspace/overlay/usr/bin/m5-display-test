@@ -1,0 +1,32 @@
+#!/bin/sh
+# Refresh/load smoke test; physical readability and keyboard checks are manual.
+# Hush lacks nounset; its errexit also exits on an exhausted while loop.
+# Initialize variables and check each fallible operation explicitly.
+fb=/sys/class/graphics/fb0
+[ -r "$fb/name" ] || { echo 'M5 FAIL: fb0 missing'; exit 1; }
+IFS= read -r name < "$fb/name" || exit "$?"
+[ "$name" = tanmatsu ] || { echo 'M5 FAIL: unexpected framebuffer'; exit 1; }
+dev=$fb/device
+IFS= read -r before < "$dev/frames" || exit "$?"
+IFS= read -r errors_before < "$dev/dma_errors" || exit "$?"
+IFS= read -r underruns_before < "$dev/underruns" || exit "$?"
+[ "$errors_before" -eq 0 ] && [ "$underruns_before" -eq 0 ] || {
+    echo 'M5 FAIL: display already has errors'; exit 1;
+}
+cat "$fb/virtual_size" "$fb/bits_per_pixel" || exit "$?"
+stty -F /dev/tty1 size || exit "$?"
+free || exit "$?"
+n=0
+while [ "$n" -lt 100 ]; do
+    printf 'M5 display load %s: 0123456789 ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz\n' "$n" > /dev/tty1 || exit "$?"
+    n=$((n + 1))
+done
+sleep 3 || exit "$?"
+IFS= read -r after < "$dev/frames" || exit "$?"
+IFS= read -r errors_after < "$dev/dma_errors" || exit "$?"
+IFS= read -r underruns_after < "$dev/underruns" || exit "$?"
+[ "$after" -gt "$before" ] && [ "$errors_after" -eq 0 ] && [ "$underruns_after" -eq 0 ] || {
+    echo "M5 FAIL: frames=$before/$after dma_errors=$errors_after underruns=$underruns_after"; exit 1;
+}
+printf 'M5 refresh PASS: frames=%s -> %s; zero DMA errors/underruns.\n' "$before" "$after"
+printf 'Physical orientation, RGB, keyboard and simultaneous SD/input checks still required.\n'

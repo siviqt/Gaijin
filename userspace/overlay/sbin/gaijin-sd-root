@@ -1,0 +1,102 @@
+#!/bin/sh
+# Sourced by PID 1 in /init; switch_root must replace that process.
+gaijin_sd_cleanup() {
+    # Roll back successful moves in reverse order, preserving rescue devices.
+    [ "$sd_dev_moved" != 1 ] || mount --move /newroot/dev /dev
+    [ "$sd_sys_moved" != 1 ] || mount --move /newroot/sys /sys
+    [ "$sd_proc_moved" != 1 ] || mount --move /newroot/proc /proc
+    [ "$sd_fat_moved" != 1 ] || mount --move /newroot/sd /sd
+    [ "$sd_root_mounted" != 1 ] || umount /newroot
+    [ -z "$sd_loop" ] || losetup -d "$sd_loop"
+    [ "$sd_fat_mounted" != 1 ] || umount /sd
+}
+
+gaijin_sd_root() {
+    case " $(cat /proc/cmdline) " in
+        *" gaijin.rescue "*) echo 'Gaijin SD: forced RAM rescue'; return 1 ;;
+    esac
+    sd_dev_moved=0 sd_sys_moved=0 sd_proc_moved=0 sd_fat_moved=0
+    sd_root_mounted=0 sd_fat_mounted=0 sd_loop=
+    mkdir -p /sd /newroot || return 1
+    # Wait for partition discovery before considering whole-card FAT. The raw
+    # node appears first even on a partitioned card; probing its MBR as a FAT
+    # volume prints a false filesystem error while mmcblk0p1 is still arriving.
+    sd_wait=0
+    sd_partitions=0
+    while [ "$sd_wait" -lt 10 ]; do
+        for sd_device in /dev/mmcblk0p*; do
+            [ -b "$sd_device" ] || continue
+            sd_partitions=1
+            mount -t vfat -o ro,loud,nosuid,nodev,noexec "$sd_device" /sd || continue
+            sd_fat_mounted=1
+            sd_assets=/sd/apps/com.github.siviq.gaijin/boot
+            if [ -f "$sd_assets/rootfs.sqfs" ] && [ -f "$sd_assets/rootfs.sqfs.sha256" ]; then
+                break 2
+            fi
+            umount /sd || return 1
+            sd_fat_mounted=0
+        done
+        sleep 1
+        sd_wait=$((sd_wait + 1))
+    done
+    # Preserve superfloppy support, but never interpret a partitioned card's
+    # MBR as a filesystem after one of its partition nodes has been found.
+    if [ "$sd_fat_mounted" != 1 ] && [ "$sd_partitions" = 0 ] && [ -b /dev/mmcblk0 ]; then
+        if mount -t vfat -o ro,loud,nosuid,nodev,noexec /dev/mmcblk0 /sd; then
+            sd_fat_mounted=1
+            sd_assets=/sd/apps/com.github.siviq.gaijin/boot
+            if [ ! -f "$sd_assets/rootfs.sqfs" ] || [ ! -f "$sd_assets/rootfs.sqfs.sha256" ]; then
+                umount /sd || return 1
+                sd_fat_mounted=0
+            fi
+        fi
+    fi
+    if [ "$sd_fat_mounted" != 1 ]; then
+        echo 'Gaijin SD: no card with Gaijin assets found'
+        return 1
+    fi
+    echo "Gaijin SD: FAT mounted read-only on /sd"
+    # A generated, fixed-name checksum avoids interpreting arbitrary paths from SD.
+    sd_expected=$(cat "$sd_assets/rootfs.sqfs.sha256")
+    case "$sd_expected" in *[!0-9a-f]*|'') sd_expected=invalid ;; esac
+    sd_actual=$(sha256sum "$sd_assets/rootfs.sqfs")
+    sd_actual=${sd_actual%% *}
+    if [ "${#sd_expected}" != 64 ] || [ "$sd_actual" != "$sd_expected" ]; then
+        echo 'Gaijin SD: rootfs checksum failed'
+        gaijin_sd_cleanup
+        return 1
+    fi
+    sd_loop=$(losetup -f) || { gaijin_sd_cleanup; return 1; }
+    if ! losetup -r "$sd_loop" "$sd_assets/rootfs.sqfs"; then
+        sd_loop=
+        gaijin_sd_cleanup
+        return 1
+    fi
+    if ! mount -t squashfs -o ro,nodev,nosuid "$sd_loop" /newroot; then
+        gaijin_sd_cleanup
+        return 1
+    fi
+    sd_root_mounted=1
+    if ! cmp -s /etc/gaijin-base /newroot/etc/gaijin-base ||
+       ! cmp -s /etc/gaijin-abi /newroot/etc/gaijin-abi ||
+       [ ! -x /newroot/sbin/init ]; then
+        echo 'Gaijin SD: incompatible base image'
+        gaijin_sd_cleanup
+        return 1
+    fi
+    for sd_dir in sd proc sys dev run tmp root home persist usr/local; do
+        if [ ! -d "/newroot/$sd_dir" ] || [ -L "/newroot/$sd_dir" ]; then
+            echo "Gaijin SD: base missing mountpoint $sd_dir"
+            gaijin_sd_cleanup
+            return 1
+        fi
+    done
+    if mount --move /sd /newroot/sd; then sd_fat_moved=1; else gaijin_sd_cleanup; return 1; fi
+    if mount --move /proc /newroot/proc; then sd_proc_moved=1; else gaijin_sd_cleanup; return 1; fi
+    if mount --move /sys /newroot/sys; then sd_sys_moved=1; else gaijin_sd_cleanup; return 1; fi
+    if mount --move /dev /newroot/dev; then sd_dev_moved=1; else gaijin_sd_cleanup; return 1; fi
+    echo "Gaijin SD: verified read-only base on $sd_loop; switching root"
+    exec /sbin/switch_root -c /dev/console /newroot /sbin/init
+}
+
+gaijin_sd_root

@@ -1,0 +1,17 @@
+GAIJIN_INPUT_TEST_VERSION = 1
+GAIJIN_INPUT_TEST_SITE = $(BR2_EXTERNAL_GAIJIN_PATH)/package/gaijin-input-test
+GAIJIN_INPUT_TEST_SITE_METHOD = local
+GAIJIN_INPUT_TEST_LICENSE = MIT
+GAIJIN_INPUT_TEST_LICENSE_FILES = COPYING
+GAIJIN_INPUT_TEST_FLAT_STACKSIZE = 16384
+
+define GAIJIN_INPUT_TEST_BUILD_CMDS
+	$(TARGET_CC) $(TARGET_CFLAGS) -std=c11 -Wall -Wextra -Werror \
+		-o $(@D)/m2-input-test $(@D)/input-test.c $(TARGET_LDFLAGS) -static
+endef
+
+define GAIJIN_INPUT_TEST_INSTALL_TARGET_CMDS
+	$(INSTALL) -D -m 0755 $(@D)/m2-input-test $(TARGET_DIR)/usr/bin/m2-input-test
+endef
+
+$(eval $(generic-package))

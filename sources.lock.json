@@ -1,0 +1,316 @@
+{
+  "boot_contract": "tanmatsu,gaijin-v1",
+  "hardware_targets": {
+    "board_revision": 7,
+    "launcher": "0.2.8",
+    "radio": "3.4.0",
+    "coprocessor": "r9",
+    "note": "Targets supplied by the user; the management MCU r9 is checked at runtime. The Gaijin loader and Linux do not start the radio transport."
+  },
+  "esp_idf": {
+    "repository": "https://github.com/espressif/esp-idf",
+    "tag": "v6.0.2",
+    "commit": "7101770dc6db2667b3c477cc31365dd1acd6db4e"
+  },
+  "bsp": {
+    "repository": "https://github.com/badgeteam/esp32-component-badge-bsp",
+    "version": "1.6.4",
+    "commit": "b6f4448d65c66bc68e8548aa34783e3df75cb36b",
+    "transitive_dependencies": "dependencies.lock"
+  },
+  "linux": {
+    "version": "6.18.35",
+    "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.35.tar.xz",
+    "sha256": "f78602932219125e211c5f5bfd84edcfd4ec5ce88fc944f8248413f665bef236",
+    "patch": "linux/patches/0001-gaijin-esp32p4.patch",
+    "patch_sha256": "af849d66dc077541e958dee6d5984e808d0a2e6ba4bb69c49607cb6ae0fe48d1",
+    "uaccess_patch": "linux/patches/0002-esp32p4-user-access.patch",
+    "uaccess_patch_sha256": "7a465ec3e2ecc4b605e50de250836d9faad540431e554e0d110d027678334a2c"
+  },
+  "why2025_reference": {
+    "repository": "https://github.com/mrbreaker/why2025-linux",
+    "commit": "bd790395c14968a27c00f962c9cd08d66f39de24",
+    "used": "P4 baseline, NOMMU pool dependency, cache and timer fixes; PMP/direct entry reference. No WHY2025 peripheral wiring or binary images."
+  },
+  "stamp_p4_reference": {
+    "repository": "https://github.com/tsuyoshi-otake/m5stamp-p4-c6-linux",
+    "tag": "v0.4.3",
+    "commit": "84b6160288763d61f6f9d5975bf73148da5a724f",
+    "used": "USB Serial/JTAG early console implementation included in the consolidated kernel patch. Its versions.lock.json is not used as the Gaijin kernel lock."
+  },
+  "buildroot": {
+    "repository": "https://gitlab.com/buildroot.org/buildroot",
+    "tag": "2025.02.15",
+    "commit": "c49ae7216786d3cb62a8e8de5556007b4b539233",
+    "role": "M1 internal RV32 NOMMU soft-float uClibc-ng toolchain, elf2flt, static BusyBox and gzip newc initramfs. Package versions/hashes come from this locked Buildroot revision.",
+    "busybox_init_patch": "userspace/patches/busybox/0001-init-disable-software-flow-control.patch",
+    "busybox_init_patch_sha256": "c9ba9bde382a4d55eeee970aae8fe88cc18402a3669e10a1431d81c0b351c9d6",
+    "busybox_vi_patch": "userspace/patches/busybox/0002-vi-allow-unnamed-buffer.patch",
+    "busybox_vi_patch_sha256": "a00d3344c89a0b46ac541a4352002f9762e37e231d7ee900e4db5668de4973cd"
+  },
+  "m1_userspace_abi": {
+    "id": "gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1",
+    "status": "Core bFLT ABI verified on Tanmatsu rev7 on 2026-10-28; compatibility limited to the pinned SDK",
+    "isa": "rv32imac",
+    "elf_intermediate": "ELF32 little-endian RISC-V; ilp32 soft-float; RVC permitted; static",
+    "runtime_executable": "bFLT v4, uncompressed; kernel CONFIG_BINFMT_FLAT",
+    "libc": "uClibc-ng, static, NOMMU, no threads",
+    "float": "software float/double only; hardware F and D are excluded from the exposed ISA",
+    "config": "userspace/configs/gaijin_defconfig",
+    "shell": "BusyBox hush (ash is unsupported on NOMMU)",
+    "kernel_patch": "linux/patches/0001-gaijin-esp32p4.patch"
+  },
+  "libfdt": {
+    "base": "Linux 6.18.35 scripts/dtc/libfdt (DTC 1.7.2-g52f07dcc)",
+    "fdt_check_c": "https://raw.githubusercontent.com/dgibson/dtc/v1.7.2/libfdt/fdt_check.c",
+    "fdt_check_sha256": "17475451c6fece9b27097b3a3709540299e2316ca33a1c37605b97230ff31c7e",
+    "license": "BSD-2-Clause (chosen from GPL-2.0-or-later OR BSD-2-Clause)"
+  },
+  "m2_input": {
+    "status": "CLOSED \u2014 PASS; accepted by the user on 2026-10-28",
+    "board_revision": 7,
+    "coprocessor_firmware": 9,
+    "protocol_reference": "managed_components/nicolaielectronics__tanmatsu_coprocessor, pinned by dependencies.lock",
+    "gpio_reference": "ESP-IDF v6.0.2 ESP32-P4 GPIO, IO MUX and LP IO MUX register/LL headers",
+    "patches": [
+      "linux/patches/0001-gaijin-esp32p4.patch"
+    ],
+    "transport": "Linux i2c-gpio, GPIO9 SDA / GPIO10 SCL, address 0x5f; polled input",
+    "milestone_order": "User requested M2 keyboard and management MCU; supersedes original specification M4 keyboard order",
+    "acceptance": {
+      "date": "2026-10-28",
+      "user_statement": "Test is a pass.",
+      "capture": "Documentation/validation/evidence/m2-sd/m2-sd-acceptance-console.log",
+      "observed_coprocessor_firmware": 9,
+      "note": "Keyboard accepted on 2026-10-28; current regression capture on 2026-10-29 has 603 events, zero overflows and final clear state.",
+      "capture_sha256": "618ee6939123630645522fba3ad5b71c32443937ad4f9d2065f817acc49a8218"
+    }
+  },
+  "sd_release": {
+    "version": "0.2.8",
+    "appfs_revision": 11,
+    "kernel_release": "6.18.35-gaijin-m2.8",
+    "status": "CLOSED \u2014 PASS; M2 Linux SD hardware validation completed 2026-10-29; off-log recovery/integrity checks confirmed by the user",
+    "scope": "Original specification M2 Linux SD gate, preserving accepted M2 keyboard implementation",
+    "hardware_reference": "Pinned ESP-IDF v6.0.2 ESP32-P4 SDMMC LL, GPIO HAL and register headers; BSP 1.6.4 Tanmatsu storage wiring",
+    "mode": "Slot 0 read-only single-sector IDMAC, accepts page-sized reads via splitting; 32-bit streaming DMA mappings, 64-byte descriptor/cache lines, max 1 MHz; no IRQs, hotplug or radio",
+    "rootfs": "Buildroot 2025.02.15 SquashFS v4, gzip, 32 KiB blocks; same verified userspace as initramfs",
+    "validation": "Documentation/guides/sd-storage.md",
+    "driver_patches": [
+      "linux/patches/0001-gaijin-esp32p4.patch"
+    ],
+    "diagnostics": "BSP LBA0 reference retained; Linux DMA/SG fingerprints plus DMA status and byte counters; zero metadata and SG mismatch rejected",
+    "acceptance": {
+      "date": "2026-10-29",
+      "capture": "Documentation/validation/evidence/m2-sd/m2-sd-acceptance-console.log",
+      "capture_sha256": "618ee6939123630645522fba3ad5b71c32443937ad4f9d2065f817acc49a8218",
+      "package_inventory": "Documentation/validation/evidence/m2-sd/m2-sd-acceptance-current.json",
+      "kernel_build": "6.18.35-gaijin-m2.8 #16",
+      "card": "SDHC SD16G, 14.5 GiB, FAT partition mmcblk0p1",
+      "captured_results": {
+        "successful_linux_boot_segments": 4,
+        "sd_test_passes": 5,
+        "root_hash_and_exec_iterations": 15,
+        "m1_smoke_completed_passes": 5,
+        "input_events": 603,
+        "input_overflows": 0,
+        "shell_respawns": 2,
+        "block_read_only": 1
+      },
+      "off_log_confirmation": "User confirmed missing-root rescue, bad-checksum rescue and before/after SD file-hash checks were completed outside the console capture; their command output is not available.",
+      "user_confirmation": "Yes, I confirm they were done outside this tests.",
+      "follow_ups": [
+        "One earlier M1 smoke run was interrupted after five serial write-timeout warnings; later five smoke runs complete. Cause/reset intent is not established by the capture. Existing USB/flow-control follow-up remains open.",
+        "Input capture runs separately from SD test; simultaneous input/USB latency under sustained reads is not quantified.",
+        "Launcher SDIO retry and MCU I2C timeout messages recover during Launcher startup; their cause is not established by this SD test.",
+        "Broader card compatibility, long stress runs and performance tuning remain follow-ups; hotplug and persistence are outside M2."
+      ]
+    },
+    "diagnostic_source": "main/sd_diagnostic.c"
+  },
+  "source_layout": "One consolidated kernel patch contains only the current platform and driver implementations; linux/tanmatsu_defconfig is the only board kernel configuration.",
+  "m3_state": {
+    "version": "0.3.1",
+    "appfs_revision": 13,
+    "kernel_release": "6.18.35-gaijin-m3.1",
+    "status": "CLOSED \u2014 PASS; accepted by the user on 2026-10-29",
+    "image": "/gaijin/userdata.ext2 (outside replaceable /apps/com.github.siviq.gaijin)",
+    "format": "16..256 MiB ext2, 1 KiB blocks, 128-byte inodes, filetype/sparse_super/large_file only",
+    "write_policy": "Read-only FAT; FIBMAP extents, raw-partition direct-I/O loop and DM linear map; frozen MMC sector allowlist, CMD24 only",
+    "validation": "Documentation/guides/persistence.md",
+    "fixes": [
+      "Exact same SD write ranges can be re-registered after stop; any changed ranges stay denied.",
+      "Fresh direct reads of allocated superblock sectors reject dirty state despite stale FAT file cache.",
+      "Login prompt uses builtin read without NOMMU BusyBox command substitution."
+    ],
+    "hardware_evidence": {
+      "tested_version": "0.3.0",
+      "appfs_revision": 12,
+      "kernel_build": "6.18.35-gaijin-m3 #18",
+      "logs": {
+        "m3-hw-persistence.log": "272cf3a7e5ccad9b7c843e22285aeac3970dbacfc68160551297b64d0286d2e7",
+        "m3-hw-clean-start-restart.log": "a2a748be5de5cf24dec8f4ddc0730db2a31133e628085915092994ee0bd1b763",
+        "m3-hw-restart.log": "60c04f9d18dd89f232dfee55fb643e00e4368fb9f3d1cc6950497ae8da5edc8d"
+      },
+      "local_inventory": "Documentation/validation/evidence/m3/m3-hw-current.json",
+      "limits": "No device hash inventory, offline repair/check or unrelated-file hash comparison is captured; same-boot restart fails and prompt-associated allocation warnings are present."
+    },
+    "hardware_regression": {
+      "date": "2026-10-29",
+      "result": "PASS: same-boot restart and saved-prompt shell respawn",
+      "capture": "Documentation/validation/evidence/m3.1/m3.1-hw-regression.log",
+      "capture_sha256": "33c372c1c6a706e95dd84a17759dd6a17175ab2da51b51f866985296ee501f5e",
+      "kernel_build": "6.18.35-gaijin-m3.1 #19",
+      "local_inventory": "Documentation/validation/evidence/m3.1/m3.1-hw-current.json",
+      "observed": {
+        "boot_persistent_mounts": 1,
+        "clean_stop_start_cycles": 3,
+        "state_verify_passes": 3,
+        "shell_respawns": 2,
+        "allocation_failure_messages": 0,
+        "errno_16_messages": 0
+      },
+      "limits": "One boot; no losetup listing, full device hashes, loader identity banner or offline repair/card-integrity outputs. Handoff still uses Gaijin M2 tag; installed AppFS loader revision is unverified."
+    },
+    "unclean_shutdown_evidence": {
+      "capture": "Documentation/validation/evidence/m3.1/m3.1-hw-unclean-shutdown.log",
+      "capture_sha256": "305d2700c5a323eb334f770c7c89637a956b5df2751a1f7a7989f21234bebea3",
+      "kernel_build": "6.18.35-gaijin-m3.1 #19",
+      "user_report": "Powered off without stopping persistence; state does not mount on the following boot.",
+      "observed": "Fresh ext2 superblock eligibility check rejects the image; RAM fallback, ABI, M1 smoke and M2 SD tests pass. userdata.ext2 remains listed.",
+      "limits": "Dirty superblock is the likely cause given the shutdown history; raw superblock/fsck output and recovery are not yet available. No data-loss or successful-recovery claim is made."
+    },
+    "offline_recovery": {
+      "date": "2026-10-29",
+      "result": "PASS: host repair, SD verification and post-recovery Tanmatsu state verification",
+      "report": "Documentation/validation/evidence/m3.1/m3.1-offline-recovery.json",
+      "report_sha256": "f7d6d37eed4af40a6e096ed53b7da50dd815dd67118982ec7e2ebb4cf78a89dc",
+      "log": "Documentation/validation/evidence/m3.1/m3.1-offline-recovery.log",
+      "log_sha256": "27437ee94bafae1041002e180b26eac0bb20e8e2b25ae3f2373a8a0dbb27b3da",
+      "before_sha256": "69c096ca0c676552a70ff709249cb854b93fa952c918ac6a55d38a117e1d0327",
+      "after_sha256": "ce32c324a2362691f31507f062d1977f4d8823bf61d048a1d173b2d91f562cca",
+      "changed_bytes": 9,
+      "changed_blocks_1k": [
+        1
+      ],
+      "filesystem_check_errors": 0,
+      "unrelated_card_files_verified_unchanged": 11
+    },
+    "post_recovery_hardware": {
+      "capture": "Documentation/validation/evidence/m3.1/m3.1-hw-recovered.log",
+      "capture_sha256": "642f5deac2986816d51504f2d7b44c6d88c19f1c0f9e234fdaf17ec1b4e57133",
+      "kernel_build": "6.18.35-gaijin-m3.1 #19",
+      "result": "PASS: persistence mounted, saved prompt, state verify, clean stop and shell respawn"
+    },
+    "acceptance": {
+      "date": "2026-10-29",
+      "user_statement": "This completes M3 implementations, its a pass.",
+      "version": "0.3.1",
+      "appfs_revision": 13,
+      "kernel_build": "6.18.35-gaijin-m3.1 #19",
+      "evidence": "Documentation/validation/persistence.md",
+      "scope": "Persistent home/root and selected settings; clean-start RAM fallback; same-boot restart; unclean-shutdown rejection; host repair, card-file integrity and post-repair target verification.",
+      "follow_ups": [
+        "Automatic on-device fsck requires a tailored NOMMU checker and memory/interruption validation. Current recovery is host-side.",
+        "A board-aware shutdown/reboot command that synchronizes and unmounts state remains future work; use gaijin-persist stop before reset.",
+        "User-facing provisioning, resize and dedicated/shared-card setup choices remain future work.",
+        "Existing USB/flow-control, sustained latency and wider-card stress follow-ups remain open.",
+        "Captures retain an older loader tag; the installed AppFS revision is not independently identified by the truncated logs. The local revision-13 set is verified."
+      ]
+    }
+  },
+  "m5_display": {
+    "version": "0.5.17",
+    "appfs_revision": 31,
+    "kernel_release": "6.18.35-gaijin-m5",
+    "status": "Revision 30 device tests pass for storage, power states, font and named-file vi; bare vi freezes both consoles. Revision 31 includes the vi guard and NOMMU pointer bounds, plus the new AppFS identifier. M5 acceptance and remaining display flicker investigation stay open.",
+    "panel": "Tanmatsu rev7 ST7701, 480x800 RGB565, 2 DSI lanes at 500 Mbps, 30 MHz pixel clock",
+    "initialization": "Loader uses pinned ESP-IDF v6.0.2 HAL/DSI/DMA APIs and mipi_dsi_abstraction 1.2.1 command sequence; Linux owns refresh interrupts and scanout enable",
+    "memory": "0x48e00000..0x48ebc000 reserved; 768000 pixel bytes; 64-byte descriptor at 0x48ebb800",
+    "console": "10x18 landscape fbcon (80x26); interactive Hush on LCD tty1 and USB ttyUJ0; native U-mode applications",
+    "backlight": "Existing tanmatsu-mcu r9 owner; register 11; backlight class 0..255, default 160",
+    "validation": "Documentation/guides/display.md",
+    "limitations": [
+      "Single-buffer scanout; 20 Hz framebuffer writeback and bFLT cache maintenance in chunks up to 4 KiB. Flicker mitigation awaits device validation.",
+      "Physical orientation, RGB order, typing, brightness and simultaneous SD/input/display/USB acceptance remain pending.",
+      "Shutdown and poweroff passed with RAM fallback. Active-state cleanup retest pending after verified offline repair. RTC, Fn/session and power-key policies remain separate."
+    ],
+    "first_boot": {
+      "capture": "Documentation/validation/evidence/m5/m5-first-boot.log",
+      "local_inventory": "Documentation/validation/evidence/m5/m5-first-boot-current.json",
+      "observed": "Linux #21: 100x30 fbcon; persistent state mounted; ABI, M1 smoke and M2 SD PASS. User reports upside-down output; display diagnostic rejects set -eu.",
+      "fix": "0.5.1 / revision 15: rotate:1 and explicit hush-compatible diagnostic error checks.",
+      "status": "Corrected device orientation and diagnostic retest pending; M5 not accepted.",
+      "capture_sha256": "874e5cd3deeccd5b4f4f346f5ae9963b3e010ed81afaefec35aa629ca5fba78f",
+      "local_inventory_sha256": "a806494dda4f68bfbd5e5ea232efaef788f1778d7fba7a42ed99b9242c765866"
+    },
+    "orientation_retest": {
+      "capture": "Documentation/validation/evidence/m5/m5-orientation-refresh.log",
+      "capture_sha256": "1c906388cdd2d7b85c8cc7580cdf9554a8db74e8299b262b68d6aeb31f2b04a3",
+      "observed": "User confirms correct orientation. Display diagnostic PASS: frames 6757 to 6972, zero DMA errors/underruns. Dirty ext2 rejected; RAM fallback.",
+      "status": "Display orientation/refresh observed; complete M5 and power acceptance pending."
+    },
+    "native_privilege": "Physical CLIC IRQ completion before Linux C/scheduling; raw trap metadata separate from syscall/signal bookkeeping; M-mode kernel and U-mode native applications",
+    "latest_capture": "Documentation/validation/evidence/m5/m5-umode2-interactive-20261107.console.log",
+    "latest_capture_sha256": "6d9c6655d32f770c28e392fddf5c4938aa891c9930cb9cb6e8c550bda5adb2b3",
+    "application_id": "com.github.siviq.gaijin",
+    "user_access_fix": {
+      "date": "2026-11-08",
+      "status": "Included in the complete revision-31 build. All 93 host tests, actual RV32 string-function tests, native vi tests, package verification and privacy checks pass. New device validation remains pending.",
+      "kernel_patch": "linux/patches/0002-esp32p4-user-access.patch",
+      "busybox_patch": "userspace/patches/busybox/0002-vi-allow-unnamed-buffer.patch",
+      "validation": "Documentation/guides/user-access.md",
+      "target_probe": "gaijin-abi-check --uaccess (new image only)",
+      "remaining": "On-device unnamed/named vi and user-access probe; LCD flicker investigation."
+    },
+    "host_validation": {
+      "report": "Documentation/validation/evidence/m5/m5-rev31-host.json",
+      "report_sha256": "b1963199f554a4ebc4dcc1579d0955af53930e9721b07a39eb995b8b9df6a21f"
+    }
+  },
+  "power_control": {
+    "version": "0.5.17",
+    "appfs_revision": 31,
+    "status": "Revision 31 preserves checked state cleanup, shutdown to AppFS and physical poweroff. Revision-30 device tests passed except the bare-vi freeze. Revision 31 fixes that startup path; on-device editor/probe and power-cycle validation remain pending.",
+    "commands": {
+      "shutdown": "clean reset to AppFS Launcher",
+      "poweroff": "MCU r9 register 126 value 1, alarm wake disabled",
+      "halt": "clean CPU halt, power remains on"
+    },
+    "cleanup": "pause init, terminate user sessions, reopen console, checked ext2-only syncfs, unmount binds/ext2, verify clean header with fresh raw direct reads, remove map/loop, audit writable mounts, Linux power syscall; kernel-log stages; no global sync; failure resumes init",
+    "appfs": "The loader clears AppFS magic on entry. The kernel clears the same magic before ROM reset to Launcher.",
+    "reset": "ESP-IDF v6.0.2 ESP32-P4 ROM software_reset at 0x4fc00094",
+    "reference": "AppFS 2.1.0 retained-selection magic/layout, BSP 1.6.4, coprocessor firmware r9",
+    "validation": "Documentation/guides/power.md",
+    "state_recovery": "Documentation/validation/evidence/m5/m5-state-recovery.json",
+    "state_recovery_sha256": "1fb4142ecf217f1634963ec47240639dd7f240244be5d91595c6b9828f4cbaac",
+    "reboot_investigation": {
+      "active_capture": "Documentation/validation/evidence/m5/m5-reboot-active-excerpt.log",
+      "active_capture_sha256": "1ecead6fcd719ff7626f2cb38672d7607c5f072538d16cd7108b5456563d8e7b",
+      "active_capture_note": "Linux/serial excerpt only; subsequent Launcher Wi-Fi output omitted. Unmodified original retained privately.",
+      "ram_capture": "Documentation/validation/evidence/m5/m5-reboot-ram.log",
+      "ram_capture_sha256": "7abc3a9dd87ccc2cca7276cb93e169a67c51d58624f89fc75c44ebfde156ceeb",
+      "observed": "Rev16 kernel #22: dirty state RAM fallback; reboot prints already inactive, Restarting system gaijin, ROM SW_SYS_RESET and fresh Gaijin boot. User reports initial active-state reboot froze blue and required physical power off.",
+      "fix": "Rev17: checked ext2-only syncfs, clean-header direct-read verification before map removal, no global pre/final sync, kernel-log markers for every stage. Kernel/ROM reset unchanged.",
+      "limits": "The original hang is not reproduced on host and its exact cause is unproven. Active-state reboot and clean persistence across reboot need device retest.",
+      "state_recovery": "Documentation/validation/evidence/m5/m5-reboot-state-recovery.json",
+      "state_recovery_sha256": "e14eeddcf29361e21515c9a960ed748360dfab5b77bd3f26cc11dd94d1023902"
+    },
+    "reboot_followup": {
+      "capture": "Documentation/validation/evidence/m5/m5-reboot-rev17.log",
+      "capture_sha256": "c91641351e53a62d36165661cb734190b64acb1f59708fdeb155ef72d0c3db86",
+      "observed": "Rev17 clean unmount and raw header check completed; ROM SW_SYS_RESET; second Linux boot mounted persistence and reached serial shell launch. User reports blue display and unresponsive USB after launch.",
+      "recovery": "Documentation/validation/evidence/m5/m5-reboot-rev17-state-recovery.json",
+      "change": "Rev18 uses a shared console launcher to disable IXON/IXOFF after BusyBox init resets termios, logs launcher/profile phases to kmsg, and emits one delayed read-only task/display snapshot.",
+      "limits": "No reset or framebuffer driver change. No structural corruption found. Cause of both-console freeze remains unconfirmed; software-flow-control correction alone does not establish a hardware fix."
+    },
+    "revision22_validation": {
+      "date": "2026-11-05",
+      "capture": "Documentation/validation/evidence/m5/m5-rev22-power-excerpt.log",
+      "capture_sha256": "3437dce3638d69d5d384e625c120814cf760273cd4b6d2b91ec0d9054eaabcff",
+      "capture_note": "Excerpt preserves the Linux boot and transition evidence, with Launcher configuration and user file reads omitted.",
+      "observed": "Both display-disabled boots reached USB login with persistence active. Shutdown verified clean ext2 state and returned to Launcher v0.3.1. Poweroff verified clean ext2 state before the serial disconnect, and the user confirmed physical power-off.",
+      "remaining": "Display-enabled boot stability is unresolved."
+    }
+  }
+}

@@ -1,0 +1,21 @@
+#!/bin/sh
+# Exercises external bFLT exec plus hush's NOMMU spawn/pipeline paths.
+# Hush 1.37 lacks nounset, and errexit exits on an exhausted while loop.
+# Check commands explicitly and initialize every variable before use.
+uname -a || exit "$?"
+cat /proc/cmdline || exit "$?"
+cat /proc/cpuinfo || exit "$?"
+/usr/bin/gaijin-abi-check || exit "$?"
+n=0
+while [ "$n" -lt 20 ]; do
+    /usr/bin/gaijin-abi-check >/dev/null || exit "$?"
+    n=$((n + 1))
+done
+printf 'pipeline-ok\n' | cat || exit "$?"
+printf 'tmpfs-ok\n' >/tmp/m1-smoke || exit "$?"
+cat /tmp/m1-smoke || exit "$?"
+rm /tmp/m1-smoke || exit "$?"
+stty -a || exit "$?"
+free || exit "$?"
+cat /proc/meminfo || exit "$?"
+printf 'M1 smoke PASS (20 external execs). Check Ctrl-C, editing, shell exit and USB reconnect manually.\n'

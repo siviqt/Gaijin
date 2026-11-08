@@ -1,0 +1,5 @@
+config BR2_PACKAGE_GAIJIN_ABI_CHECK
+	bool "Gaijin userspace ABI probe"
+	help
+	  Check integer widths, endianness, libc, software float and vfork/exec.
+	  Include a separate native U-mode privilege and signal-return probe.

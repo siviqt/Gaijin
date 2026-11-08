@@ -1,0 +1,89 @@
+--- Waiting for the device to reconnect.
+2026-11-07 22:00:34 I (1259) main_task: Started on CPU0
+2026-11-07 22:00:34 I (1259) main_task: Calling app_main()
+2026-11-07 22:00:34 I (1259) Gaijin: Gaijin M5 contract=1 board=7 BSP=1.6.4 launcher=0.2.8 radio=3.4.0 MCU=r9 (target)
+2026-11-07 22:00:34 I (1259) Gaijin: PSRAM=32 MiB unmanaged; hart0 M-mode; hart1 held by IDF unicore startup
+2026-11-07 22:00:34 I (1259) Gaijin SD reset: LDO4 disabled, bypass off; discharge wait 4000 ms
+2026-11-07 22:00:38 I (5409) Gaijin SD reset: LDO4 restored at 3.3 V; initializing slot 0
+2026-11-07 22:00:38 I (5449) SD reference: loader LBA0 fnv1a=b700eedc nonzero=13 signature=55aa FAT-start=63
+2026-11-07 22:00:38 I (5449) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+2026-11-07 22:00:38 I (5449) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+2026-11-07 22:00:38 I (5449) Gaijin: load Image: 2701784 bytes -> 0x48000000
+2026-11-07 22:00:39 I (5989) Gaijin: load tanmatsu.dtb: 2370 bytes -> 0x48800000
+2026-11-07 22:00:39 I (5999) Gaijin: load initramfs: 581458 bytes -> 0x49000000
+2026-11-07 22:00:39 I (6119) Gaijin: SD card unmounted
+2026-11-07 22:00:39 I (6479) Gaijin display: 480x800 RGB565 at 0x48e00000; Linux owns DMA refresh
+2026-11-07 22:00:39 I (6489) Gaijin: verified Image memory=2822760; DTB=0x48800000; initrd=581458
+2026-11-07 22:00:39 I (6489) Gaijin: handoff -> Linux 0x48000000 a0=0 a1=0x48800000; reset recovers launcher
+2026-11-07 22:00:40 [    0.000000] Linux version 6.18.35-gaijin-m5-umode (user@host) (riscv32-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0, GNU ld (crosstool-NG esp-15.2.0_20251204) 2.45) #1 Sat Nov  7 21:51:09 EET 2026
+2026-11-07 22:00:40 [    0.000000] Machine model: Tanmatsu rev7 Gaijin M5
+2026-11-07 22:00:40 [    0.000000] earlycon: esp32p4usbjtag0 at MMIO32 0x500d2000 (options '')
+2026-11-07 22:00:40 [    0.000000] printk: legacy bootconsole [esp32p4usbjtag0] enabled
+2026-11-07 22:00:40 [    0.000000] OF: reserved mem: 0x48e00000..0x48ebbfff (752 KiB) map non-reusable framebuffer@48e00000
+2026-11-07 22:00:40 [    0.000000] Zone ranges:
+2026-11-07 22:00:40 [    0.000000]   Normal   [mem 0x0000000048000000-0x0000000049ffffff]
+2026-11-07 22:00:40 [    0.000000] Movable zone start for each node
+2026-11-07 22:00:40 [    0.000000] Early memory node ranges
+2026-11-07 22:00:40 [    0.000000]   node   0: [mem 0x0000000048000000-0x0000000049ffffff]
+2026-11-07 22:00:40 [    0.000000] Initmem setup node 0 [mem 0x0000000048000000-0x0000000049ffffff]
+2026-11-07 22:00:40 [    0.000000] Falling back to deprecated "riscv,isa"
+2026-11-07 22:00:40 [    0.000000] riscv: base ISA extensions acim
+2026-11-07 22:00:40 [    0.000000] riscv: ELF capabilities acim
+2026-11-07 22:00:40 [    0.000000] Ticket spinlock: enabled
+2026-11-07 22:00:40 [    0.000000] Kernel command line: earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=tty0 console=ttyUJ0,115200n8 fbcon=rotate:1,font:VGA8x16 consoleblank=0 rdinit=/init loglevel=7 panic=0
+2026-11-07 22:00:40 [    0.000000] printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+2026-11-07 22:00:40 [    0.000000] Dentry cache hash table entries: 4096 (order: 2, 16384 bytes, linear)
+2026-11-07 22:00:40 [    0.000000] Inode-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+2026-11-07 22:00:40 [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8192
+2026-11-07 22:00:40 [    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+2026-11-07 22:00:40 [    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+2026-11-07 22:00:40 [    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+2026-11-07 22:00:40 [    0.000000] riscv-intc: 32 local interrupts mapped
+2026-11-07 22:00:40 [    0.000000] esp32p4-clic: 240 IRQ slots, INTMTX routing enabled
+2026-11-07 22:00:40 [    0.000000] clocksource: esp32p4-systimer: mask: 0xfffffffffffff max_cycles: 0x3b0a9be80, max_idle_ns: 440795202120 ns
+2026-11-07 22:00:40 [    0.000006] sched_clock: 52 bits at 16MHz, resolution 62ns, wraps every 2199023255531ns
+2026-11-07 22:00:40 [    0.002958] esp32p4-systimer: SYSTIMER @ 16000000 Hz, IRQ 17 (CLIC slot 17)
+2026-11-07 22:00:40 [    0.005599] Console: colour dummy device 80x25
+2026-11-07 22:00:40 [    0.007152] printk: legacy console [tty0] enabled
+2026-11-07 22:00:40 [    0.009984] Calibrating delay loop (skipped), value calculated using timer frequency.. 32.00 BogoMIPS (lpj=64000)
+2026-11-07 22:00:40 [    0.013443] pid_max: default: 4096 minimum: 301
+2026-11-07 22:00:40 [    0.015430] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+2026-11-07 22:00:40 [    0.018093] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+2026-11-07 22:00:40 [    0.025862] Memory: 28044K/32768K available (1894K kernel code, 316K rwdata, 305K rodata, 117K init, 116K bss, 4468K reserved, 0K cma-reserved)
+2026-11-07 22:00:40 [    0.032192] devtmpfs: initialized
+2026-11-07 22:00:40 [    0.037702] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+2026-11-07 22:00:40 [    0.041344] posixtimers hash table entries: 512 (order: 0, 2048 bytes, linear)
+2026-11-07 22:00:40 [    0.043951] futex hash table entries: 16 (256 bytes on 1 NUMA nodes, total 0 KiB, linear).
+2026-11-07 22:00:40 [    0.071009] cpu0: Ratio of byte access time to unaligned word access is 1.47, unaligned accesses are fast
+2026-11-07 22:00:40 [    0.074390] esp32p4_cache: registered ROM-thunk noncoherent ops, block=64
+2026-11-07 22:00:40 [    0.085232] clocksource: Switched to clocksource esp32p4-systimer
+2026-11-07 22:00:40 [    0.115381] Unpacking initramfs...
+2026-11-07 22:00:40 [    0.120431] workingset: timestamp_bits=30 max_order=13 bucket_order=0
+2026-11-07 22:00:40 [    0.123555] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+2026-11-07 22:00:40 [    0.125845] io scheduler mq-deadline registered
+2026-11-07 22:00:40 [    0.127345] io scheduler kyber registered
+2026-11-07 22:00:40 [    0.128850] io scheduler bfq registered
+2026-11-07 22:00:40 [    0.165056] Console: switching to colour frame buffer device 100x30
+2026-11-07 22:00:40 [    0.220839] tanmatsu-fb 50081000.framebuffer: fb0: 480x800 RGB565, landscape fbcon, 20 Hz cache flush
+2026-11-07 22:00:40 [    0.474093] Freeing initrd memory: 564K
+2026-11-07 22:00:40 [    0.532914] 500d2000.serial: ttyUJ0 at MMIO 0x500d2000 (irq = 0, base_baud = 3000000) is a P4 USB Serial/JTAG
+2026-11-07 22:00:40 [    0.548194] printk: legacy console [ttyUJ0] enabled
+2026-11-07 22:00:40 [    0.548194] printk: legacy console [ttyUJ0] enabled
+2026-11-07 22:00:40 [    0.563153] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+2026-11-07 22:00:40 [    0.563153] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+2026-11-07 22:00:40 [    0.580697] esp32p4-usb-serial-jtag 500d2000.serial: polled USB console: ttyUJ0 (4 ms)
+2026-11-07 22:00:40 [    0.611031] loop: module loaded
+2026-11-07 22:00:40 [    0.624891] tanmatsu-power 5010800c.power-controller: Launcher reset ready
+2026-11-07 22:00:40 [    0.640753] device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+2026-11-07 22:00:40 [    0.681349] tanmatsu-sd 50083000.mmc: slot 0 polled IDMAC, file-sector write gate, 1MHz maximum; no hotplug
+2026-11-07 22:00:40 [    0.732589] input: Tanmatsu MCU keyboard as /devices/platform/i2c/i2c-0/0-005f/input/input0
+2026-11-07 22:00:40 [    0.754721] tanmatsu-mcu 0-005f: MCU r9 input: 20 ms polling, software repeat 400/50 ms
+2026-11-07 22:00:40 [    0.770984] i2c-gpio i2c: using lines 521 (SDA) and 522 (SCL)
+2026-11-07 22:00:40 [    0.794416] clk: Disabling unused clocks
+2026-11-07 22:00:40 [    0.811364] Freeing unused kernel image (initmem) memory: 116K
+2026-11-07 22:00:40 [    0.825804] This architecture does not have kernel memory protection.
+2026-11-07 22:00:40 [    0.840240] Run /init as init process
+2026-11-07 22:00:41 [    1.078086] mmc0: new SDHC card at address 0003
+2026-11-07 22:00:41 [    1.120335] mmcblk0: mmc0:0003 SD16G 14.5 GiB
+2026-11-07 22:00:41 [    1.143893] tanmatsu-sd 50083000.mmc: LBA0 dma=b700eedc sg=b700eedc nonzero=13 sig=55aa idsts=00000102 card-bytes=512 host-bytes=512
+2026-11-07 22:00:41 [    1.183297]  mmcblk0: p1

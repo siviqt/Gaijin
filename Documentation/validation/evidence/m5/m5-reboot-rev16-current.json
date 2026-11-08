@@ -1,0 +1,213 @@
+{
+  "format": 1,
+  "version": "0.5.2",
+  "appfs_revision": 16,
+  "kernel_release": "6.18.35-gaijin-m5",
+  "abi": "gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1",
+  "bootargs": "earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=tty0 console=ttyUJ0,115200n8 fbcon=rotate:1,font:VGA8x16 consoleblank=0 rdinit=/init loglevel=7 panic=0",
+  "sd_root": "sd",
+  "appfs_binary": "sd/apps/tanmatsu-linux/linux-loader.bin",
+  "verification": "Host integrity record; hardware results are in Documentation/validation/README.md",
+  "files": {
+    "Documentation/README.md": {
+      "bytes": 5821,
+      "sha256": "bfd179c6c03f0185b51e0a8c5aadc2c3121b6383e56c31767d1c2065dd33716d"
+    },
+    "Documentation/architecture.md": {
+      "bytes": 10476,
+      "sha256": "476b57eef7b028c4fd66c83ca30be394d14d3d81fe44d73ae7cf41bc02ec6c4b"
+    },
+    "Documentation/development.md": {
+      "bytes": 7943,
+      "sha256": "29f6053fb4139ceb9cb85347c9bd03c15b0b7bb291adbe67875be2df98a95f14"
+    },
+    "Documentation/guides/display.md": {
+      "bytes": 7580,
+      "sha256": "20f7379a4b63f5af5eb09812fcaeb9c2aabb4298e7de2a59cd6bc6f90082e969"
+    },
+    "Documentation/guides/keyboard.md": {
+      "bytes": 9625,
+      "sha256": "47efeafdc6291ca8313837fb6c1bdbfedb5a9e576f37e9079e7ade9ca0c32ec2"
+    },
+    "Documentation/guides/persistence.md": {
+      "bytes": 13507,
+      "sha256": "7d2739921085ffb97182c417f5353be91b374833d138da5e3e82f3a7557f168c"
+    },
+    "Documentation/guides/power.md": {
+      "bytes": 5801,
+      "sha256": "7f94ffa81c8a15bd3269341de150b66a8a715497613441df3d8ebbde23e977e8"
+    },
+    "Documentation/guides/sd-storage.md": {
+      "bytes": 15766,
+      "sha256": "711c05a8f0c5a1117118cba3111a5d197afb0e8b53a8ae917cf0e5d720de7beb"
+    },
+    "Documentation/reference/Tanmatsu_Linux_Project_Specification.docx": {
+      "bytes": 54490,
+      "sha256": "344ef2703eeaa8d39dce498bce004e39cd7805ccb983613e3a7ab256e56f2819"
+    },
+    "Documentation/validation/README.md": {
+      "bytes": 13219,
+      "sha256": "b4651e1dd4d0aac225d29a566bba9d91a45f4408d73f99dc56e3f90aa68d094c"
+    },
+    "Documentation/validation/evidence/m2-sd/m2-sd-acceptance-console.log": {
+      "bytes": 97209,
+      "sha256": "415d1c86618fe9738105bd18f87000fc6966834f46196ce0d9c77f222eafd8fa"
+    },
+    "Documentation/validation/evidence/m2-sd/m2-sd-acceptance-current.json": {
+      "bytes": 3808,
+      "sha256": "414aba6cf3ca73c48c91fc8fa95a72bb1f881ce378764a358f37f239a88d100a"
+    },
+    "Documentation/validation/evidence/m3/m3-hw-clean-start-restart.log": {
+      "bytes": 35367,
+      "sha256": "d17ac36a7505d123d25da9ef4d4b127b8b3c2aa549fa8062563e820c4fd46e33"
+    },
+    "Documentation/validation/evidence/m3/m3-hw-current.json": {
+      "bytes": 4095,
+      "sha256": "c5567031a362ad2d62617ccfb126b1b1396db4a0011dba17164b8ef86b727701"
+    },
+    "Documentation/validation/evidence/m3/m3-hw-persistence.log": {
+      "bytes": 187136,
+      "sha256": "b1cf7d7ee2bcc87a004049c53f31607b869f0b2e056ef175a4c3f4e1a6cee371"
+    },
+    "Documentation/validation/evidence/m3/m3-hw-restart.log": {
+      "bytes": 12516,
+      "sha256": "410c66c91b0d016cf657d75add298b59c48b8b214ed2f0bf60c82e724bf4add2"
+    },
+    "Documentation/validation/evidence/m3.1/m3.1-hw-current.json": {
+      "bytes": 4877,
+      "sha256": "e1352d57e1cf72f94903f84e55814e71c39b2f99613aa99afecc4fc08c0eca07"
+    },
+    "Documentation/validation/evidence/m3.1/m3.1-hw-recovered.log": {
+      "bytes": 7328,
+      "sha256": "50787cfd4279b9844d83b51adb60b5d7d8b425ca1236a28d292da6b24d51f813"
+    },
+    "Documentation/validation/evidence/m3.1/m3.1-hw-regression.log": {
+      "bytes": 8831,
+      "sha256": "da68f093151916ddde1e95b4e6ca8457664e4fcb19590997c16f1126f73a6c23"
+    },
+    "Documentation/validation/evidence/m3.1/m3.1-hw-unclean-shutdown.log": {
+      "bytes": 12477,
+      "sha256": "1bacfa470433815aca7746ef3a30bab801f60df6b0a0f71916e7290a122e2c3b"
+    },
+    "Documentation/validation/evidence/m3.1/m3.1-offline-recovery.json": {
+      "bytes": 1385,
+      "sha256": "f83b59e214b21ea21bdfeb472fb501399edd71903a4e6e7b21b6264c016e24e8"
+    },
+    "Documentation/validation/evidence/m3.1/m3.1-offline-recovery.log": {
+      "bytes": 1018,
+      "sha256": "27437ee94bafae1041002e180b26eac0bb20e8e2b25ae3f2373a8a0dbb27b3da"
+    },
+    "Documentation/validation/evidence/m5/m5-first-boot-current.json": {
+      "bytes": 7618,
+      "sha256": "a806494dda4f68bfbd5e5ea232efaef788f1778d7fba7a42ed99b9242c765866"
+    },
+    "Documentation/validation/evidence/m5/m5-first-boot.log": {
+      "bytes": 11689,
+      "sha256": "a17b39d3c119f646abe64db9dad424fc7e0c6f6750cd4022550055bcfc4052aa"
+    },
+    "Documentation/validation/evidence/m5/m5-orientation-refresh.log": {
+      "bytes": 7636,
+      "sha256": "f9421e0099f125abad2b2f37cc84aaf1deec5eb4c0a89caab284940836b6cec3"
+    },
+    "Documentation/validation/evidence/m5/m5-state-recovery.json": {
+      "bytes": 897,
+      "sha256": "1da599d9bab7ca8ec6e5ebd89ddcd745de6cdec8ff4298981952c80ed35220a6"
+    },
+    "Documentation/validation/evidence/m5/m5-state-recovery.log": {
+      "bytes": 952,
+      "sha256": "37790aa77af9ec0db9e9ab9256e90cc5a153c7560cb8b2d3fbfcc1f0047de4dc"
+    },
+    "Documentation/validation/persistence.md": {
+      "bytes": 12015,
+      "sha256": "b51526443623e5b21c4b937eec50aefb558409ec5ba786e61c57dc000b73b368"
+    },
+    "INSTALL.md": {
+      "bytes": 6290,
+      "sha256": "8d93728904a1bd72e50a6b0e982e93ac7daa1ec92443ad1fcf6ae8c908e0a376"
+    },
+    "README.md": {
+      "bytes": 2480,
+      "sha256": "470ee705ed7ab2ee33bb44e5a09908d660b5636b4333132ea659dd792321b160"
+    },
+    "THIRD_PARTY.md": {
+      "bytes": 4496,
+      "sha256": "25861c81a5232c4ca40dfc4afa432f56701deee5b83230ec60fcd9f5eba9ba7b"
+    },
+    "licenses/Apache-2.0.txt": {
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "licenses/BSD-2-Clause.txt": {
+      "bytes": 1641,
+      "sha256": "6313108c23efffa36948f8b2cff1560a5935373b527b0e1a837cc77e6ed1bacd"
+    },
+    "licenses/BusyBox.txt": {
+      "bytes": 18348,
+      "sha256": "bbfc9843646d483c334664f651c208b9839626891d8f17604db2146962f43548"
+    },
+    "licenses/GPL-2.0.txt": {
+      "bytes": 18600,
+      "sha256": "8780e78a1a737e127f25a65f6d95269bffd36158dc261114de7859b490bfc5aa"
+    },
+    "licenses/Tanmatsu-coprocessor-MIT.txt": {
+      "bytes": 1076,
+      "sha256": "785295b38e9a310d9c21d79808004866ded486b027917f54881d61c171c623fa"
+    },
+    "licenses/uClibc-LGPL-2.1.txt": {
+      "bytes": 26423,
+      "sha256": "ec60b993835e2c6b79e6d9226345f4e614e686eb57dc13b6420c15a33a8996e5"
+    },
+    "sd/apps/tanmatsu-linux/LICENSE": {
+      "bytes": 1234,
+      "sha256": "6f5e7e1112162dfe57b3d33edb6f37914db303b975398a523fe45d9bee5ee8e6"
+    },
+    "sd/apps/tanmatsu-linux/boot/Image": {
+      "bytes": 2701840,
+      "sha256": "ebbafeece319ae5d659192ebea633edfd0b37f2fb05a9089c2707c70ed685b0c"
+    },
+    "sd/apps/tanmatsu-linux/boot/initramfs": {
+      "bytes": 589853,
+      "sha256": "b0aba8fc31232c1cce508296b031978e71fd4f2169c28009aea38465478ffa98"
+    },
+    "sd/apps/tanmatsu-linux/boot/manifest.bin": {
+      "bytes": 140,
+      "sha256": "628270a68bc0c9b34ceaa448e11524447e28edc8ecf6b3c31b2d1394949e48c1"
+    },
+    "sd/apps/tanmatsu-linux/boot/rootfs.sqfs": {
+      "bytes": 602112,
+      "sha256": "46739bfa13db34a04f2b1d35cc627b85ba4f703597938beb24166ceffccaa7e3"
+    },
+    "sd/apps/tanmatsu-linux/boot/rootfs.sqfs.sha256": {
+      "bytes": 65,
+      "sha256": "2d8627960a2d746c5d583b62cdd41ec2ee5f626e5a488d5a2635b55eea17ec11"
+    },
+    "sd/apps/tanmatsu-linux/boot/tanmatsu.dtb": {
+      "bytes": 2370,
+      "sha256": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df"
+    },
+    "sd/apps/tanmatsu-linux/boot/userspace-abi.json": {
+      "bytes": 2727,
+      "sha256": "082b6a468d819a7b635d58d7bc0e5f84397269c3d7b947e2f27e1ad6ae8b395a"
+    },
+    "sd/apps/tanmatsu-linux/icon.png": {
+      "bytes": 168,
+      "sha256": "2e8751058b47580e980b9258c2b96ddfb387ab941a2347a2da6a0d019f5cf95f"
+    },
+    "sd/apps/tanmatsu-linux/linux-loader.bin": {
+      "bytes": 322896,
+      "sha256": "65666b6875157b04ef41c7f60c394c39c4f6f4db59a08bab2d42c913f91c71dc"
+    },
+    "sd/apps/tanmatsu-linux/metadata.json": {
+      "bytes": 518,
+      "sha256": "dc344031e4b89d38ec7218f4749f00a0401a3f1996877b80856cda6003e81fa1"
+    },
+    "sources.lock.json": {
+      "bytes": 16633,
+      "sha256": "5f22d2fa1d324ad2c2f66a4c635cb06efea456a17cf537dea6dd0ae8d164c00e"
+    },
+    "tools/create_state.py": {
+      "bytes": 3160,
+      "sha256": "19966e319e9793912b37fb4a696d784d253909b26d271f7e3340556defd84b7a"
+    }
+  }
+}

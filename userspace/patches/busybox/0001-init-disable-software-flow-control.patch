@@ -1,0 +1,15 @@
+Set the console input flags in init's existing TCSANOW call so login
+launchers can skip stty's output drain. This also applies on respawn.
+
+--- a/init/init.c
++++ b/init/init.c
+@@ -374,7 +374,7 @@ static void set_sane_term(void)
+ 	tty.c_cflag |= CREAD | HUPCL | CLOCAL;
+ 
+-	/* input modes */
+-	tty.c_iflag = ICRNL | IXON | IXOFF;
++	/* Disable software flow control before starting the console shell. */
++	tty.c_iflag = ICRNL;
+ 
+ 	/* output modes */
+ 	tty.c_oflag = OPOST | ONLCR;

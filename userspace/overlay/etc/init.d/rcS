@@ -1,0 +1,23 @@
+#!/bin/sh
+# proc, sys and dev are already mounted by early init and moved with SD root.
+mount -t tmpfs -o size=1m,mode=0755,nosuid,nodev tmpfs /run
+mount -t tmpfs -o size=4m,mode=1777,nosuid,nodev tmpfs /tmp
+# State failure keeps the base usable; never format or repair on the device.
+if ! /sbin/gaijin-persist start; then
+    echo 'Gaijin state: RAM fallback; image preserved for offline recovery'
+    [ ! -e /run/gaijin-state-map ] || echo 'Gaijin state: partial cleanup; run gaijin-persist stop before reset'
+    [ -e /run/gaijin-state-root ] || mount -t tmpfs -o size=1m,mode=0700,nosuid,nodev tmpfs /root
+    [ -e /run/gaijin-state-home ] || mount -t tmpfs -o size=1m,mode=0755,nosuid,nodev tmpfs /home
+fi
+mount -t tmpfs -o size=1m,mode=0755,nosuid,nodev tmpfs /usr/local
+printf '\nGaijin — Tanmatsu rev7\n'
+uname -a
+cat /etc/gaijin-abi
+if /usr/bin/gaijin-abi-check; then
+    echo 'Gaijin: userspace ABI probe PASS'
+else
+    echo 'Gaijin: userspace ABI probe FAIL — retain this log'
+fi
+free
+printf 'Read-only base; use gaijin-persist status to check state. Use shutdown for Launcher, poweroff to turn off, or halt.\n'
+printf 'Type m1-smoke, m2-sd-test and m3-state-test for checks.\n\n'

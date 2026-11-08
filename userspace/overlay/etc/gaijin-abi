@@ -1,0 +1,5 @@
+gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1
+RV32 NOMMU; 32-bit pointers/long; little endian; soft-float calling convention.
+Hardware F/D instructions and ilp32f/ilp32d binaries are unsupported.
+Validated on Tanmatsu rev7 with the pinned RV32IMAC/ilp32 uClibc-ng bFLT toolchain.
+ABI validation accepted 2026-10-28; compatibility is limited to this toolchain.

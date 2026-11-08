@@ -1,0 +1,16 @@
+An unnamed vi buffer has no filename. Do not pass NULL to open(): there
+is nothing to load, and NOMMU platforms may not have fault-safe uaccess.
+
+--- a/editors/vi.c
++++ b/editors/vi.c
+@@ -1985,6 +1985,10 @@
+ 	int fd, size;
+ 	struct stat statbuf;
+ 
++	/* No file to read when starting an unnamed buffer. */
++	if (fn == NULL)
++		return cnt;
++
+ 	if (p < text)
+ 		p = text;
+ 	if (p > end)

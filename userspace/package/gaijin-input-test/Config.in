@@ -1,0 +1,4 @@
+config BR2_PACKAGE_GAIJIN_INPUT_TEST
+	bool "Gaijin M2 evdev diagnostic"
+	help
+	  Inspect keyboard events, repeat and evdev overflow recovery over USB.

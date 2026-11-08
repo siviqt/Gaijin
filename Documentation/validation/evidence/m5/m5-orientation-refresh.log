@@ -1,0 +1,114 @@
+I (2968) Gaijin: handoff -> Linux 0x48000000 a0=0 a1=0x48800000; reset recovers launcher
+[    0.000000] Linux version 6.18.35-gaijin-m5 (user@host) (riscv32-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0, GNU ld (crosstool-NG esp-15.2.0_20251204) 2.45) #21 Thu Oct 29 19:26:39 EET 2026
+[    0.000000] Machine model: Tanmatsu rev7 Gaijin M5
+[    0.000000] earlycon: esp32p4usbjtag0 at MMIO32 0x500d2000 (options '')
+[    0.000000] printk: legacy bootconsole [esp32p4usbjtag0] enabled
+[    0.000000] OF: reserved mem: 0x48e00000..0x48ebbfff (752 KiB) map non-reusable framebuffer@48e00000
+[    0.000000] Zone ranges:
+[    0.000000]   Normal   [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Movable zone start for each node
+[    0.000000] Early memory node ranges
+[    0.000000]   node   0: [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Initmem setup node 0 [mem 0x0000000048000000-0x0000000049ffffff]
+[    0.000000] Falling back to deprecated "riscv,isa"
+[    0.000000] riscv: base ISA extensions acim
+[    0.000000] riscv: ELF capabilities acim
+[    0.000000] Ticket spinlock: enabled
+[    0.000000] Kernel command line: earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=tty0 console=ttyUJ0,115200n8 fbcon=rotate:1,font:VGA8x16 consoleblank=0 rdinit=/init loglevel=7 panic=0
+[    0.000000] printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+[    0.000000] Dentry cache hash table entries: 4096 (order: 2, 16384 bytes, linear)
+[    0.000000] Inode-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+[    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8192
+[    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+[    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+[    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+[    0.000000] riscv-intc: 32 local interrupts mapped
+[    0.000000] esp32p4-clic: 240 IRQ slots, INTMTX routing enabled
+[    0.000000] clocksource: esp32p4-systimer: mask: 0xfffffffffffff max_cycles: 0x3b0a9be80, max_idle_ns: 440795202120 ns
+[    0.000006] sched_clock: 52 bits at 16MHz, resolution 62ns, wraps every 2199023255531ns
+[    0.002967] esp32p4-systimer: SYSTIMER @ 16000000 Hz, IRQ 17 (CLIC slot 17)
+[    0.005593] Console: colour dummy device 80x25
+[    0.007129] printk: legacy console [tty0] enabled
+[    0.009941] Calibrating delay loop (skipped), value calculated using timer frequency.. 32.00 BogoMIPS (lpj=64000)
+[    0.013419] pid_max: default: 4096 minimum: 301
+[    0.015404] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.018073] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+[    0.025849] Memory: 28064K/32768K available (1893K kernel code, 317K rwdata, 304K rodata, 118K init, 116K bss, 4448K reserved, 0K cma-reserved)
+[    0.032193] devtmpfs: initialized
+[    0.037715] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+[    0.041369] posixtimers hash table entries: 512 (order: 0, 2048 bytes, linear)
+[    0.043929] futex hash table entries: 16 (256 bytes on 1 NUMA nodes, total 0 KiB, linear).
+[    0.070975] cpu0: Ratio of byte access time to unaligned word access is 1.47, unaligned accesses are fast
+[    0.074358] esp32p4_cache: registered ROM-thunk noncoherent ops, block=64
+[    0.084752] clocksource: Switched to clocksource esp32p4-systimer
+[    0.115486] Unpacking initramfs...
+[    0.120568] workingset: timestamp_bits=30 max_order=13 bucket_order=0
+[    0.123588] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+[    0.125820] io scheduler mq-deadline registered
+[    0.127322] io scheduler kyber registered
+[    0.128877] io scheduler bfq registered
+[    0.165688] Console: switching to colour frame buffer device 100x30
+[    0.220658] tanmatsu-fb 50081000.framebuffer: fb0: 480x800 RGB565, landscape fbcon, 20 Hz cache flush
+[    0.455985] Freeing initrd memory: 544K
+[    0.526103] 500d2000.serial: ttyUJ0 at MMIO 0x500d2000 (irq = 0, base_baud = 3000000) is a P4 USB Serial/JTAG
+[    0.541963] printk: legacy console [ttyUJ0] enabled
+[    0.541963] printk: legacy console [ttyUJ0] enabled
+[    0.556463] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.556463] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+[    0.574487] esp32p4-usb-serial-jtag 500d2000.serial: polled USB console: ttyUJ0 (4 ms)
+[    0.604235] loop: module loaded
+[    0.619793] device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+[    0.660851] tanmatsu-sd 50083000.mmc: slot 0 polled IDMAC, file-sector write gate, 1MHz maximum; no hotplug
+[    0.712090] input: Tanmatsu MCU keyboard as /devices/platform/i2c/i2c-0/0-005f/input/input0
+[    0.734736] tanmatsu-mcu 0-005f: MCU r9 input: 20 ms polling, software repeat 400/50 ms
+[    0.750845] i2c-gpio i2c: using lines 521 (SDA) and 522 (SCL)
+[    0.773416] clk: Disabling unused clocks
+[    0.790911] Freeing unused kernel image (initmem) memory: 116K
+[    0.806206] This architecture does not have kernel memory protection.
+[    0.819694] Run /init as init process
+[    0.998293] mmc0: new SDHC card at address 0003
+[    1.034273] mmcblk0: mmc0:0003 SD16G 14.5 GiB
+[    1.090053] tanmatsu-sd 50083000.mmc: LBA0 dma=b700eedc sg=b700eedc nonzero=13 sig=55aa idsts=00000102 card-bytes=512 host-bytes=512
+[    1.150021]  mmcblk0: p1
+[    1.196024] FAT-fs (mmcblk0): bogus number of reserved sectors
+[    1.210666] FAT-fs (mmcblk0): Can't find a valid FAT filesystem
+mount: mounting /dev/mmcblk0 on /sd failed: Invalid argument
+[   19.490651] loop0: detected capacity change from 0 to 1112
+Gaijin SD: verified read-only base on /dev/loop0; switching root
+starting pid 44, tty '': '/etc/init.d/rcS'
+Gaijin state: fresh ext2 superblock failed (errno=22); image preserved
+Gaijin state: RAM fallback; image preserved for offline recovery
+
+Gaijin — Tanmatsu rev7 local console + USB recovery
+Linux (none) 6.18.35-gaijin-m5 #21 Thu Oct 29 19:26:39 EET 2026 riscv32 GNU/Linux
+gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1
+RV32 NOMMU; 32-bit pointers/long; little endian; soft-float calling convention.
+Hardware F/D instructions and ilp32f/ilp32d binaries are unsupported.
+Validated on Tanmatsu rev7 with the pinned RV32IMAC/ilp32 uClibc-ng bFLT toolchain.
+ABI validation accepted 2026-10-28; compatibility is limited to this toolchain.
+ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+Gaijin: userspace ABI probe PASS
+              total        used        free      shared  buff/cache   available
+Mem:          28980        4708       18164           0        6108       21712
+Read-only base; see /run/gaijin-persist for state status. Before reset: cd /; gaijin-persist stop.
+Type m1-smoke, m2-sd-test and m3-state-test for checks.
+
+starting pid 61, tty '/dev/ttyUJ0': '-/bin/sh'
+process '/sbin/gaijin-console' (pid 62) exited. Scheduling for restart.
+[   70.087746] random: crng init done
+
+gaijin# df
+Filesystem           1K-blocks      Used Available Use% Mounted on
+/dev/mmcblk0p1        15164128     69824  15094304   0% /sd
+/dev/loop0                 576       576         0 100% /
+gaijin# m5
+sh: can't execute 'm5': No such file or directory
+gaijin# m5-display-test 
+480,800
+16
+30 100
+              total        used        free      shared  buff/cache   available
+Mem:          28980        6020       16804           0        6156       18856
+M5 refresh PASS: frames=6757 -> 6972; zero DMA errors/underruns.
+Physical orientation, RGB, keyboard and simultaneous SD/input checks still required.
+gaijin# 

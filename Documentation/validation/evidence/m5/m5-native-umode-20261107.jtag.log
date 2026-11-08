@@ -1,0 +1,102 @@
+Open On-Chip Debugger v0.12.0-esp32-20260424 (2026-04-24-15:13)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : esp_usb_jtag: VID set to 0x303a and PID to 0x1001
+Info : esp_usb_jtag: capabilities descriptor set to 0x2000
+WARNING: ESP flash support is disabled!
+force hard breakpoints
+Automatic fences disabled for this capture
+Info : esp_usb_jtag: serial (<device-mac>)
+Info : esp_usb_jtag: Device found. Base speed 24000KHz, div range 1 to 255
+Info : clock speed 24000 kHz
+Info : JTAG tap: esp32p4.tap0 tap/device found: 0x00012c25 (mfg: 0x612 (Espressif Systems), part: 0x0012, ver: 0x0)
+Info : JTAG tap: esp32p4.tap1 tap/device found: 0x00012c25 (mfg: 0x612 (Espressif Systems), part: 0x0012, ver: 0x0)
+Info : [esp32p4] gdb port disabled
+Before first halt DMSTATUS: 0x004c0ca2
+Before first halt sample 1 (magic phase ticks frames flushes): 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+Before first halt sample 1 SYSTIMER CONF: 0xe5000002
+Before first halt sample 1 SYSTIMER target0 low: 0x063f5855
+Before first halt sample 1 SYSTIMER latched counter low: 0x064d05bf
+Before first halt sample 1 SYSTIMER raw IRQ: 0x00000001
+Before first halt sample 1 SYSTIMER masked IRQ: 0x00000001
+Before first halt sample 1 Core 0 SYSTIMER route: 0x00000011
+Before first halt sample 1 Core 0 interrupt sources 32 to 63: 0x00201000
+Before first halt sample 1 HP clock force-on control: 0x00007e78
+Before first halt sample 1 DSI DPI configuration: 0x00001e01
+Before first halt sample 1 LP clock/reset cause: 0x02132641
+Before first halt sample 2 (magic phase ticks frames flushes): 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+Before first halt sample 2 SYSTIMER CONF: 0xe5000002
+Before first halt sample 2 SYSTIMER target0 low: 0x063f5855
+Before first halt sample 2 SYSTIMER latched counter low: 0x064d05bf
+Before first halt sample 2 SYSTIMER raw IRQ: 0x00000001
+Before first halt sample 2 SYSTIMER masked IRQ: 0x00000001
+Before first halt sample 2 Core 0 SYSTIMER route: 0x00000011
+Before first halt sample 2 Core 0 interrupt sources 32 to 63: 0x00201000
+Before first halt sample 2 HP clock force-on control: 0x00007e78
+Before first halt sample 2 DSI DPI configuration: 0x00001e01
+Before first halt sample 2 LP clock/reset cause: 0x02132641
+=== Registers at first halt, before OpenOCD examination ===
+First halt dpc = 0x4802f6a2
+First halt dcsr = 0x400000c3
+First halt mstatus = 0x00010088
+First halt mcause = 0x08000008
+First halt mepc = 0x49a17bee
+First halt mintstatus_rev1 = 0xff000000
+First halt mtval = 0x00000000
+First halt sp = 0x48247ee0
+First halt ra = 0x4802f70a
+Hart 0 resumed after first halt
+After first halt/resume (magic phase ticks frames flushes): 0x00000000 0x00000000 0x00000000 0x00000000 0x00000000
+After first halt/resume SYSTIMER CONF: 0xe5000002
+After first halt/resume SYSTIMER target0 low: 0x063f5855
+After first halt/resume SYSTIMER latched counter low: 0x064d05bf
+After first halt/resume SYSTIMER raw IRQ: 0x00000001
+After first halt/resume SYSTIMER masked IRQ: 0x00000001
+After first halt/resume Core 0 SYSTIMER route: 0x00000011
+After first halt/resume Core 0 interrupt sources 32 to 63: 0x00201000
+After first halt/resume HP clock force-on control: 0x00007e78
+After first halt/resume DSI DPI configuration: 0x00001e01
+After first halt/resume LP clock/reset cause: 0x02132641
+Info : [esp32p4] datacount=1 progbufsize=2
+Info : [esp32p4] Examined RISC-V core
+Info : [esp32p4]  XLEN=32, misa=0x40901125
+Target state before halt: running
+LP trace after attach, before explicit halt: 0x0 0x0 0x0 0x0 0x0
+LP trace 150 ms later: 0x0 0x0 0x0 0x0 0x0
+=== CPU registers ===
+pc = 0x4802f6a6
+sp = 0x48247ee0
+ra = 0x4802f70a
+s1 = 0x4824c000
+mstatus = 0x00010088
+mcause = 0x08000008
+mepc = 0x49a17bee
+mtval = 0x00000000
+dcsr = 0x400090c3
+fp = 0x48247f00
+=== Watchdog and interrupt state ===
+LP store 11 through 15 at 0x50110058: 0x0 0x0 0x0 0x0 0x0
+LP clock/reset cause at 0x50111010: 0x2132641
+LP watchdog CONFIG0 at 0x50116000: 0x4007ee00
+SYSTIMER CONF and UNIT0_OP at 0x500e2000: 0xe5000002 0x20000000
+SYSTIMER target0 high and low at 0x500e201c: 0x0 0x63f5855
+SYSTIMER latched unit0 high and low at 0x500e2040: 0x0 0x64d05bf
+SYSTIMER interrupt enable at 0x500e2064: 0x1
+SYSTIMER raw interrupt status at 0x500e2068: 0x1
+SYSTIMER masked interrupt status at 0x500e2070: 0x1
+SYSTIMER interrupt matrix route at 0x500d60d4: 0x11
+Display DMA channel enable at 0x50081018: 0x0
+Display DMA channel 0 status at 0x50081188: 0x2
+DSI bridge DPI configuration at 0x500a0840: 0x1e01
+DSI bridge underrun raw status at 0x500a0858: 0x0
+CLIC slot 17 at 0x20801044: 0x0
+CLIC slot 18 at 0x20801048: 0x0
+=== Kernel stack return addresses ===
+Frame 0 return PC = 0x4802f82e
+Frame 1 return PC = 0x481d6e16
+Frame 2 return PC = 0x481db2da
+Frame 3 return PC = 0x48000106
+Target state after resume: running
+LP trace after resume: 0x0 0x0 0x0 0x0 0x0
+shutdown command invoked

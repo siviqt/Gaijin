@@ -1,0 +1,109 @@
+{
+  "format": 1,
+  "version": "0.3.0",
+  "appfs_revision": 12,
+  "kernel_release": "6.18.35-gaijin-m3",
+  "abi": "gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1",
+  "bootargs": "earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=ttyUJ0,115200n8 rdinit=/init loglevel=7 panic=0",
+  "sd_root": "sd",
+  "appfs_binary": "sd/apps/tanmatsu-linux/linux-loader.bin",
+  "verification": "Host integrity record; hardware results are in Documentation/validation.md",
+  "files": {
+    "Documentation/m2-keyboard.md": {
+      "bytes": 7791,
+      "sha256": "a2652bb7f5b83865f489ccfc74844c4dc36f360b1b6e1fa2aaaa2a017b3ea87d"
+    },
+    "Documentation/m2-sd.md": {
+      "bytes": 15036,
+      "sha256": "510ff11098f6d26b4cedaf65c7049c07d6c793d92e8503b42fa294a84e796b0f"
+    },
+    "Documentation/m3-state.md": {
+      "bytes": 11839,
+      "sha256": "d17514477b710865e2f3a56c29b35a7757b6a44aa1497ef9cca48ee487fbe78f"
+    },
+    "INSTALL.txt": {
+      "bytes": 5618,
+      "sha256": "acbb21be97f455ba54b633d510aeb7022228e944566471f6402b2dd3c4711b35"
+    },
+    "THIRD_PARTY.md": {
+      "bytes": 3495,
+      "sha256": "b9b4c492fc925b05a154877b5b2b952d091e415a3e1b66d1a9708bd1a89bc8f5"
+    },
+    "licenses/Apache-2.0.txt": {
+      "bytes": 11358,
+      "sha256": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+    },
+    "licenses/BSD-2-Clause.txt": {
+      "bytes": 1641,
+      "sha256": "6313108c23efffa36948f8b2cff1560a5935373b527b0e1a837cc77e6ed1bacd"
+    },
+    "licenses/BusyBox.txt": {
+      "bytes": 18348,
+      "sha256": "bbfc9843646d483c334664f651c208b9839626891d8f17604db2146962f43548"
+    },
+    "licenses/GPL-2.0.txt": {
+      "bytes": 18600,
+      "sha256": "8780e78a1a737e127f25a65f6d95269bffd36158dc261114de7859b490bfc5aa"
+    },
+    "licenses/Tanmatsu-coprocessor-MIT.txt": {
+      "bytes": 1076,
+      "sha256": "785295b38e9a310d9c21d79808004866ded486b027917f54881d61c171c623fa"
+    },
+    "licenses/uClibc-LGPL-2.1.txt": {
+      "bytes": 26423,
+      "sha256": "ec60b993835e2c6b79e6d9226345f4e614e686eb57dc13b6420c15a33a8996e5"
+    },
+    "sd/apps/tanmatsu-linux/LICENSE": {
+      "bytes": 1234,
+      "sha256": "6f5e7e1112162dfe57b3d33edb6f37914db303b975398a523fe45d9bee5ee8e6"
+    },
+    "sd/apps/tanmatsu-linux/boot/Image": {
+      "bytes": 2564872,
+      "sha256": "804e2f3b5bacb5bd2bdf28cefe11949e2813b1c2b1931859406808132c3171ea"
+    },
+    "sd/apps/tanmatsu-linux/boot/initramfs": {
+      "bytes": 556654,
+      "sha256": "abfdd88c47ab7de0da953e66a67970f4536b84eae1bc9e186e3bfa480d484508"
+    },
+    "sd/apps/tanmatsu-linux/boot/manifest.bin": {
+      "bytes": 140,
+      "sha256": "fad0be1d4768934e8873f16b3a270326d354383fc1e3b15620d7685bffb33d7f"
+    },
+    "sd/apps/tanmatsu-linux/boot/rootfs.sqfs": {
+      "bytes": 569344,
+      "sha256": "d493e73e5e1def5db1aac7492e424721e0671b0ddbc8c9966685a49b1505cd67"
+    },
+    "sd/apps/tanmatsu-linux/boot/rootfs.sqfs.sha256": {
+      "bytes": 65,
+      "sha256": "555a3d92b36928f25f16aea0dd3751ea77d620cb2c76375e84b8a7f7c8712697"
+    },
+    "sd/apps/tanmatsu-linux/boot/tanmatsu.dtb": {
+      "bytes": 1964,
+      "sha256": "afc8816a41ac51fc370a90c2b62c747fb595d643777cbb59a9cd9ca945cc4592"
+    },
+    "sd/apps/tanmatsu-linux/boot/userspace-abi.json": {
+      "bytes": 2285,
+      "sha256": "433214d235009a5873786b4e8929aa8e659b286a647ddd383b01eb8c414c8e52"
+    },
+    "sd/apps/tanmatsu-linux/icon.png": {
+      "bytes": 168,
+      "sha256": "2e8751058b47580e980b9258c2b96ddfb387ab941a2347a2da6a0d019f5cf95f"
+    },
+    "sd/apps/tanmatsu-linux/linux-loader.bin": {
+      "bytes": 309200,
+      "sha256": "20463161d91cfe7aa265d6db443ff7ec9d1b37b5ae41a43051d8f8d86dd0a4e0"
+    },
+    "sd/apps/tanmatsu-linux/metadata.json": {
+      "bytes": 501,
+      "sha256": "9a6bcc95dda1ba2a2217330d0dfa5f823e8b685aa666151469832bb71a5f4b93"
+    },
+    "sources.lock.json": {
+      "bytes": 7723,
+      "sha256": "92808c817b670c189d7b3e2c6e54f201e0d7259cc4fea67b22448149dd67eafb"
+    },
+    "tools/create_state.py": {
+      "bytes": 3160,
+      "sha256": "19966e319e9793912b37fb4a696d784d253909b26d271f7e3340556defd84b7a"
+    }
+  }
+}

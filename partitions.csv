@@ -1,0 +1,10 @@
+# Build metadata only. Install linux-loader.bin through the existing launcher/AppFS.
+# Name, Type, SubType, Offset, Size, Flags
+coredump,data,coredump,0x9000,64K,
+nvs,data,nvs,0x19000,16K,
+otadata,data,ota,0x1d000,8K,
+phy_init,data,phy,0x1f000,4K,
+ota_0,app,ota_0,0x20000,2048K,
+ota_1,app,ota_1,0x220000,2048K,
+appfs,0x43,3,0x420000,8192K,
+locfd,data,fat,0xc20000,3968K,

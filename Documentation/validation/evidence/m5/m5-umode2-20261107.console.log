@@ -1,0 +1,198 @@
+--- Waiting for the device to reconnect.
+2026-11-07 22:24:29 I (1260) main_task: Started on CPU0
+2026-11-07 22:24:29 I (1260) main_task: Calling app_main()
+2026-11-07 22:24:29 I (1260) Gaijin: Gaijin M5 contract=1 board=7 BSP=1.6.4 launcher=0.2.8 radio=3.4.0 MCU=r9 (target)
+2026-11-07 22:24:29 I (1260) Gaijin: PSRAM=32 MiB unmanaged; hart0 M-mode; hart1 held by IDF unicore startup
+2026-11-07 22:24:29 I (1260) Gaijin SD reset: LDO4 disabled, bypass off; discharge wait 4000 ms
+2026-11-07 22:24:33 I (5410) Gaijin SD reset: LDO4 restored at 3.3 V; initializing slot 0
+2026-11-07 22:24:33 I (5450) SD reference: loader LBA0 fnv1a=b700eedc nonzero=13 signature=55aa FAT-start=63
+2026-11-07 22:24:33 I (5450) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+2026-11-07 22:24:33 I (5450) SD reference LBA0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+2026-11-07 22:24:33 I (5450) Gaijin: load Image: 2701784 bytes -> 0x48000000
+2026-11-07 22:24:34 I (5990) Gaijin: load tanmatsu.dtb: 2370 bytes -> 0x48800000
+2026-11-07 22:24:34 I (6000) Gaijin: load initramfs: 581458 bytes -> 0x49000000
+2026-11-07 22:24:34 I (6120) Gaijin: SD card unmounted
+2026-11-07 22:24:34 I (6480) Gaijin display: 480x800 RGB565 at 0x48e00000; Linux owns DMA refresh
+2026-11-07 22:24:34 I (6490) Gaijin: verified Image memory=2822760; DTB=0x48800000; initrd=581458
+2026-11-07 22:24:34 I (6490) Gaijin: handoff -> Linux 0x48000000 a0=0 a1=0x48800000; reset recovers launcher
+2026-11-07 22:24:34 [    0.000000] Linux version 6.18.35-gaijin-m5-umode2 (user@host) (riscv32-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0, GNU ld (crosstool-NG esp-15.2.0_20251204) 2.45) #1 Sat Nov  7 22:12:15 EET 2026
+2026-11-07 22:24:34 [    0.000000] Machine model: Tanmatsu rev7 Gaijin M5
+2026-11-07 22:24:34 [    0.000000] earlycon: esp32p4usbjtag0 at MMIO32 0x500d2000 (options '')
+2026-11-07 22:24:34 [    0.000000] printk: legacy bootconsole [esp32p4usbjtag0] enabled
+2026-11-07 22:24:34 [    0.000000] OF: reserved mem: 0x48e00000..0x48ebbfff (752 KiB) map non-reusable framebuffer@48e00000
+2026-11-07 22:24:34 [    0.000000] Zone ranges:
+2026-11-07 22:24:34 [    0.000000]   Normal   [mem 0x0000000048000000-0x0000000049ffffff]
+2026-11-07 22:24:34 [    0.000000] Movable zone start for each node
+2026-11-07 22:24:34 [    0.000000] Early memory node ranges
+2026-11-07 22:24:34 [    0.000000]   node   0: [mem 0x0000000048000000-0x0000000049ffffff]
+2026-11-07 22:24:34 [    0.000000] Initmem setup node 0 [mem 0x0000000048000000-0x0000000049ffffff]
+2026-11-07 22:24:34 [    0.000000] Falling back to deprecated "riscv,isa"
+2026-11-07 22:24:34 [    0.000000] riscv: base ISA extensions acim
+2026-11-07 22:24:34 [    0.000000] riscv: ELF capabilities acim
+2026-11-07 22:24:34 [    0.000000] Ticket spinlock: enabled
+2026-11-07 22:24:34 [    0.000000] Kernel command line: earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=tty0 console=ttyUJ0,115200n8 fbcon=rotate:1,font:VGA8x16 consoleblank=0 rdinit=/init loglevel=7 panic=0
+2026-11-07 22:24:34 [    0.000000] printk: log buffer data + meta data: 65536 + 204800 = 270336 bytes
+2026-11-07 22:24:34 [    0.000000] Dentry cache hash table entries: 4096 (order: 2, 16384 bytes, linear)
+2026-11-07 22:24:34 [    0.000000] Inode-cache hash table entries: 2048 (order: 1, 8192 bytes, linear)
+2026-11-07 22:24:34 [    0.000000] Built 1 zonelists, mobility grouping on.  Total pages: 8192
+2026-11-07 22:24:34 [    0.000000] mem auto-init: stack:all(zero), heap alloc:off, heap free:off
+2026-11-07 22:24:34 [    0.000000] SLUB: HWalign=64, Order=0-3, MinObjects=0, CPUs=1, Nodes=1
+2026-11-07 22:24:34 [    0.000000] NR_IRQS: 64, nr_irqs: 64, preallocated irqs: 0
+2026-11-07 22:24:34 [    0.000000] riscv-intc: 32 local interrupts mapped
+2026-11-07 22:24:34 [    0.000000] esp32p4-clic: 240 IRQ slots, INTMTX routing enabled
+2026-11-07 22:24:34 [    0.000000] clocksource: esp32p4-systimer: mask: 0xfffffffffffff max_cycles: 0x3b0a9be80, max_idle_ns: 440795202120 ns
+2026-11-07 22:24:34 [    0.000006] sched_clock: 52 bits at 16MHz, resolution 62ns, wraps every 2199023255531ns
+2026-11-07 22:24:34 [    0.002958] esp32p4-systimer: SYSTIMER @ 16000000 Hz, IRQ 17 (CLIC slot 17)
+2026-11-07 22:24:34 [    0.005598] Console: colour dummy device 80x25
+2026-11-07 22:24:34 [    0.007153] printk: legacy console [tty0] enabled
+2026-11-07 22:24:34 [    0.009984] Calibrating delay loop (skipped), value calculated using timer frequency.. 32.00 BogoMIPS (lpj=64000)
+2026-11-07 22:24:34 [    0.013443] pid_max: default: 4096 minimum: 301
+2026-11-07 22:24:34 [    0.015430] Mount-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+2026-11-07 22:24:34 [    0.018093] Mountpoint-cache hash table entries: 1024 (order: 0, 4096 bytes, linear)
+2026-11-07 22:24:34 [    0.025861] Memory: 28044K/32768K available (1894K kernel code, 316K rwdata, 305K rodata, 117K init, 116K bss, 4468K reserved, 0K cma-reserved)
+2026-11-07 22:24:34 [    0.032189] devtmpfs: initialized
+2026-11-07 22:24:34 [    0.037703] clocksource: jiffies: mask: 0xffffffff max_cycles: 0xffffffff, max_idle_ns: 7645041785100000 ns
+2026-11-07 22:24:34 [    0.041343] posixtimers hash table entries: 512 (order: 0, 2048 bytes, linear)
+2026-11-07 22:24:34 [    0.043951] futex hash table entries: 16 (256 bytes on 1 NUMA nodes, total 0 KiB, linear).
+2026-11-07 22:24:34 [    0.071009] cpu0: Ratio of byte access time to unaligned word access is 1.47, unaligned accesses are fast
+2026-11-07 22:24:34 [    0.074388] esp32p4_cache: registered ROM-thunk noncoherent ops, block=64
+2026-11-07 22:24:34 [    0.085239] clocksource: Switched to clocksource esp32p4-systimer
+2026-11-07 22:24:34 [    0.115344] Unpacking initramfs...
+2026-11-07 22:24:34 [    0.120437] workingset: timestamp_bits=30 max_order=13 bucket_order=0
+2026-11-07 22:24:34 [    0.123553] squashfs: version 4.0 (2009/01/31) Phillip Lougher
+2026-11-07 22:24:34 [    0.125842] io scheduler mq-deadline registered
+2026-11-07 22:24:34 [    0.127344] io scheduler kyber registered
+2026-11-07 22:24:34 [    0.128850] io scheduler bfq registered
+2026-11-07 22:24:34 [    0.165061] Console: switching to colour frame buffer device 100x30
+2026-11-07 22:24:34 [    0.220827] tanmatsu-fb 50081000.framebuffer: fb0: 480x800 RGB565, landscape fbcon, 20 Hz cache flush
+2026-11-07 22:24:35 [    0.474936] Freeing initrd memory: 564K
+2026-11-07 22:24:35 [    0.534348] 500d2000.serial: ttyUJ0 at MMIO 0x500d2000 (irq = 0, base_baud = 3000000) is a P4 USB Serial/JTAG
+2026-11-07 22:24:35 [    0.550606] printk: legacy console [ttyUJ0] enabled
+2026-11-07 22:24:35 [    0.550606] printk: legacy console [ttyUJ0] enabled
+2026-11-07 22:24:35 [    0.565922] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+2026-11-07 22:24:35 [    0.565922] printk: legacy bootconsole [esp32p4usbjtag0] disabled
+2026-11-07 22:24:35 [    0.583267] esp32p4-usb-serial-jtag 500d2000.serial: polled USB console: ttyUJ0 (4 ms)
+2026-11-07 22:24:35 [    0.614014] loop: module loaded
+2026-11-07 22:24:35 [    0.627656] tanmatsu-power 5010800c.power-controller: Launcher reset ready
+2026-11-07 22:24:35 [    0.643806] device-mapper: ioctl: 4.50.0-ioctl (2025-04-28) initialised: dm-devel@lists.linux.dev
+2026-11-07 22:24:35 [    0.685350] tanmatsu-sd 50083000.mmc: slot 0 polled IDMAC, file-sector write gate, 1MHz maximum; no hotplug
+2026-11-07 22:24:35 [    0.737671] input: Tanmatsu MCU keyboard as /devices/platform/i2c/i2c-0/0-005f/input/input0
+2026-11-07 22:24:35 [    0.760765] tanmatsu-mcu 0-005f: MCU r9 input: 20 ms polling, software repeat 400/50 ms
+2026-11-07 22:24:35 [    0.776591] i2c-gpio i2c: using lines 521 (SDA) and 522 (SCL)
+2026-11-07 22:24:35 [    0.798990] clk: Disabling unused clocks
+2026-11-07 22:24:35 [    0.815479] Freeing unused kernel image (initmem) memory: 116K
+2026-11-07 22:24:35 [    0.830242] This architecture does not have kernel memory protection.
+2026-11-07 22:24:35 [    0.844307] Run /init as init process
+2026-11-07 22:24:35 [    1.075702] mmc0: new SDHC card at address 0003
+2026-11-07 22:24:35 [    1.107743] mmcblk0: mmc0:0003 SD16G 14.5 GiB
+2026-11-07 22:24:35 [    1.144189] tanmatsu-sd 50083000.mmc: LBA0 dma=b700eedc sg=b700eedc nonzero=13 sig=55aa idsts=00000102 card-bytes=512 host-bytes=512
+2026-11-07 22:24:35 [    1.199145]  mmcblk0: p1
+2026-11-07 22:24:35 [    1.219813] FAT-fs (mmcblk0): bogus number of reserved sectors
+2026-11-07 22:24:35 [    1.234596] FAT-fs (mmcblk0): Can't find a valid FAT filesystem
+2026-11-07 22:24:35 mount: mounting /dev/mmcblk0 on /sd failed: Invalid argument
+2026-11-07 22:24:54 [   19.381108] loop0: detected capacity change from 0 to 1160
+2026-11-07 22:24:54 Gaijin SD: verified read-only base on /dev/loop0; switching root
+starting pid 44, tty '': '/etc/init.d/rcS'
+2026-11-07 22:24:54 Gaijin state: clean-start marker (RAM only)
+2026-11-07 22:24:54 Gaijin state: RAM fallback; image preserved for offline recovery
+2026-11-07 22:24:54 
+2026-11-07 22:24:54 Gaijin — Tanmatsu rev7
+2026-11-07 22:24:54 Linux (none) 6.18.35-gaijin-m5-umode2 #1 Sat Nov  7 22:12:15 EET 2026 riscv32 GNU/Linux
+2026-11-07 22:24:54 gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1
+2026-11-07 22:24:54 RV32 NOMMU; 32-bit pointers/long; little endian; soft-float calling convention.
+2026-11-07 22:24:54 Hardware F/D instructions and ilp32f/ilp32d binaries are unsupported.
+2026-11-07 22:24:54 Validated on Tanmatsu rev7 with the pinned RV32IMAC/ilp32 uClibc-ng bFLT toolchain.
+2026-11-07 22:24:54 ABI validation accepted 2026-10-28; compatibility is limited to this toolchain.
+2026-11-07 22:24:54 ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+2026-11-07 22:24:54 Gaijin: userspace ABI probe PASS
+2026-11-07 22:24:54               total        used        free      shared  buff/cache   available
+2026-11-07 22:24:54 Mem:          28980        4672       18264           0        6044       21744
+2026-11-07 22:24:55 Read-only base; see /run/gaijin-persist for state status. Use shutdown for Launcher, poweroff to turn off, or halt.
+2026-11-07 22:24:55 Type m1-smoke, m2-sd-test and m3-state-test for checks.
+2026-11-07 22:24:55 
+starting pid 58, tty '/dev/ttyUJ0': '-/bin/sh'
+2026-11-07 22:24:55 /root # [   47.284275] random: crng init done
+2026-11-07 22:25:28 
+2026-11-07 22:25:28 /root # uname -r
+2026-11-07 22:25:35 6.18.35-gaijin-m5-umode2
+2026-11-07 22:25:35 /root # gai	^H^H
+2026-11-07 22:25:41 sh: can't execute 'gai': No such file or directory
+2026-11-07 22:25:41 /root # gaijin-persist-^H
+2026-11-07 22:25:50 sh: can't execute 'gaijin-persist': No such file or directory
+2026-11-07 22:25:50 /root # gaijin-persist status
+2026-11-07 22:25:58 usage: gaijin-persist start|stop
+2026-11-07 22:25:58 /root # m1-smoke
+2026-11-07 22:26:07 Linux (none) 6.18.35-gaijin-m5-umode2 #1 Sat Nov  7 22:12:15 EET 2026 riscv32 GNU/Linux
+2026-11-07 22:26:07 earlycon=esp32p4usbjtag,mmio32,0x500d2000 console=tty0 console=ttyUJ0,115200n8 fbcon=rotate:1,font:VGA8x16 consoleblank=0 rdinit=/init loglevel=7 panic=0
+2026-11-07 22:26:07 processor	: 0
+2026-11-07 22:26:07 hart		: 0
+2026-11-07 22:26:07 isa		: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+2026-11-07 22:26:07 mmu		: none
+2026-11-07 22:26:07 mvendorid	: 0x612
+2026-11-07 22:26:07 marchid		: 0x80000003
+2026-11-07 22:26:07 mimpid		: 0x1
+2026-11-07 22:26:07 hart isa	: rv32imac_zicntr_zicsr_zifencei_zihpm_zaamo_zalrsc_zca
+2026-11-07 22:26:07 
+2026-11-07 22:26:07 ABI PASS: rv32imac ilp32 LE uClibc bFLT; software float/double, relocation, 256KiB malloc, vfork/exec/wait
+2026-11-07 22:26:08 pipeline-ok
+2026-11-07 22:26:08 tmpfs-ok
+2026-11-07 22:26:08 speed 115200 baud;stty: standard input
+2026-11-07 22:26:08  line = 0;
+2026-11-07 22:26:08 intr = ^C; quit = ^\; erase = ^?; kill = ^U; eof = ^D; eol = <undef>;
+2026-11-07 22:26:08 eol2 = <undef>; swtch = <undef>; start = ^Q; stop = ^S; susp = ^Z; rprnt = ^R;
+2026-11-07 22:26:08 werase = ^W; lnext = ^V; flush = ^O; min = 1; time = 0;
+2026-11-07 22:26:08 -parenb -parodd -cmspar cs8 hupcl -cstopb cread clocal -crtscts
+2026-11-07 22:26:08 -ignbrk -brkint -ignpar -parmrk -inpck -istrip -inlcr -igncr icrnl -ixon -ixoff
+2026-11-07 22:26:08 -iuclc -ixany -imaxbel -iutf8
+2026-11-07 22:26:08 opost -olcuc -ocrnl onlcr -onocr -onlret -ofill -ofdel nl0 cr0 tab0 bs0 vt0 ff0
+2026-11-07 22:26:08 isig icanon iexten echo echoe echok -echonl -noflsh -xcase -tostop -echoprt
+2026-11-07 22:26:08 echoctl echoke -flusho
+2026-11-07 22:26:08               total        used        free      shared  buff/cache   available
+2026-11-07 22:26:08 Mem:          28980        5900       17012           0        6068       20572
+2026-11-07 22:26:08 MemTotal:          28980 kB
+2026-11-07 22:26:08 MemFree:           16948 kB
+2026-11-07 22:26:08 MemAvailable:      20516 kB
+2026-11-07 22:26:08 Buffers:            3788 kB
+2026-11-07 22:26:08 Cached:             1228 kB
+2026-11-07 22:26:08 SwapCached:            0 kB
+2026-11-07 22:26:08 Active:             4776 kB
+2026-11-07 22:26:08 Inactive:            240 kB
+2026-11-07 22:26:08 Active(anon):          0 kB
+2026-11-07 22:26:08 Inactive(anon):        0 kB
+2026-11-07 22:26:08 Active(file):       4776 kB
+2026-11-07 22:26:08 Inactive(file):      240 kB
+2026-11-07 22:26:08 Unevictable:           0 kB
+2026-11-07 22:26:08 Mlocked:               0 kB
+2026-11-07 22:26:08 MmapCopy:           2952 kB
+2026-11-07 22:26:08 SwapTotal:             0 kB
+2026-11-07 22:26:08 SwapFree:              0 kB
+2026-11-07 22:26:08 Dirty:                 0 kB
+2026-11-07 22:26:08 Writeback:             0 kB
+2026-11-07 22:26:08 AnonPages:             0 kB
+2026-11-07 22:26:08 Mapped:                0 kB
+2026-11-07 22:26:08 Shmem:                 0 kB
+2026-11-07 22:26:08 KReclaimable:       1052 kB
+2026-11-07 22:26:08 Slab:               3324 kB
+2026-11-07 22:26:08 SReclaimable:       1052 kB
+2026-11-07 22:26:08 SUnreclaim:         2272 kB
+2026-11-07 22:26:08 KernelStack:         192 kB
+2026-11-07 22:26:08 PageTables:            0 kB
+2026-11-07 22:26:08 SecPageTables:         0 kB
+2026-11-07 22:26:08 NFS_Unstable:          0 kB
+2026-11-07 22:26:08 Bounce:                0 kB
+2026-11-07 22:26:08 WritebackTmp:          0 kB
+2026-11-07 22:26:08 CommitLimit:       14488 kB
+2026-11-07 22:26:08 Committed_AS:          0 kB
+2026-11-07 22:26:08 VmallocTotal:          0 kB
+2026-11-07 22:26:08 VmallocUsed:           0 kB
+2026-11-07 22:26:08 VmallocChunk:          0 kB
+2026-11-07 22:26:08 Percpu:               32 kB
+2026-11-07 22:26:08 Balloon:               0 kB
+2026-11-07 22:26:08 M1 smoke PASS (20 external execs). Check Ctrl-C, editing, shell exit and USB reconnect manually.
+2026-11-07 22:26:08 /root # cp /sd/gaijin/m5-umode-probe /tmp/m5-umode-probe
+2026-11-07 22:26:35 cp: can't stat '/sd/gaijin/m5-umode-probe': No such file or directory
+2026-11-07 22:26:35 /root # df
+2026-11-07 22:26:37 Filesystem           1K-blocks      Used Available Use% Mounted on
+2026-11-07 22:26:37 /dev/mmcblk0p1        15164128     69872  15094256   0% /sd
+2026-11-07 22:26:37 /dev/loop0                 608       608         0 100% /
+2026-11-07 22:26:37 /root # 

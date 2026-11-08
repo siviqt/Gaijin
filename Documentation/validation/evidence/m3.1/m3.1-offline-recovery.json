@@ -1,0 +1,26 @@
+{
+  "card_image": "/media/siv/CARD-UUID/gaijin/userdata.ext2",
+  "backup": "backups/userdata-unclean-2026-10-29.ext2.gz",
+  "original_sha256": "69c096ca0c676552a70ff709249cb854b93fa952c918ac6a55d38a117e1d0327",
+  "repaired_sha256": "ce32c324a2362691f31507f062d1977f4d8823bf61d048a1d173b2d91f562cca",
+  "changed_bytes": 9,
+  "changed_blocks_1k": [
+    1
+  ],
+  "e2fsck_exit": 0,
+  "file_count": 12,
+  "changed_files": [
+    "gaijin/userdata.ext2"
+  ],
+  "data_outside_primary_superblock_unchanged": true,
+  "target_boot_verification": "PASS: persistent mount, saved prompt, m3-state-test verify, clean persistence stop and shell respawn",
+  "date": "2026-10-29",
+  "original_superblock_state": 0,
+  "repaired_superblock_state": 1,
+  "repair_method": "e2fsck -fp on a working copy; verify with e2fsck -fn; apply exactly the verified byte differences to the original-size SD file; fsync and verify SD file again",
+  "limits": "Host repair and post-recovery Tanmatsu verification complete. Host image hashes describe the repair before the subsequent device boot.",
+  "target_capture": "Documentation/m3.1-hw-recovered.log",
+  "target_capture_sha256": "50787cfd4279b9844d83b51adb60b5d7d8b425ca1236a28d292da6b24d51f813",
+  "backup_format": "gzip; decompressed SHA256 equals original_sha256",
+  "backup_compressed_sha256": "f2e5e0ff1d6826ff59aacad89d9a2619800ed133456634c1d43696b81a1813b1"
+}

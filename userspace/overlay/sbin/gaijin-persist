@@ -1,0 +1,129 @@
+#!/bin/sh
+# Explicit mounts; immutable /etc remains the factory configuration.
+gaijin_state_note() {
+    printf 'Gaijin state: %s\n' "$1" >&2
+    if [ "${GAIJIN_POWER_TRACE:-}" = 1 ] && [ -c /dev/kmsg ]; then
+        printf '<6>Gaijin state: %s\n' "$1" > /dev/kmsg || :
+    fi
+}
+
+gaijin_persist_stop() {
+    if [ ! -f /run/gaijin-state-map ]; then
+        echo 'Gaijin state: already inactive'
+        return 0
+    fi
+    # Flags track partial cleanup so busy mounts/map removal can be retried.
+    if [ -f /run/gaijin-state-mounted ]; then
+        gaijin_state_note 'syncfs /persist begin'
+        gaijin-state-map flush || return 1
+        gaijin_state_note 'syncfs /persist complete'
+    fi
+    rm -f /run/gaijin-persist
+    if [ -f /run/gaijin-state-root ]; then
+        gaijin_state_note 'unmount /root begin'
+        umount /root || return 1
+        gaijin_state_note 'unmount /root complete'
+        rm -f /run/gaijin-state-root
+    fi
+    if [ -f /run/gaijin-state-home ]; then
+        gaijin_state_note 'unmount /home begin'
+        umount /home || return 1
+        gaijin_state_note 'unmount /home complete'
+        rm -f /run/gaijin-state-home
+    fi
+    if [ -f /run/gaijin-state-mounted ]; then
+        gaijin_state_note 'unmount /persist begin'
+        umount /persist || return 1
+        gaijin_state_note 'unmount /persist complete'
+        rm -f /run/gaijin-state-mounted
+    fi
+    gaijin_state_note 'verify raw ext2 clean state begin'
+    gaijin-state-map verify-clean || return 1
+    gaijin_state_note 'verify raw ext2 clean state complete'
+    gaijin_state_note 'remove state map begin'
+    gaijin-state-map stop || return 1
+    gaijin_state_note 'remove state map complete'
+    rm -f /run/gaijin-state-map /run/gaijin-persist /run/gaijin-prompt
+    echo 'Gaijin state: cleanly unmounted; physical reset may return to Launcher'
+}
+
+gaijin_persist_abort() {
+    gaijin_persist_stop || echo 'Gaijin state: cleanup incomplete; retry gaijin-persist stop before reset'
+    return 1
+}
+
+gaijin_persist_start() {
+    case " $(cat /proc/cmdline) " in
+        *" gaijin.clean "*|*" gaijin.rescue "*) echo 'Gaijin state: clean start (RAM only)'; return 1 ;;
+    esac
+    # Host-side marker gives a clean start without rebuilding the loader.
+    if [ -e /sd/gaijin/clean-start ]; then
+        echo 'Gaijin state: clean-start marker (RAM only)'
+        return 1
+    fi
+    [ ! -e /run/gaijin-state-map ] || { echo 'Gaijin state: already mapped'; return 1; }
+    state_device=$(gaijin-state-map) || return 1
+    printf '%s\n' "$state_device" > /run/gaijin-state-map
+    if ! mount -t ext2 -o rw,noatime,nosuid,nodev,errors=remount-ro "$state_device" /persist; then
+        gaijin_persist_abort
+        return 1
+    fi
+    touch /run/gaijin-state-mounted
+    # Provisioned directories and version marker only; never initialize or repair.
+    if [ "$(cat /persist/state-version)" != gaijin-state-v1 ] ||
+       [ ! -d /persist/home/root ] || [ -L /persist/home ] || [ -L /persist/home/root ] ||
+       [ ! -d /persist/settings ] || [ -L /persist/settings ] ||
+       [ -L /persist/state-version ]; then
+        echo 'Gaijin state: incompatible directory layout'
+        gaijin_persist_abort
+        return 1
+    fi
+    if ! mount -o bind /persist/home /home; then
+        gaijin_persist_abort
+        return 1
+    fi
+    touch /run/gaijin-state-home
+    if ! mount -o bind /persist/home/root /root; then
+        gaijin_persist_abort
+        return 1
+    fi
+    touch /run/gaijin-state-root
+    # Allowlist: shell prompt preference only. Never source persisted shell code.
+    # Other settings are reserved until their owning subsystem defines a format.
+    if [ -f /persist/settings/prompt ] && [ ! -L /persist/settings/prompt ]; then
+        state_prompt=$(head -c 33 /persist/settings/prompt)
+        case "$state_prompt" in
+            *[!a-zA-Z0-9_.-]*|'') ;;
+            *) [ "${#state_prompt}" -gt 32 ] || printf '%s\n' "$state_prompt" > /run/gaijin-prompt ;;
+        esac
+    fi
+    printf '%s\n' "$state_device" > /run/gaijin-persist
+    echo "Gaijin state: persistent /home, /root and settings on $state_device"
+    return 0
+}
+
+gaijin_persist_status() {
+    if [ -f /run/gaijin-persist ] && [ -f /run/gaijin-state-map ] &&
+       [ -f /run/gaijin-state-mounted ] && [ -f /run/gaijin-state-root ] &&
+       [ -f /run/gaijin-state-home ]; then
+        state_device=
+        IFS= read -r state_device < /run/gaijin-persist
+        printf 'Gaijin state: active on %s; /root and /home are persistent\n' "$state_device"
+    elif [ -e /run/gaijin-state-map ] || [ -e /run/gaijin-persist ] ||
+         [ -e /run/gaijin-state-mounted ] || [ -e /run/gaijin-state-root ] ||
+         [ -e /run/gaijin-state-home ]; then
+        echo 'Gaijin state: cleanup incomplete; run gaijin-persist stop before reset'
+        return 1
+    elif [ -e /sd/gaijin/clean-start ]; then
+        echo 'Gaijin state: inactive; clean-start marker (RAM only)'
+    else
+        echo 'Gaijin state: inactive; /root and /home use RAM fallback'
+    fi
+}
+
+case "$1" in
+    start) gaijin_persist_start ;;
+    stop) gaijin_persist_stop ;;
+    status) gaijin_persist_status ;;
+    *) echo 'usage: gaijin-persist start|stop|status'; exit 1 ;;
+esac

@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-08",
+  "version": "0.5.17",
+  "appfs_revision": 31,
+  "application_id": "com.github.siviq.gaijin",
+  "components": "Loader, kernel and pinned NOMMU userspace rebuilt",
+  "host_tests": {
+    "run": 93,
+    "passed": 93,
+    "skipped": 0
+  },
+  "clic_rv32_cases": 60,
+  "clic_negative_control": "PASS",
+  "generic_user_strings": "PASS: bounds, overflow, truncation, near-end NUL and negative control",
+  "actual_rv32_kernel_string_objects": "PASS under QEMU user harness",
+  "native_vi": "PASS: unnamed/named edit-save-reopen at 80x24 and 80x26 with fatal UB checks",
+  "target_vi_guard": "Verified branch around open when filename is NULL",
+  "app_repository_schema": "PASS with the pinned application-repository Ajv validator",
+  "package_integrity": "PASS: complete manifest, ABI, matching initramfs/SquashFS and AppFS assets",
+  "publication_audit": "PASS: redacted source, specification metadata and application files",
+  "kernel_builder": "builder@gaijin",
+  "font": "10x18",
+  "hardware_validated": false,
+  "remaining": [
+    "Device test of bare vi and invalid-pointer syscall probe",
+    "Remaining LCD flicker",
+    "M5 hardware acceptance"
+  ],
+  "components_sha256": {
+    "loader": "1224edd28c6fef3637c590538cac82a0d0e2d2311d372c91a2a27db449f6f615",
+    "Image": "8251d0019fd79770c1c2204a3d0c8cfabe65a1051735b58ebfff7674de60e3ff",
+    "initramfs": "935d7176a088fb80e0447cadf56d3c081af843ff30f8052f43869eb1004e121b",
+    "rootfs.sqfs": "b862b94cdcb45c3b287776fb082a778c8a8b424eafdef3546104071c92e83e6e"
+  }
+}

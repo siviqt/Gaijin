@@ -11,7 +11,7 @@ import subprocess
 import tempfile
 import zipfile
 from package_boot import package
-from verify_userspace import check_release_branding
+from verify_userspace import check_release_branding, read_newc, resolve_path
 
 ROOT = Path(__file__).resolve().parents[1]
 ABI = "gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1"
@@ -43,6 +43,16 @@ def check_loader(loader):
         raise ValueError("loader is not current: expected framebuffer setup and SD reset; run make loader")
 
 
+def check_userspace_paths(archive):
+    entries, _ = read_newc(archive)
+    for name in ("sbin/gaijin-sd-root", "usr/bin/m2-sd-test"):
+        _, item = resolve_path(entries, name)
+        paths = set(re.findall(rb"/sd/apps/([^/\s]+)/boot", item["data"]))
+        if (paths != {APP_ID.encode()} or
+                item["data"] != (ROOT / "userspace/overlay" / name).read_bytes()):
+            raise ValueError(f"stale userspace application path in {name}; run make userspace")
+
+
 def file_record(path):
     data = path.read_bytes()
     return dict(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
@@ -52,7 +62,7 @@ def stage_launcher(loader, output):
     """Stage only application metadata/assets; never invent a kernel manifest."""
     metadata = json.loads((ROOT / "launcher/metadata.json").read_text())
     app = metadata["application"][0]
-    expected = dict(targets=["tanmatsu"], type="appfs", executable="linux-loader.bin", revision=31,
+    expected = dict(targets=["tanmatsu"], type="appfs", executable="linux-loader.bin", revision=32,
                     external_only=True, assets=[dict(source_file=name, target_file=name) for name in APP_ASSETS])
     if app != expected:
         raise ValueError("metadata must match Tanmatsu Launcher 0.2.8 AppFS installation")
@@ -70,6 +80,8 @@ def stage_launcher(loader, output):
 
 
 def stage_application(loader, kernel, userspace, output):
+    if output.name != APP_ID:
+        raise ValueError(f"application directory must be named {APP_ID}")
     check_loader(loader)
     archive = userspace / "images/rootfs.cpio.gz"
     rootfs = userspace / "images/rootfs.squashfs"
@@ -80,6 +92,7 @@ def stage_application(loader, kernel, userspace, output):
         raise ValueError("missing/stale userspace verification; run make userspace")
     if report.get("rootfs", {}).get("sha256") != file_record(rootfs)["sha256"]:
         raise ValueError("missing/stale SD rootfs verification; run make userspace")
+    check_userspace_paths(archive)
     config = (kernel / ".config").read_text().splitlines()
     for setting in ("# CONFIG_MMU is not set", "# CONFIG_SMP is not set", "# CONFIG_FPU is not set",
                     "CONFIG_SERIAL_ESP32P4_USB_JTAG=y", "CONFIG_BINFMT_FLAT=y", "CONFIG_BINFMT_SCRIPT=y",
@@ -118,12 +131,13 @@ def stage_application(loader, kernel, userspace, output):
     # Prepare the entire directory, then replace it. No old files survive.
     output.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(dir=output.parent, prefix="app-stage-") as temp:
-        stage = Path(temp) / "current"
+        stage = Path(temp) / APP_ID
         stage_launcher(loader, stage)
         package(kernel / "arch/riscv/boot/Image", kernel / "tanmatsu.dtb", archive, stage / "boot")
         shutil.copyfile(userspace / "gaijin-userspace.json", stage / "boot/userspace-abi.json")
         shutil.copyfile(rootfs, stage / "boot/rootfs.sqfs")
         (stage / "boot/rootfs.sqfs.sha256").write_text(file_record(rootfs)["sha256"] + "\n")
+        check_application(stage)
         previous = Path(temp) / "previous"
         if output.exists():
             output.rename(previous)
@@ -135,9 +149,40 @@ def stage_application(loader, kernel, userspace, output):
             raise
 
 
+def check_application(app):
+    """Check the installed directory too: valid hashes cannot fix a wrong slug."""
+    if app.name != APP_ID:
+        raise ValueError(f"application directory must be named {APP_ID}")
+    metadata = json.loads((app / "metadata.json").read_text())
+    if metadata != json.loads((ROOT / "launcher/metadata.json").read_text()):
+        raise ValueError("application metadata differs from source; run make package")
+    for name in (*APP_ASSETS, "icon.png", "linux-loader.bin"):
+        if not (app / name).is_file():
+            raise ValueError(f"application asset missing: {name}")
+    check_loader(app / "linux-loader.bin")
+    check_userspace_paths(app / "boot/initramfs")
+    # Check the boot manifest independently of CURRENT.json.
+    manifest = b"GAIJIN1\0" + struct.pack("<4I", 1, 7, 1, 0)
+    for name in ("Image", "tanmatsu.dtb", "initramfs"):
+        record = file_record(app / "boot" / name)
+        manifest += struct.pack("<I", record["bytes"]) + bytes.fromhex(record["sha256"])
+    manifest += bytes(8)
+    if (app / "boot/manifest.bin").read_bytes() != manifest:
+        raise ValueError("boot manifest does not match the current set")
+    rootfs_hash = file_record(app / "boot/rootfs.sqfs")["sha256"]
+    if (app / "boot/rootfs.sqfs.sha256").read_text() != rootfs_hash + "\n":
+        raise ValueError("SD rootfs checksum does not match the current set")
+    userspace = json.loads((app / "boot/userspace-abi.json").read_text())
+    if (userspace.get("archive_sha256") != file_record(app / "boot/initramfs")["sha256"] or
+            userspace.get("rootfs", {}).get("sha256") != rootfs_hash):
+        raise ValueError("userspace verification does not match the installed files")
+    return metadata
+
+
 def check_current(build):
     report = json.loads((build / "CURRENT.json").read_text())
-    if report.get("format") != 1 or report.get("bootargs") != bootargs():
+    if (report.get("format") != 1 or report.get("bootargs") != bootargs() or
+            report.get("application_id") != APP_ID):
         raise ValueError("current build record is incompatible; run make package")
     files = report["files"]
     staged = {p.relative_to(build).as_posix() for p in (build / "sd").rglob("*") if p.is_file()}
@@ -150,25 +195,11 @@ def check_current(build):
         if file_record(build / relative) != expected:
             raise ValueError(f"current build checksum mismatch: {name}; run make package")
     app = build / APP
-    metadata = json.loads((app / "metadata.json").read_text())
-    if metadata != json.loads((ROOT / "launcher/metadata.json").read_text()):
-        raise ValueError("staged metadata differs from source; run make package")
+    metadata = check_application(app)
     if (report.get("appfs_binary") != str(APP / "linux-loader.bin") or
             report.get("appfs_revision") != metadata["application"][0]["revision"] or
             report.get("version") != metadata["version"]):
         raise ValueError("build record and application metadata disagree")
-    check_loader(app / "linux-loader.bin")
-    # Check the boot manifest independently of CURRENT.json.
-    manifest = b"GAIJIN1\0" + struct.pack("<4I", 1, 7, 1, 0)
-    for name in ("Image", "tanmatsu.dtb", "initramfs"):
-        record = file_record(app / "boot" / name)
-        manifest += struct.pack("<I", record["bytes"]) + bytes.fromhex(record["sha256"])
-    manifest += bytes(8)
-    if (app / "boot/manifest.bin").read_bytes() != manifest:
-        raise ValueError("boot manifest does not match the current set")
-    rootfs_hash = file_record(app / "boot/rootfs.sqfs")["sha256"]
-    if (app / "boot/rootfs.sqfs.sha256").read_text() != rootfs_hash + "\n":
-        raise ValueError("SD rootfs checksum does not match the current set")
     # A separately rebuilt component must be packaged before it can be installed.
     for source, staged_name in (("loader/linux-loader.bin", "linux-loader.bin"),
                                 ("kernel/arch/riscv/boot/Image", "boot/Image"),
@@ -230,6 +261,7 @@ def publish(build):
     files = {p.relative_to(build).as_posix(): file_record(p) for p in sorted(paths)}
     metadata = json.loads((build / APP / "metadata.json").read_text())
     report = dict(format=1, version=metadata["version"], appfs_revision=metadata["application"][0]["revision"],
+                  application_id=APP_ID,
                   kernel_release=(build / "kernel/include/config/kernel.release").read_text().strip(),
                   abi=ABI, bootargs=bootargs(), sd_root="sd", appfs_binary=str(APP / "linux-loader.bin"),
                   verification="Host integrity record; hardware results are in Documentation/validation/README.md",
@@ -252,10 +284,15 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     action = parser.add_mutually_exclusive_group()
     action.add_argument("--check", action="store_true", help="verify the complete staged set without rebuilding")
+    action.add_argument("--check-app", type=Path, help="verify a copied application and its directory name")
     action.add_argument("--install", action="store_true", help="verify and upload the staged AppFS binary")
     parser.add_argument("--badgelink", default="../../tanmatsu-sdk/tools/badgelink.sh")
     args = parser.parse_args()
     try:
+        if args.check_app:
+            metadata = check_application(args.check_app)
+            print(f"Application verified: {args.check_app} ({metadata['version']}, revision {metadata['application'][0]['revision']})")
+            return
         build = ROOT / "build"
         if args.check or args.install:
             report = check_current(build)

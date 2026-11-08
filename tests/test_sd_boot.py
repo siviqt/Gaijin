@@ -25,7 +25,7 @@ class SDBootTests(unittest.TestCase):
         self.bin.mkdir()
         self.log = self.work / "commands"
         self.env = dict(os.environ, PATH=f"{self.bin}:/usr/bin:/bin", LOG=str(self.log))
-        for directory in ("sd/apps/com.github.siviq.gaijin/boot", "dev", "proc", "etc", "newroot/etc",
+        for directory in ("sd/apps/com.github.siviqt.gaijin/boot", "dev", "proc", "etc", "newroot/etc",
                           "newroot/sbin", "newroot/sd", "newroot/proc", "newroot/sys", "newroot/dev",
                           "newroot/run", "newroot/tmp", "newroot/root", "newroot/home",
                           "newroot/persist", "newroot/usr/local"):
@@ -38,7 +38,7 @@ class SDBootTests(unittest.TestCase):
         init.chmod(0o755)
         (self.work / "dev/mmcblk0p1").touch()
         (self.work / "proc/cmdline").write_text("console=ttyUJ0\n")
-        self.image = self.work / "sd/apps/com.github.siviq.gaijin/boot/rootfs.sqfs"
+        self.image = self.work / "sd/apps/com.github.siviqt.gaijin/boot/rootfs.sqfs"
         self.image.write_bytes(b"simulated immutable base")
         self.checksum = self.image.with_name("rootfs.sqfs.sha256")
         self.checksum.write_text(hashlib.sha256(self.image.read_bytes()).hexdigest() + "\n")

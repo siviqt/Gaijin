@@ -154,7 +154,7 @@ class BootTests(unittest.TestCase):
         self.assertEqual(self.lib.m0_prepare_dtb(dtb, len(broken), 0), -1)
 
     def test_built_kernel_set_when_available(self):
-        boot = ROOT / "build/sd/apps/com.github.siviq.gaijin/boot"
+        boot = ROOT / "build/sd/apps/com.github.siviqt.gaijin/boot"
         if not (boot / "manifest.bin").exists():
             self.skipTest("make kernel has not run")
         raw = (boot / "manifest.bin").read_bytes()

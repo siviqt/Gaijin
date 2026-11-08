@@ -14,7 +14,8 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
-from package_current import ABI, bootargs, check_current, check_loader, stage_launcher, stage_application
+from package_current import (ABI, APP_ID, bootargs, check_application, check_current,
+                             check_loader, check_userspace_paths, stage_launcher, stage_application)
 from build_userspace import check_config
 from verify_userspace import check_busybox_config, flat_info, read_newc, resolve_path, verify, verify_elf, verify_squashfs
 
@@ -226,11 +227,11 @@ class UserspaceTests(unittest.TestCase):
 
     def test_launcher_and_complete_sd_package(self):
         loader = self.work / "linux-loader.bin"
-        loader.write_bytes(bootargs().encode() + b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0LDO4 disabled, bypass off\0/sd/apps/com.github.siviq.gaijin/boot/\0")
-        output = self.work / "app"
+        loader.write_bytes(bootargs().encode() + b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0LDO4 disabled, bypass off\0/sd/apps/com.github.siviqt.gaijin/boot/\0")
+        output = self.work / APP_ID
         stage_launcher(loader, output)
         meta = json.loads((output / "metadata.json").read_text())
-        self.assertEqual(meta["application"][0]["revision"], 31)
+        self.assertEqual(meta["application"][0]["revision"], 32)
         self.assertTrue(meta['application'][0]['external_only'])
         self.assertEqual((output / "icon.png").read_bytes()[16:24], struct.pack(">II", 32, 32))
         self.assertFalse((output / "boot/manifest.bin").exists())
@@ -253,6 +254,7 @@ class UserspaceTests(unittest.TestCase):
         state.parent.mkdir()
         state.write_bytes(b"existing user data outside the application")
         stage_application(loader, kernel, self.work, output)
+        check_application(output)
         for asset in meta['application'][0]['assets']:
             self.assertEqual(asset['source_file'], asset['target_file'])
             self.assertTrue((output / asset['source_file']).is_file(), asset)
@@ -301,6 +303,29 @@ class UserspaceTests(unittest.TestCase):
         (self.work / "images/rootfs.cpio.gz").write_bytes(b"stale archive")
         with self.assertRaisesRegex(ValueError, "stale"):
             stage_application(loader, kernel, self.work, output)
+
+    def test_application_directory_and_loader_share_the_published_identifier(self):
+        self.assertEqual(APP_ID, "com.github.siviqt.gaijin")
+        wrong_directory = self.work / "com.github.siviq.gaijin"
+        with self.assertRaisesRegex(ValueError, "directory must be named"):
+            check_application(wrong_directory)
+        with self.assertRaisesRegex(ValueError, "directory must be named"):
+            stage_application(self.work / "missing-loader", self.work, self.work, wrong_directory)
+        loader = self.work / "linux-loader.bin"
+        loader.write_bytes(bootargs().encode() + b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0"
+                           b"LDO4 disabled, bypass off\0/sd/apps/com.github.siviq.gaijin/boot/\0")
+        with self.assertRaisesRegex(ValueError, "loader is not current"):
+            check_loader(loader)
+
+    def test_userspace_rejects_the_previous_application_path(self):
+        check_userspace_paths(self.archive)
+        for script in ("sbin/gaijin-sd-root", "usr/bin/m2-sd-test"):
+            entries = [(name, mode, payload.replace(b"com.github.siviqt.gaijin", b"com.github.siviq.gaijin")
+                        if name == script else payload, rdev)
+                       for name, mode, payload, rdev in minimal_root()]
+            self.archive.write_bytes(gzip.compress(newc(entries)))
+            with self.subTest(script=script), self.assertRaisesRegex(ValueError, "stale userspace application path"):
+                check_userspace_paths(self.archive)
 
     def test_squashfs_memory_envelope_and_contents(self):
         image = self.work / "rootfs.sqfs"

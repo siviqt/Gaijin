@@ -3,7 +3,7 @@
 Gaijin boots native RV32 NOMMU Linux from a Tanmatsu AppFS loader, then gives
 Linux ownership of USB, SD, display refresh and MCU input/backlight. The base and FAT stay read-only;
 validated ext2 image sectors provide persistent state. The current release is
-application 0.5.17 / AppFS revision 31 / Linux 6.18.35-gaijin-m5, targeting
+application 0.5.18 / AppFS revision 32 / Linux 6.18.35-gaijin-m5, targeting
 Tanmatsu rev7, ESP-IDF v6.0.2, BSP 1.6.4, Launcher 0.2.8, Radio 3.4.0 and MCU r9.
 
 This document owns boot, memory, console, ABI and build contracts. Detailed
@@ -14,7 +14,7 @@ are maintained separately.
 
 ## Loader and recovery
 
-The AppFS application `com.github.siviq.gaijin` enters through ESP-IDF `app_main()`.
+The AppFS application `com.github.siviqt.gaijin` enters through ESP-IDF `app_main()`.
 It clears the first eight bytes of retained `rtc_retain_mem_t.custom`,
 matching BSP 1.6.4's Launcher-recovery behavior. The existing Launcher and
 system bootloader remain installed. Failures after entry log and reset;
@@ -171,7 +171,7 @@ toolchain. The probe is rebuilt on each userspace build.
 
 `make build` builds all components and calls `tools/package_current.py`.
 Packaging prepares the complete application directory before replacing
-`build/sd/apps/com.github.siviq.gaijin/`, removing stale files. It validates loader
+`build/sd/apps/com.github.siviqt.gaijin/`, removing stale files. It validates loader
 identity/bootargs, resolved kernel settings and the userspace archive report.
 It writes one CURRENT.json, SHA256SUMS and gaijin-current.zip. `make install`
 verifies hashes, manifest, metadata, bootargs and component/staging consistency,

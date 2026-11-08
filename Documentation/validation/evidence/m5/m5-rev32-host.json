@@ -1,0 +1,35 @@
+{
+  "date": "2026-11-08",
+  "version": "0.5.18",
+  "appfs_revision": 32,
+  "application_id": "com.github.siviqt.gaijin",
+  "components": "Loader, kernel and pinned NOMMU userspace rebuilt",
+  "host_tests": {
+    "run": 95,
+    "passed": 95,
+    "skipped": 0
+  },
+  "clic_rv32_cases": 60,
+  "clic_negative_control": "PASS",
+  "actual_rv32_kernel_string_objects": "PASS under QEMU user harness",
+  "native_vi": "PASS: unnamed/named edit-save-reopen at 80x24 and 80x26",
+  "app_repository_schema": "PASS: repository schema checked with jsonschema 4.26.0 / Draft 7",
+  "app_repository_schema_sha256": "d7bc68421418a49153fcc2b52dcb98b5560bc53a23858eb5e29cf9d5b7234c90",
+  "package_integrity": "PASS: complete manifest, ABI, matching initramfs/SquashFS and declared AppFS assets",
+  "application_identity_regressions": "PASS: previous directory name, revision-31 loader and stale SD root/test scripts are rejected",
+  "publication_audit": "PASS",
+  "kernel_builder": "builder@gaijin",
+  "hardware_validated": false,
+  "remaining": [
+    "Device boot of revision 32 from apps/com.github.siviqt.gaijin",
+    "On-device vi and user-access probe, persistence and power-cycle regressions",
+    "Remaining LCD flicker and M5 hardware acceptance"
+  ],
+  "components_sha256": {
+    "loader": "76d54ce7a834d5604b66c5edf9839557f81a1251c2642f6bd9bd17c9c64ee361",
+    "Image": "2d7e7d81278189d837464106710c454ac32c6abef62b26320e8f444acf763ed9",
+    "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
+    "initramfs": "da284ca66bf2dab86172c4f0be0bd279e119adca908cec59ea3c3b5e4f32ebb4",
+    "rootfs.sqfs": "88889dd1cd582aa1380c2aee721b89953e51510da2582d8c6fc818730e62ef23"
+  }
+}

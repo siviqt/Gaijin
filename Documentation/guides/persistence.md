@@ -7,7 +7,7 @@ The accepted M1 and M2 evidence remains in [validation](../validation/README.md)
 
 ## Storage contract
 
-The immutable base and boot assets remain under `/apps/com.github.siviq.gaijin/`.
+The immutable base and boot assets remain under `/apps/com.github.siviqt.gaijin/`.
 User state is a separately provisioned **`/gaijin/userdata.ext2`** on the same
 FAT card, outside the replaceable application directory. Updates and packaging
 never create, delete, resize, replace or include this image. Keep a separate
@@ -206,7 +206,7 @@ physical cache/DMA operation, card durability or power-interruption recovery.
    Retain existing proof between verify runs; prepare deliberately refuses to
    overwrite proof. Repeat smoke/input checks while doing state I/O and observe
    USB/input latency and memory.
-4. Stop cleanly, reset to Launcher, replace only `/apps/com.github.siviq.gaijin/` with a
+4. Stop cleanly, reset to Launcher, replace only `/apps/com.github.siviqt.gaijin/` with a
    complete compatible set, and verify state/proof survives the update.
    Compare offline hashes of boot assets and unrelated card files with the
    baseline after the write tests. FAT metadata must also remain unchanged.

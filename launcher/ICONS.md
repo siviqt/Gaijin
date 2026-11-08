@@ -15,8 +15,8 @@ is a compatibility copy of the selected 32-pixel icon.
 
 To select another bundled set, change the three `icon` paths in
 `launcher/metadata.json`, update the compatibility copy and repackage. The
-firmware version and AppFS executable revision remain 0.5.17 / 31 because
-this update changes icon assets only.
+firmware version and AppFS executable revision can stay unchanged when an update
+changes icon assets only. The identifier repair uses 0.5.18 / revision 32.
 
 The artwork was created with built-in image generation and exported to exact
 RGBA dimensions. The generation prompts are recorded in

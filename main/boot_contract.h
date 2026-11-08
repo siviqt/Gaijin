@@ -3,7 +3,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define GAIJIN_APP_ID "com.github.siviq.gaijin"
+#define GAIJIN_APP_ID "com.github.siviqt.gaijin"
 
 #define M0_RAM_BASE UINT32_C(0x48000000)
 #define M0_RAM_SIZE UINT32_C(0x02000000)

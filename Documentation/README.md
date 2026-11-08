@@ -1,8 +1,8 @@
 # Gaijin documentation
 
 Use this index to find the current behavior, operate the application or change
-its implementation. The current build is application **0.5.17 / AppFS revision
-31 / Linux 6.18.35-gaijin-m5**. M1–M4 are accepted. M5 — Framebuffer and fbcon
+its implementation. The current build is application **0.5.18 / AppFS revision
+32 / Linux 6.18.35-gaijin-m5**. M1–M4 are accepted. M5 — Framebuffer and fbcon
 is implemented and awaits hardware acceptance.
 
 ## Find the right document
@@ -15,7 +15,8 @@ is implemented and awaits hardware acceptance.
 | Return to Launcher, halt or power off | [Power commands](guides/power.md) |
 | Use the local console, framebuffer, backlight and M5 checks | [Display](guides/display.md) |
 | Validate the vi/kernel pointer fix | [User-access correction](guides/user-access.md) |
-| Review revision 31 build checks and remaining device tests | [Revision 31 validation](validation/revision31.md) |
+| Review the application identifier repair and current device checks | [Revision 32 validation](validation/revision32.md) |
+| Review the earlier vi and user-access build checks | [Revision 31 validation](validation/revision31.md) |
 | Understand keyboard mapping, repeat, recovery and the M4/M5 boundary | [Keyboard](guides/keyboard.md) |
 | Understand SD/DMA, root transition and storage regression checks | [SD storage](guides/sd-storage.md) |
 | Provision, use, resize or recover persistent home directories | [Persistent state](guides/persistence.md) |

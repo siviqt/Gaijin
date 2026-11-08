@@ -134,7 +134,7 @@
     "appfs_revision": 13,
     "kernel_release": "6.18.35-gaijin-m3.1",
     "status": "CLOSED \u2014 PASS; accepted by the user on 2026-10-29",
-    "image": "/gaijin/userdata.ext2 (outside replaceable /apps/com.github.siviq.gaijin)",
+    "image": "/gaijin/userdata.ext2 (outside replaceable /apps/com.github.siviqt.gaijin)",
     "format": "16..256 MiB ext2, 1 KiB blocks, 128-byte inodes, filetype/sparse_super/large_file only",
     "write_policy": "Read-only FAT; FIBMAP extents, raw-partition direct-I/O loop and DM linear map; frozen MMC sector allowlist, CMD24 only",
     "validation": "Documentation/guides/persistence.md",
@@ -220,10 +220,10 @@
     }
   },
   "m5_display": {
-    "version": "0.5.17",
-    "appfs_revision": 31,
+    "version": "0.5.18",
+    "appfs_revision": 32,
     "kernel_release": "6.18.35-gaijin-m5",
-    "status": "Revision 30 device tests pass for storage, power states, font and named-file vi; bare vi freezes both consoles. Revision 31 includes the vi guard and NOMMU pointer bounds, plus the new AppFS identifier. M5 acceptance and remaining display flicker investigation stay open.",
+    "status": "Revision 32 corrects the AppFS and SD application identifier to com.github.siviqt.gaijin and preserves revision-31 vi/user-access fixes. Host verification and SD deployment are recorded separately; device boot and M5 acceptance remain pending.",
     "panel": "Tanmatsu rev7 ST7701, 480x800 RGB565, 2 DSI lanes at 500 Mbps, 30 MHz pixel clock",
     "initialization": "Loader uses pinned ESP-IDF v6.0.2 HAL/DSI/DMA APIs and mipi_dsi_abstraction 1.2.1 command sequence; Linux owns refresh interrupts and scanout enable",
     "memory": "0x48e00000..0x48ebc000 reserved; 768000 pixel bytes; 64-byte descriptor at 0x48ebb800",
@@ -253,7 +253,7 @@
     "native_privilege": "Physical CLIC IRQ completion before Linux C/scheduling; raw trap metadata separate from syscall/signal bookkeeping; M-mode kernel and U-mode native applications",
     "latest_capture": "Documentation/validation/evidence/m5/m5-umode2-interactive-20261107.console.log",
     "latest_capture_sha256": "6d9c6655d32f770c28e392fddf5c4938aa891c9930cb9cb6e8c550bda5adb2b3",
-    "application_id": "com.github.siviq.gaijin",
+    "application_id": "com.github.siviqt.gaijin",
     "user_access_fix": {
       "date": "2026-11-08",
       "status": "Included in the complete revision-31 build. All 93 host tests, actual RV32 string-function tests, native vi tests, package verification and privacy checks pass. New device validation remains pending.",
@@ -264,8 +264,8 @@
       "remaining": "On-device unnamed/named vi and user-access probe; LCD flicker investigation."
     },
     "host_validation": {
-      "report": "Documentation/validation/evidence/m5/m5-rev31-host.json",
-      "report_sha256": "b1963199f554a4ebc4dcc1579d0955af53930e9721b07a39eb995b8b9df6a21f"
+      "report": "Documentation/validation/evidence/m5/m5-rev32-host.json",
+      "report_sha256": "0ebe8f859b088b450ea79cc15672ea743d7f80dbf22ea72c22f83912e7791fd3"
     },
     "launcher_icons": {
       "selected": "penguin",
@@ -280,13 +280,20 @@
         64
       ],
       "prompts": "launcher/icon-prompts.json",
-      "firmware_unchanged": true
+      "assets_unchanged_in_revision_32": true
+    },
+    "application_id_fix": {
+      "date": "2026-11-08",
+      "previous_application_id": "com.github.siviq.gaijin",
+      "application_id": "com.github.siviqt.gaijin",
+      "appfs_revision": 32,
+      "validation": "Documentation/validation/revision32.md"
     }
   },
   "power_control": {
-    "version": "0.5.17",
-    "appfs_revision": 31,
-    "status": "Revision 31 preserves checked state cleanup, shutdown to AppFS and physical poweroff. Revision-30 device tests passed except the bare-vi freeze. Revision 31 fixes that startup path; on-device editor/probe and power-cycle validation remain pending.",
+    "version": "0.5.18",
+    "appfs_revision": 32,
+    "status": "Revision 32 corrects the application identifier and preserves the revision-31 vi/user-access fixes, checked state cleanup, shutdown to AppFS and physical poweroff. Revision-30 device results remain the latest accepted power tests; current device boot, editor/probe and power-cycle validation are pending.",
     "commands": {
       "shutdown": "clean reset to AppFS Launcher",
       "poweroff": "MCU r9 register 126 value 1, alarm wake disabled",

@@ -131,7 +131,7 @@ changed format. The root image is checked by Linux before mounting. Checksums
 provide development integrity, not signatures or authentication.
 
 PID 1 mounts devtmpfs/proc/sysfs, then searches slot-0 FAT partitions (and a
-whole-card FAT filesystem) for `/apps/com.github.siviq.gaijin/boot`. It waits at most ten
+whole-card FAT filesystem) for `/apps/com.github.siviqt.gaijin/boot`. It waits at most ten
 one-second intervals for candidate devices, plus bounded driver/mount/read work.
 FAT is mounted `ro,loud,nosuid,nodev,noexec`; only files beneath the project application
 are read. It verifies the fixed root image checksum, obtains a free loop device
@@ -156,7 +156,7 @@ A failure during the final switch_root exec, failed rollback, or a permanently
 wedged controller still requires physical reset. Do not remove a live backing
 card. There is no automatic repair or hotplug recovery in this milestone.
 
-Updates replace only `/apps/com.github.siviq.gaijin/` and its AppFS entry. User data must
+Updates replace only `/apps/com.github.siviqt.gaijin/` and its AppFS entry. User data must
 stay outside that replaceable application directory; the persistence guide
 defines the current backing image and recovery policy.
 

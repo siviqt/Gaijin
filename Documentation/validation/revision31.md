@@ -1,3 +1,7 @@
+Revision 31 is superseded by the [revision-32 application identifier repair](revision32.md).
+The identifier below records the typo shipped in revision 31; the correct current
+identifier is `com.github.siviqt.gaijin`.
+
 Gaijin 0.5.17 / AppFS revision 31 is the November 8, 2026 source and package
 update. Its application identifier is `com.github.siviq.gaijin`; the SD assets,
 loader, runtime scripts, package metadata and installation commands use this

@@ -23,4 +23,4 @@ test:
 install:
 	python3 tools/package_current.py --install --badgelink "$(BADGELINK)"
 run:
-	"$(BADGELINK)" start com.github.siviq.gaijin
+	"$(BADGELINK)" start com.github.siviqt.gaijin

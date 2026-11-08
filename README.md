@@ -1,11 +1,13 @@
 # Gaijin
 
 Native RV32 NOMMU Linux for Tanmatsu rev7, launched from AppFS. The current
-build is **application 0.5.17 / AppFS revision 31 / Linux 6.18.35-gaijin-m5**.
+build is **application 0.5.18 / AppFS revision 32 / Linux 6.18.35-gaijin-m5**.
 
 This build includes the [user-access and vi correction](Documentation/guides/user-access.md).
 LCD flicker and hardware validation of the updated editor remain open.
-The AppFS identifier and SD directory are `com.github.siviq.gaijin`.
+The AppFS identifier and SD directory are `com.github.siviqt.gaijin`.
+Revision 32 repairs the identifier mismatch in revision 31; see the
+[repair and validation record](Documentation/validation/revision32.md).
 Three [launcher icon sets](launcher/ICONS.md) are bundled at 16, 32 and 64 pixels;
 Penguin is selected.
 It starts login shells on the LCD and USB consoles.

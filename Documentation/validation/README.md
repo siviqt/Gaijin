@@ -245,7 +245,10 @@ installation archive. See [workspace layout](../development.md).
 
 ## Evidence locations
 
-The current [revision-31 validation](revision31.md) records 93 passing host
+The current [revision-32 validation](revision32.md) records the correction to
+`com.github.siviqt.gaijin`, copied-installation checks and remaining device tests.
+
+The historical [revision-31 validation](revision31.md) records 93 passing host
 tests with no skips, complete package checks, native editor tests and RV32
 user-access/CLIC checks. Its new on-device editor tests remain pending.
 

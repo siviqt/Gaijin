@@ -1,7 +1,7 @@
 # Display and local console
 
 M5 implements the Tanmatsu rev7 ST7701 framebuffer, landscape fbcon and MCU
-backlight control. Application 0.5.17 / AppFS revision 31 uses Linux
+backlight control. Application 0.5.18 / AppFS revision 32 uses Linux
 6.18.35-gaijin-m5 with login shells on LCD tty1 and USB ttyUJ0.
 
 ## Ownership and memory
@@ -68,7 +68,7 @@ echo 1 > /sys/class/graphics/fbcon/rotate_all
 ```
 
 The permanent setting is supplied by the AppFS loader, so install the updated
-revision-31 loader as well as copying the updated SD application files.
+revision-32 loader as well as copying the updated SD application files.
 
 
 Revision 21 tested one direct login shell on USB ttyUJ0 with display refresh.

@@ -35,10 +35,21 @@ make verify
 Use the primary commands above for new instructions. Override `IDF_PATH` and
 `BADGELINK` as needed. After partial builds, run `make package` before install.
 
-The complete AppFS directory is `build/sd/apps/com.github.siviq.gaijin/`.
+The complete AppFS directory is `build/sd/apps/com.github.siviqt.gaijin/`.
 Its metadata declares the boot files, notices and licenses as external-storage
 assets. The identifier is defined in `main/boot_contract.h`; runtime scripts
 and package tests use the same supported path.
+
+After copying an application to the repository or an SD card, check that exact
+directory, including its name and the paths embedded in both loader and initramfs:
+
+```sh
+python3 tools/package_current.py --check-app /path/to/apps/com.github.siviqt.gaijin
+```
+
+This also verifies the manifest, rootfs checksum, declared assets and matching
+userspace report. Revision 32 adds these installation checks after revision 31
+was copied under the correct repository name while its binaries expected a typo.
 
 Run `python3 tools/audit_public.py .` before preparing a public source export.
 The kernel builder defaults to the neutral `builder@gaijin` banner, and the
@@ -84,7 +95,7 @@ Do not hand-edit their generated output or prepared dependency sources.
 
 | Path | Purpose |
 | --- | --- |
-| `build/sd/apps/com.github.siviq.gaijin/` | Canonical installation tree; preserve external `/gaijin/userdata.ext2` |
+| `build/sd/apps/com.github.siviqt.gaijin/` | Canonical installation tree; preserve external `/gaijin/userdata.ext2` |
 | `build/gaijin-current.zip` | Single downloadable installation bundle |
 | `build/CURRENT.json`, `build/SHA256SUMS` | Release identity and complete public-file inventory/hashes |
 | `build/loader/`, `build/kernel/`, `build/userspace/` | Current component workspaces and ABI intermediates |
@@ -111,6 +122,9 @@ material. Generated build trees, downloaded dependencies, diagnostic profiles,
 resolved `sdkconfig` and Python caches were removed after the revision-30
 build, verification and SD update. Rebuilding recreates them; initial builds
 need network access or externally retained source/download caches.
+
+The revision-32 rebuild recreates these generated workspaces in the Git checkout;
+they remain excluded from source control and can be retained for incremental builds.
 
 The successful native U-mode adapter is part of the canonical kernel patch.
 There is no separate machine-mode application profile or experimental kernel

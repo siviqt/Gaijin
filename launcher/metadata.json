@@ -1,7 +1,7 @@
 {
   "name": "Gaijin",
   "description": "Native Linux with local and USB consoles and persistent SD state for Tanmatsu rev7.",
-  "version": "0.5.17",
+  "version": "0.5.18",
   "author": "Gaijin contributors",
   "categories": [
     "system"
@@ -20,7 +20,7 @@
       ],
       "type": "appfs",
       "executable": "linux-loader.bin",
-      "revision": 31,
+      "revision": 32,
       "external_only": true,
       "assets": [
         {

@@ -44,7 +44,7 @@ static char message[256];
 static struct volume volume = { .pdrv = 3, .volbase = 2048 };
 FRESULT f_open(FIL *file, const char *name, unsigned flags)
 {
-    assert(!strcmp(name, "0:/apps/com.github.siviq.gaijin/boot/manifest.bin"));
+    assert(!strcmp(name, "0:/apps/com.github.siviqt.gaijin/boot/manifest.bin"));
     assert(flags == FA_READ);
     if (fail_open) return 3;
     file->obj.fs = &volume;

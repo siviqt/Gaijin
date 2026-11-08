@@ -29,7 +29,7 @@ gaijin_sd_root() {
             sd_partitions=1
             mount -t vfat -o ro,loud,nosuid,nodev,noexec "$sd_device" /sd || continue
             sd_fat_mounted=1
-            sd_assets=/sd/apps/com.github.siviq.gaijin/boot
+            sd_assets=/sd/apps/com.github.siviqt.gaijin/boot
             if [ -f "$sd_assets/rootfs.sqfs" ] && [ -f "$sd_assets/rootfs.sqfs.sha256" ]; then
                 break 2
             fi
@@ -44,7 +44,7 @@ gaijin_sd_root() {
     if [ "$sd_fat_mounted" != 1 ] && [ "$sd_partitions" = 0 ] && [ -b /dev/mmcblk0 ]; then
         if mount -t vfat -o ro,loud,nosuid,nodev,noexec /dev/mmcblk0 /sd; then
             sd_fat_mounted=1
-            sd_assets=/sd/apps/com.github.siviq.gaijin/boot
+            sd_assets=/sd/apps/com.github.siviqt.gaijin/boot
             if [ ! -f "$sd_assets/rootfs.sqfs" ] || [ ! -f "$sd_assets/rootfs.sqfs.sha256" ]; then
                 umount /sd || return 1
                 sd_fat_mounted=0

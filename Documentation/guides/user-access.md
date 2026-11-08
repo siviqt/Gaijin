@@ -1,4 +1,4 @@
-Application 0.5.17 / AppFS revision 31 includes the unnamed `vi` correction.
+Application 0.5.18 / AppFS revision 32 includes the unnamed `vi` correction.
 On revision 30 the device tests confirmed that named files open successfully,
 while bare `vi` freezes both consoles. The new complete image requires device
 validation; the LCD flicker investigation remains open.
@@ -27,7 +27,7 @@ RV32 kernel string-copy objects into a freestanding harness and runs them under
 QEMU with valid, invalid and boundary addresses. These tests do not emulate P4
 bus behavior or replace device validation.
 
-After installing revision 31, perform the first pointer tests with
+After installing revision 32, perform the first pointer tests with
 persistence inactive:
 
 ```sh

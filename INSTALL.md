@@ -1,6 +1,6 @@
 # Install the current Gaijin build
 
-Current build is **M5 (Framebuffer and fbcon) / application 0.5.17 / AppFS revision 31**.
+Current build is **M5 (Framebuffer and fbcon) / application 0.5.18 / AppFS revision 32**.
 Expect **Linux 6.18.35-gaijin-m5**, framebuffer output, and login shells on
 LCD `tty1` and USB `ttyUJ0`. M5 hardware acceptance is pending.
 
@@ -15,9 +15,9 @@ folder. Do not combine files from separate directories or downloads.
    sha256sum -c SHA256SUMS
    ```
 
-2. Replace the SD card's `/apps/com.github.siviq.gaijin/` directory with
-   `sd/apps/com.github.siviq.gaijin/` from this set. The resulting application
-   directory is `/apps/com.github.siviq.gaijin/`, containing `metadata.json`,
+2. Replace the SD card's `/apps/com.github.siviqt.gaijin/` directory with
+   `sd/apps/com.github.siviqt.gaijin/` from this set. The resulting application
+   directory is `/apps/com.github.siviqt.gaijin/`, containing `metadata.json`,
    `linux-loader.bin`, `icon.png`, `LICENSE` and `boot/` with Image, DTB,
    initramfs, manifest, rootfs.sqfs and rootfs.sqfs.sha256.
    The SD card need not be formatted; unrelated files can remain. Replace the full application directory and upload its loader together.
@@ -26,18 +26,21 @@ folder. Do not combine files from separate directories or downloads.
    [persistence instructions](Documentation/guides/persistence.md). Without it, the system uses RAM.
    Provisioning is explicit and never part of an application update.
 
-   Revision 31 changes the application identifier from `tanmatsu-linux` to
-   `com.github.siviq.gaijin`. Use the new loader and directory together. Remove
+   Revision 32 corrects the application identifier to `com.github.siviqt.gaijin`.
+   Revision 31 incorrectly compiled `com.github.siviq.gaijin`, which fails to
+   boot when installed under the correct repository directory. Replace the loader,
+   initramfs and rootfs together; renaming the folder alone does not repair the
+   revision-31 binaries for the correct identifier. Remove
    the old cached application entry in Launcher to avoid selecting it, then
-   launch Gaijin from the SD card so Launcher copies the revision-31 executable
+   launch Gaijin from the SD card so Launcher copies the revision-32 executable
    into AppFS. The package declares all boot assets and requires SD installation.
 
 3. Enter **BadgeLink mode**. Upload the loader from this same set:
 
    ```sh
    /path/to/tanmatsu-sdk/tools/badgelink.sh appfs upload \
-     com.github.siviq.gaijin "Gaijin" 31 \
-     sd/apps/com.github.siviq.gaijin/linux-loader.bin
+     com.github.siviqt.gaijin "Gaijin" 32 \
+     sd/apps/com.github.siviqt.gaijin/linux-loader.bin
    ```
 
    Adjust the SDK path if necessary. From the project root, `make install`

@@ -2,7 +2,7 @@
 # Read-only target acceptance: repeated hashes through the live backing mount.
 fail() { echo "M2 SD FAIL: $*"; exit 1; }
 [ "$#" -eq 0 ] || fail 'usage: m2-sd-test'
-base=/sd/apps/com.github.siviq.gaijin/boot
+base=/sd/apps/com.github.siviqt.gaijin/boot
 awk '$2 == "/" && $3 == "squashfs" && $4 ~ /(^|,)ro(,|$)/ { ok=1 } END { exit !ok }' /proc/mounts || fail 'root is not read-only SquashFS'
 awk '$2 == "/sd" && $3 == "vfat" && $4 ~ /(^|,)ro(,|$)/ { ok=1 } END { exit !ok }' /proc/mounts || fail 'FAT backing mount was not preserved read-only'
 expected=$(cat "$base/rootfs.sqfs.sha256") || fail 'missing checksum'

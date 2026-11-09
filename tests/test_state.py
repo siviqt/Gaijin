@@ -44,7 +44,8 @@ class StateImageTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             c, binary = Path(directory)/'state.c', Path(directory)/'state'
             c.write_text(fixture.replace('/* STATE_SOURCE */', source))
-            subprocess.run(['cc', '-std=gnu11', '-Wall', '-Wextra', '-Werror', str(c), '-o', str(binary)], check=True)
+            subprocess.run(['cc', '-std=gnu11', '-Wall', '-Wextra', '-Werror', '-I', str(ROOT/'common'),
+                            str(c), '-o', str(binary)], check=True)
             subprocess.run([str(binary)], check=True, capture_output=True, timeout=10)
 
     def test_offline_image_is_clean_and_existing_data_is_preserved(self):
@@ -87,7 +88,10 @@ class StateBootTests(unittest.TestCase):
         self.log = self.work/'commands'
         self.env = dict(os.environ, PATH=f'{self.work}/bin:/usr/bin:/bin', LOG=str(self.log), GAIJIN_POWER_TRACE="0")
         self.command('gaijin-state-map', '''echo "map $*" >>"$LOG"
-if [ "$1" = flush ]; then
+if [ "$1" = probe ]; then
+    [ "$FAIL_MAP" != 1 ] || exit 1
+    echo "${HOME_STATE:-clean}"
+elif [ "$1" = flush ]; then
     [ "$FAIL_SYNC" != 1 ] || exit 1
 elif [ "$1" = verify-clean ]; then
     [ "$FAIL_VERIFY" != 1 ] || exit 1
@@ -124,6 +128,7 @@ case "$*" in *"$FAIL_UMOUNT"*) [ -z "$FAIL_UMOUNT" ] || exit 1 ;; esac
         self.assertIn(f'bind {self.work}/persist/home {self.work}/home',self.commands)
         self.assertTrue((self.work/'run/gaijin-persist').exists())
         self.assertEqual((self.work/'run/gaijin-prompt').read_text(),'mydevice\n')
+        self.log.unlink()
         result=self.run_script('stop')
         self.assertEqual(result.returncode,0,result.stderr)
         self.assertFalse((self.work/'run/gaijin-persist').exists())
@@ -187,6 +192,7 @@ case "$*" in *"$FAIL_UMOUNT"*) [ -z "$FAIL_UMOUNT" ] || exit 1 ;; esac
 
     def test_syncfs_failure_does_not_unmount(self):
         self.assertEqual(self.run_script().returncode,0)
+        self.log.unlink()
         self.assertNotEqual(self.run_script('stop',FAIL_SYNC='1').returncode,0)
         self.assertNotIn('umount',self.commands)
         self.assertTrue((self.work/'run/gaijin-persist').exists())
@@ -214,6 +220,7 @@ case "$*" in *"$FAIL_UMOUNT"*) [ -z "$FAIL_UMOUNT" ] || exit 1 ;; esac
 
     def test_dirty_raw_header_after_unmount_blocks_map_removal_and_is_retryable(self):
         self.assertEqual(self.run_script().returncode, 0)
+        self.log.unlink()
         result = self.run_script('stop', FAIL_VERIFY='1')
         self.assertNotEqual(result.returncode, 0)
         self.assertIn('map verify-clean', self.commands)
@@ -222,6 +229,19 @@ case "$*" in *"$FAIL_UMOUNT"*) [ -z "$FAIL_UMOUNT" ] || exit 1 ;; esac
         self.assertFalse((self.work/'run/gaijin-state-mounted').exists())
         self.assertEqual(self.run_script('stop').returncode, 0)
         self.assertFalse((self.work/'run/gaijin-state-map').exists())
+
+    def test_rejected_state_and_schema_never_reach_writable_activation(self):
+        for state in ('dirty','incompatible','damaged','incomplete','absent','io-error'):
+            self.log.unlink(missing_ok=True)
+            self.assertNotEqual(self.run_script(HOME_STATE=state).returncode,0)
+            self.assertNotIn('mount ',self.commands)
+            self.assertNotIn('map map-ro',self.commands)
+        (self.work/'persist/state-version').write_text('future-schema\n')
+        self.log.unlink(missing_ok=True)
+        self.assertNotEqual(self.run_script().returncode,0)
+        self.assertIn('-o ro,',self.commands)
+        self.assertNotIn('-o rw,',self.commands)
+        self.assertEqual((self.work/'run/gaijin-home-state').read_text(),'incompatible\n')
 
     def test_same_boot_stop_and_restart_restore_persistent_mounts(self):
         (self.work/'persist/settings/prompt').write_text('restart-ok\n')

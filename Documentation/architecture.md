@@ -3,7 +3,7 @@
 Gaijin boots native RV32 NOMMU Linux from a Tanmatsu AppFS loader, then gives
 Linux ownership of USB, SD, display refresh and MCU input/backlight. The base and FAT stay read-only;
 validated ext2 image sectors provide persistent state. The current release is
-application 0.5.19 / AppFS revision 33 / Linux 6.18.35-gaijin-m5, targeting
+application 0.5.24 / AppFS revision 38 / Linux 6.18.35-gaijin-m5, targeting
 Tanmatsu rev7, ESP-IDF v6.0.2, BSP 1.6.4, Launcher 0.2.8, Radio 3.4.0 and MCU r9.
 
 This document owns boot, memory, console, ABI and build contracts. Detailed
@@ -27,11 +27,32 @@ MMC host driver, with page-sized requests split into sector-sized DMA reads/writ
 restricted to the validated state-image sectors described in the M3 guide.
 The loader isolates the SD pins and disables LDO4 and its bypass to discharge
 the socket. It restores SD power, reads and verifies the boot assets, unmounts
-SD and initializes the ST7701 display before jumping. Linux starts display DMA
-and scanout. Audio and radio transport remain untouched. SD slot 0 uses GPIO39–42 D0–D3, GPIO43 CLK, GPIO44 CMD and LDO4.
-Radio SDIO slot 1 is untouched. The loader does not write SD files, format,
-erase NVS or change partitions. Radio and coprocessor versions printed by the
+SD before jumping. It initializes the ST7701 display before home provisioning;
+an owned DMA-completion interrupt refreshes HOME during creation and readback.
+Its internal-RAM handler immediately rearms the reserved descriptor. Rendering
+is capped at 10 Hz and synchronizes changed, aligned bar rows in calls of at
+most 4 KiB. The loader masks/frees the interrupt and drains DMA before handoff;
+Linux owns normal refresh. A strict read-only `display-test` marker can run a
+ten-second display diagnostic without resetting an existing home image.
+Linux also services pending DMA completions between native drawing rows,
+preserving the IRQ mask used by legacy printk during boot logging. This
+single-core path shares completion/error handling with the display interrupt;
+it adds no pixel buffer and does not enable interrupts inside console writes.
+Audio and radio transport remain untouched. SD slot 0 uses GPIO39–42 D0–D3, GPIO43 CLK, GPIO44 CMD and LDO4.
+Radio SDIO slot 1 is untouched. The loader may create a missing home file or
+replace a recognized dirty home after explicit confirmation, using FatFs
+before Linux ownership. It never formats the card, erases NVS or changes
+partitions. Radio and coprocessor versions printed by the
 loader are targets, not runtime firmware identification.
+
+The loader captures the AppFS 2.1.0 descriptor and supported application
+argument before clearing its selection/argument. It publishes home status and
+the validated descriptor in DT. A confirmed reset uses the existing clean
+shutdown controller, fresh raw superblock identity and card CID, then passes a
+bounded `ghr1` argument through the standard AppFS selection layout on
+RESTART2. Ordinary shutdown still clears selection and returns to Launcher.
+Reset is one-shot and requires no extra retained-memory allocation or Linux
+FAT write permission. New storage behavior is pending device acceptance.
 
 ## Boot contract v1
 

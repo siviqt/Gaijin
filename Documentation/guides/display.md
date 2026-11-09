@@ -5,6 +5,8 @@ backlight control. Application 0.5.19 / AppFS revision 33 uses Linux
 6.18.35-gaijin-m5 with login shells on LCD tty1 and USB ttyUJ0.
 The user confirmed all revision-33 device checks passed on 8 November 2026;
 see the [acceptance record](../validation/revision33.md).
+The current follow-up is application 0.5.24 / AppFS revision 38; its
+[startup flicker check](../validation/revision38.md) remains pending.
 
 ## Ownership and memory
 
@@ -18,8 +20,10 @@ pixel allocation. A future Linux modesetting driver can replace this handoff.
 The loader enables LDO3 at 2.5 V, resets the panel on GPIO14 and sends the
 pinned Tanmatsu ST7701 initialization sequence. DSI uses two 500 Mbit/s lanes,
 a 30 MHz pixel clock, 480x800 native pixels and RGB565. It uses the existing
-ESP-IDF DSI bus and DMA configuration APIs, with no display task, interrupt
-handler, PSRAM heap, DMA2D copy or GPIO11 TE interrupt. It makes no DSI reads,
+ESP-IDF DSI bus and DMA configuration APIs, with no PSRAM heap, DMA2D copy or
+GPIO11 TE interrupt. Revision 37 temporarily owns a small internal-RAM
+DMA-completion handler for HOME progress, removing it before Linux handoff.
+It makes no DSI reads,
 whose stock HAL wait has no absent-panel timeout. A successful command write
 therefore does not prove that the panel is connected. Initialization errors
 leave the DT display node disabled and preserve the USB recovery shell.
@@ -32,13 +36,24 @@ when display initialization fails. The boot-contract parser rejects a missing,
 changed or reusable reservation before the loader writes that range.
 
 Linux's `tanmatsu-fb` driver owns DW-GDMA channel 0, its source-24 CLIC
-interrupt, and the DSI bridge output enable. The loader leaves DMA and bridge
-scanout stopped until Linux arms the descriptor, avoiding startup underruns.
-Every frame-complete interrupt republishes the descriptor and restarts DMA;
+interrupt, and the DSI bridge output enable. At handoff, the loader leaves DMA
+and bridge scanout stopped until Linux arms the descriptor, avoiding startup underruns.
+Each frame completion republishes the descriptor and restarts DMA;
 no ESP-IDF callback runs after handoff. Descriptor cache invalidation precedes
 CPU modification and writeback. DMA errors stop refresh, mask the source and
 increment `dma_errors`, allowing USB diagnosis without an interrupt retry loop.
 The driver validates the reserved memory and loader descriptor before use.
+
+Revision 38 bounds fbcon fill, copy and image operations to one native row
+(at most 960 destination bytes), polling the same completion/error service
+before drawing and between rows. Copy direction preserves overlapping scrolls;
+mono data retains byte-padded row strides. Polling preserves the caller's IRQ
+mask and is inactive before scanout starts or after a fault/shutdown. This
+addresses the long IRQ-masked legacy printk writes seen in the pinned kernel;
+physical confirmation is still required. `polled_frames` counts completions
+serviced by polling, including between cache-writeback chunks. `max_frame_us`
+records the largest interval between serviced completions since scanout started,
+including boot; it is not a hardware interrupt-latency measurement.
 
 The P4 DMA cannot snoop PSRAM caches. A Linux delayed work item writes back the
 pixel buffer every 50 ms in ranges of at most 4 KiB. This gives the frame
@@ -55,6 +70,22 @@ into 4 KiB IRQ-exclusive sections. This gives the frame interrupt opportunities
 to rearm DMA during large bFLT loads. Blue flashes remain a hardware validation
 item; run `m5-display-test` and record underrun counters under boot/scroll load.
 
+The revision-36 user report confirms stable Linux output but constant blue
+flicker during HOME creation. The loader's timer-based frame restart and
+per-chunk full-frame cache flush differ from the Linux path described above.
+Revision 37 replaces the poll with immediate DMA-completion rearming, starts
+DMA before DPI, coalesces the bar at 10 Hz and flushes only newly changed rows.
+Each cache call is at most 4 KiB; bar-row calls are 128 aligned bytes. The
+interrupt and controller configuration are preserved separately: the handler
+is disabled/freed before Linux while the DMA channel and clocks remain configured.
+The summary reports frames, raw underrun observations, DMA/cache errors,
+maximum inter-completion interval, rendering work and interrupt release.
+See the [implementation/dependency record](../reference/home-progress-flicker-proposal.md)
+and [revision-37 display test](../validation/revision37.md). The user confirmed
+HOME flicker is gone. Blue flashes remained only during startup, with a clean
+post-boot scroll diagnostic; revision 38 targets that path. See the
+[device result and retest](../validation/revision38.md).
+
 ## Shell, keyboard and backlight
 
 After successful panel setup, bootargs enable `console=ttyUJ0,115200n8` and then
@@ -65,7 +96,13 @@ login starts before USB ttyUJ0, and production boot has no USB earlycon wait.
 selects 90-degree landscape rotation: 800x480, 80 columns by
 26 rows. `consoleblank=0` keeps the local text visible.
 The first device boot showed that `rotate:3` was upside-down; Linux fbcon's
-rotation convention needs `rotate:1` on this mounting. To correct an older
+rotation convention needs `rotate:1` on this mounting. The loader's HOME
+progress renderer uses the same clockwise transform: landscape `(x,y)` maps
+to native `(479-y,x)`. Revision 35 created the home successfully but drew this
+screen upside down; revision 36 corrects the loader transform. Existing homes
+are reused without displaying creation progress.
+
+To correct an older
 running build without rebooting, use the USB shell:
 
 ```sh

@@ -103,7 +103,8 @@ def main():
                          ("gaijin-abi-check-*/m5-umode-probe.gdb",),
                          ("gaijin-input-test-*/m2-input-test.gdb",),
                          ("gaijin-state-*/gaijin-state-map.gdb",),
-                         ("gaijin-state-*/gaijin-power.gdb",)):
+                         ("gaijin-state-*/gaijin-power.gdb",),
+                         ("gaijin-state-*/gaijin-setup.gdb",)):
             for pattern in patterns:
                 matches = sorted((output / "build").glob(pattern))
                 if matches:

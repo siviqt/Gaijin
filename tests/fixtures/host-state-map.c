@@ -18,6 +18,8 @@
 #include <sys/statvfs.h>
 #include <sys/sysmacros.h>
 #include <unistd.h>
+#include "gaijin_home.h"
+#include "sha256.h"
 static int bad, fragment, calls, gated, loaded, resumed, removed, configured, nmap;
 static unsigned char disk_super[1024];
 static char gate_text[4096], registered[4096];
@@ -65,6 +67,10 @@ static ssize_t fake_pread(int fd, void *p, size_t n, off_t off)
 }
 static FILE *fake_fopen(const char *p, const char *mode)
 {
+    if (!strcmp(p,"/sys/firmware/devicetree/base/chosen/gaijin,home-status")) {errno=ENOENT;return NULL;}
+    if (!strcmp(p,"/sys/block/mmcblk0/device/cid")) {
+        FILE *f=tmpfile();assert(f);fputs("0123456789abcdef0123456789abcdef\n",f);rewind(f);return f;
+    }
     assert(!strcmp(p,"/sys/dev/block/179:1/start") && !strcmp(mode,"r"));
     if (bad==4) return NULL;
     FILE *f=tmpfile(); assert(f); fputs("63\n",f); rewind(f); return f;
@@ -120,7 +126,7 @@ static int fake_ioctl(int fd, unsigned long op, ...)
     }
     if (op==LOOP_CONFIGURE) {
         assert(fd==15); struct loop_config *c=arg;
-        assert(c->fd==11 && c->info.lo_flags==(LO_FLAGS_AUTOCLEAR|LO_FLAGS_DIRECT_IO)); configured++;
+        assert(c->fd==11 && (c->info.lo_flags & ~LO_FLAGS_READ_ONLY)==(LO_FLAGS_AUTOCLEAR|LO_FLAGS_DIRECT_IO)); configured++;
         return bad==14 ? -1 : 0;
     }
     assert(fd==12);
@@ -145,7 +151,7 @@ static int fake_ioctl(int fd, unsigned long op, ...)
         assert(logical==32768); loaded++; return 0;
     }
     if (op==DM_DEV_SUSPEND) {
-        assert(gated && loaded); resumed++; d->dev=(253U<<8)|3;
+        assert((gated || (d->flags & DM_READONLY_FLAG)) && loaded); resumed++; d->dev=(253U<<8)|3;
         return bad==12 ? -1 : 0;
     }
     if (op==DM_DEV_REMOVE) { removed++; return 0; }
@@ -163,6 +169,14 @@ static void setup(void)
 }
 int main(void)
 {
+    char *probe[]={"gaijin-state-map","probe",NULL};
+    setup();assert(state_main(2,probe)==0 && !gated && !configured);
+    disk_super[58]=0;
+    assert(state_main(2,probe)==0 && !gated && !configured);
+    char *token[]={"gaijin-state-map","reset-token",NULL};
+    assert(state_main(2,token)==0 && !gated && !configured);
+    char *ro[]={"gaijin-state-map","map-ro",NULL};
+    setup();assert(state_main(2,ro)==0 && !gated && configured && resumed);
     char *flush[]={"gaijin-state-map","flush",NULL};
     setup(); assert(state_main(2,flush)==0 && !gated && !configured && !removed);
     for (int failure=16;failure<=18;failure++) {

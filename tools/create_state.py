@@ -6,10 +6,11 @@ from pathlib import Path
 import shutil
 import subprocess
 import tempfile
+import uuid
 from check_state import check_header
 
 
-def create(output, size_mib=32):
+def create(output, size_mib=32, factory=False):
     output = Path(output)
     if not 16 <= size_mib <= 256:
         raise ValueError('state size must be 16..256 MiB (FAT32-safe)')
@@ -24,6 +25,11 @@ def create(output, size_mib=32):
         (root / 'home/root').mkdir(parents=True, mode=0o700)
         (root / 'settings').mkdir()
         (root / 'state-version').write_text('gaijin-state-v1\n')
+        if factory:
+            (root / 'settings/setup-pending').write_text('gaijin-setup-v1\n')
+            for entry in sorted(root.rglob('*'), reverse=True):
+                os.utime(entry, (1793232000, 1793232000))
+            os.utime(root, (1793232000, 1793232000))
         image = Path(work) / 'userdata.ext2'
         # Allocate every byte: later writes must never extend or reallocate FAT.
         with image.open('xb') as stream:
@@ -33,14 +39,24 @@ def create(output, size_mib=32):
             stream.flush()
             os.fsync(stream.fileno())
         env = dict(os.environ, E2FSPROGS_FAKE_TIME='1793232000')
+        factory_id = str(uuid.UUID(int=0x6761696a696e40008000000000000001))
+        identity = ['-U', factory_id] if factory else []
+        extended = 'root_owner=0:0' + (',hash_seed=' + factory_id if factory else '')
         subprocess.run([mke2fs, '-q', '-t', 'ext2', '-b', '1024', '-I', '128',
                         '-O', 'none,filetype,sparse_super,large_file', '-L', 'GAIJIN-STATE',
-                        '-m', '0', '-E', 'root_owner=0:0', '-d', str(root), str(image)],
+                        '-m', '0', '-E', extended, *identity, '-d', str(root), str(image)],
                        check=True, env=env)
         # mke2fs -d preserves host ownership. Normalize the explicit state tree.
         commands = ''.join(f'set_inode_field {name} {field} 0\n'
                            for name in ('/home', '/home/root', '/settings', '/state-version')
                            for field in ('uid', 'gid'))
+        if factory:
+            names = ('/', '/lost+found', '/home', '/home/root', '/settings',
+                     '/state-version', '/settings/setup-pending')
+            commands += ''.join(f'set_inode_field {name} {field} {value}\n'
+                                for name in names for field, value in
+                                (('uid', 0), ('gid', 0), ('atime', 1793232000),
+                                 ('ctime', 1793232000), ('mtime', 1793232000)))
         subprocess.run([debugfs, '-w', '-f', '/dev/stdin', str(image)],
                        input=commands, text=True, check=True, stdout=subprocess.DEVNULL)
         subprocess.run([e2fsck, '-fn', str(image)], check=True)

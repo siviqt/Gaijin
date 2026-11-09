@@ -3,9 +3,18 @@
 **M3 is CLOSED — PASS, accepted by the user on 29 October 2026.**
 User statement: “This completes M3 implementations, its a pass.” The accepted
 build is application 0.3.1 / AppFS revision 13 / kernel 6.18.35-gaijin-m3.1 #19.
-All required M3 work is complete. Automatic on-device checking and a supported
-board shutdown command remain follow-ups; host recovery and explicit clean
-unmount are the accepted current behavior.
+All required M3 work is complete. Host recovery and explicit clean unmount
+were the accepted behavior for that build. Supported power commands were
+subsequently accepted with [revision 33](revision33.md).
+
+The current policy, confirmed on 8 November 2026, keeps all dirty or
+incompatible-image recovery offline on a host. On-device checking/repair is
+outside the [first-run implementation plan](../guides/persistence.md#proposed-first-run-storage).
+The plan additionally allows explicitly confirmed replacement of an eligible
+dirty image with an empty factory filesystem; that discards data and is not
+recovery. This reset is implemented in revision 34 and has
+[host validation](home-storage.md), with device acceptance still pending.
+The historical records below remain evidence of host recovery and device reuse.
 
 The **M3.1 focused hardware regression is PASS** on 29 October 2026. The new
 capture boots Linux **6.18.35-gaijin-m3.1 #19**, completes three clean same-boot
@@ -170,16 +179,19 @@ validate automatic repair on the device.
 
 ## Startup repair feasibility
 
-Host recovery is the current implementation policy, rather than a hardware
-requirement. A future on-device path could validate the image's allocation and
-geometry, expose the existing bounded map while keeping ext2 unmounted, run
-a validated NOMMU ext2 checker in conservative automatic mode, recheck, then
-mount only on success. Complex errors or memory/time limits should retain RAM
-fallback and host recovery. It must not simply clear the clean-state flag.
+On-device startup repair was considered during earlier research and is now
+explicitly outside the plan. The user chose offline host recovery on
+8 November 2026 to keep the limited target system simple. Dirty, incompatible
+or incomplete images remain preserved by default; Gaijin uses RAM and explains
+the host procedure. The implemented revision-34
+[explicit dirty-image reset](../guides/persistence.md#optional-destructive-reset-of-a-dirty-image)
+discards the old data when selected, without implementing filesystem repair.
 
-The pinned Buildroot e2fsprogs package depends on BR2_USE_MMU because of its
-util-linux/libblkid dependency. Gaijin disables MMU and ships no ext2 checker;
-this needs a tailored port/dependency configuration plus bFLT execution,
-peak-RAM and interruption testing on the P4. Standard e2fsck preen mode (-p)
-performs automatic repairs it classifies as safe and leaves more serious
-problems for intervention. This is a design option, not an enabled feature.
+The pinned Buildroot e2fsprogs package depends on BR2_USE_MMU through
+util-linux/libblkid, while Gaijin disables MMU and ships no ext2 checker.
+Avoiding a target port removes checker execution, peak-memory, dirty-map and
+interrupted-repair machinery from the dependency list. Host e2fsprogs remains
+part of factory-image generation and offline recovery. See the
+[offline host recovery policy](../guides/persistence.md#offline-host-recovery-policy)
+for the current product behavior and the captured host/device round trip
+above for accepted evidence.

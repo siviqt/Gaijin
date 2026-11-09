@@ -27,6 +27,16 @@ def flat():
     return bytes(header)
 
 
+def loader_header(version=None):
+    if version is None:
+        version = json.loads((ROOT / 'launcher/metadata.json').read_text())['version']
+    header = bytearray(80)
+    header[0] = 0xe9
+    struct.pack_into('<I', header, 32, 0xabcd5432)
+    header[48:80] = version.encode().ljust(32, b'\0')
+    return bytes(header)
+
+
 def newc(entries):
     data = bytearray()
     for ino, (name, mode, payload, rdev) in enumerate(entries + [("TRAILER!!!", 0, b"", (0, 0))], 1):
@@ -52,7 +62,7 @@ def minimal_root():
                 ("dev/console", stat.S_IFCHR | 0o600, b"", (5, 1)),
                 ("etc/inittab", stat.S_IFREG | 0o644,
                  (ROOT / "userspace/overlay/etc/inittab").read_bytes(), (0, 0))]
-    for name in ("bin/busybox", "usr/bin/gaijin-abi-check", "usr/bin/m5-umode-probe", "usr/bin/m2-input-test", "sbin/gaijin-state-map", "sbin/gaijin-power"):
+    for name in ("bin/busybox", "usr/bin/gaijin-abi-check", "usr/bin/m5-umode-probe", "usr/bin/m2-input-test", "sbin/gaijin-state-map", "sbin/gaijin-power", "sbin/gaijin-setup"):
         entries.append((name, stat.S_IFREG | 0o755, flat(), (0, 0)))
     for name in ("shutdown", "poweroff", "halt"):
         entries.append(("sbin/" + name, stat.S_IFLNK | 0o777, b"gaijin-power", (0, 0)))
@@ -153,13 +163,13 @@ class UserspaceTests(unittest.TestCase):
 
     def test_archive_boot_requirements(self):
         with patch("verify_userspace.subprocess.check_output", return_value='Tag_RISCV_arch: "rv32i2p1_m2p0_a2p1_c2p0"'):
-            report = verify(self.archive, [self.elf] * 6, "readelf")
+            report = verify(self.archive, [self.elf] * 7, "readelf")
         self.assertEqual(report["abi"], ABI)
         self.assertFalse(report["hardware_validated"])
         for missing in ("init", "bin/sh", "dev/console", "etc/inittab", "bin/busybox"):
             self.archive.write_bytes(gzip.compress(newc([e for e in minimal_root() if e[0] != missing])))
             with self.assertRaises(ValueError):
-                verify(self.archive, [self.elf] * 6, "readelf")
+                verify(self.archive, [self.elf] * 7, "readelf")
         for name in ("/init", "../init"):
             self.archive.write_bytes(gzip.compress(newc([(name, stat.S_IFREG, b"x", (0, 0))])))
             with self.assertRaisesRegex(ValueError, "unsafe"):
@@ -173,7 +183,7 @@ class UserspaceTests(unittest.TestCase):
             self.archive.write_bytes(gzip.compress(newc(minimal_root() + [
                 (name, stat.S_IFREG | 0o644, payload, (0, 0))])))
             with self.assertRaises(ValueError):
-                verify(self.archive, [self.elf] * 6, "readelf")
+                verify(self.archive, [self.elf] * 7, "readelf")
 
     def test_branding_changes_preserve_toolchain_fingerprint(self):
         from build_userspace import toolchain_fingerprint
@@ -194,7 +204,7 @@ class UserspaceTests(unittest.TestCase):
             merged.append((name, mode, data, rdev))
         self.archive.write_bytes(gzip.compress(newc(merged)))
         with patch("verify_userspace.subprocess.check_output", return_value='Tag_RISCV_arch: "rv32i2p1_m2p0_a2p1_c2p0"'):
-            verify(self.archive, [self.elf] * 6, "readelf")
+            verify(self.archive, [self.elf] * 7, "readelf")
         entries = {"bin": dict(mode=stat.S_IFLNK, data=b"bin")}
         with self.assertRaisesRegex(ValueError, "loop"):
             resolve_path(entries, "bin/sh")
@@ -210,7 +220,7 @@ class UserspaceTests(unittest.TestCase):
         entries = [entry for entry in minimal_root() if entry[0] != "usr/bin/m5-display-test"]
         self.archive.write_bytes(gzip.compress(newc(entries)))
         with self.assertRaisesRegex(ValueError, "missing archive path"):
-            verify(self.archive, [self.elf] * 6, "readelf")
+            verify(self.archive, [self.elf] * 7, "readelf")
         for action in (b"tty1::respawn:-/bin/sh\nttyUJ0::respawn:/sbin/gaijin-console usb",
                        b"ttyUJ0::respawn:-/bin/sh\ntty1::respawn:-/bin/sh",
                        b"ttyUJ0::respawn:-/bin/sh"):
@@ -220,20 +230,20 @@ class UserspaceTests(unittest.TestCase):
                            for name, mode, data, rdev in minimal_root()]
                 self.archive.write_bytes(gzip.compress(newc(entries)))
                 with self.assertRaisesRegex(ValueError, "direct login shells"):
-                    verify(self.archive, [self.elf] * 6, "readelf")
+                    verify(self.archive, [self.elf] * 7, "readelf")
         entries = minimal_root() + [("sbin/gaijin-boot-report", stat.S_IFREG | 0o755, b"#!/bin/sh\n", (0, 0))]
         self.archive.write_bytes(gzip.compress(newc(entries)))
         with self.assertRaisesRegex(ValueError, "retired backlight diagnostic"):
-            verify(self.archive, [self.elf] * 6, "readelf")
+            verify(self.archive, [self.elf] * 7, "readelf")
 
     def test_launcher_and_complete_sd_package(self):
         loader = self.work / "linux-loader.bin"
-        loader.write_bytes(bootargs().encode() + b"\0" + bootargs(usb_only=True).encode() +
-                           b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0LDO4 disabled, bypass off\0/sd/apps/com.github.siviqt.gaijin/boot/\0")
+        loader.write_bytes(loader_header() + bootargs().encode() + b"\0" + bootargs(usb_only=True).encode() +
+                           b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0LDO4 disabled, bypass off\0Gaijin home template v1\0FAT boot-sector dirty flag is set\0HOME refresh irq v1\0/sd/apps/com.github.siviqt.gaijin/boot/\0")
         output = self.work / APP_ID
         stage_launcher(loader, output)
         meta = json.loads((output / "metadata.json").read_text())
-        self.assertEqual(meta["application"][0]["revision"], 33)
+        self.assertEqual(meta["application"][0]["revision"], 38)
         self.assertTrue(meta['application'][0]['external_only'])
         self.assertEqual(meta["repository_url"], "https://github.com/siviqt/Gaijin")
         self.assertEqual(meta["icon"], {f"{size}x{size}": f"icon{size}.png" for size in (16, 32, 64)})
@@ -261,7 +271,7 @@ class UserspaceTests(unittest.TestCase):
         (self.work / "images/rootfs.cpio.gz").write_bytes(self.archive.read_bytes())
         rootfs = self.work / "images/rootfs.squashfs"
         rootfs.write_bytes(b"test squashfs fixture")
-        (self.work / "gaijin-userspace.json").write_text(json.dumps(dict(abi=ABI, shell="hush", binaries={"usr/bin/m2-input-test": {}, "sbin/gaijin-state-map": {}, "sbin/gaijin-power": {}}, archive_sha256=hashlib.sha256(self.archive.read_bytes()).hexdigest(), rootfs={"sha256": hashlib.sha256(rootfs.read_bytes()).hexdigest()})))
+        (self.work / "gaijin-userspace.json").write_text(json.dumps(dict(abi=ABI, shell="hush", binaries={"usr/bin/m2-input-test": {}, "sbin/gaijin-state-map": {}, "sbin/gaijin-power": {}, "sbin/gaijin-setup": {}}, archive_sha256=hashlib.sha256(self.archive.read_bytes()).hexdigest(), rootfs={"sha256": hashlib.sha256(rootfs.read_bytes()).hexdigest()})))
         state = self.work / "gaijin/userdata.ext2"
         state.parent.mkdir()
         state.write_bytes(b"existing user data outside the application")
@@ -335,7 +345,7 @@ class UserspaceTests(unittest.TestCase):
         loader = self.work / "linux-loader.bin"
         loader.write_bytes(bootargs().encode() + b"\0" + bootargs(usb_only=True).encode() +
                            b"\0Gaijin M5 contract=1\0Linux owns DMA refresh\0"
-                           b"LDO4 disabled, bypass off\0/sd/apps/com.github.siviq.gaijin/boot/\0")
+                           b"LDO4 disabled, bypass off\0Gaijin home template v1\0FAT boot-sector dirty flag is set\0HOME refresh irq v1\0/sd/apps/com.github.siviq.gaijin/boot/\0")
         with self.assertRaisesRegex(ValueError, "loader is not current"):
             check_loader(loader)
 
@@ -359,12 +369,17 @@ class UserspaceTests(unittest.TestCase):
 
     def test_release_rejects_debug_earlycon_and_missing_recovery_mode(self):
         loader = self.work / 'loader.bin'
-        common = b'\0Gaijin M5 contract=1\0Linux owns DMA refresh\0LDO4 disabled, bypass off\0/sd/apps/com.github.siviqt.gaijin/boot/\0'
+        common = b'\0Gaijin M5 contract=1\0Linux owns DMA refresh\0LDO4 disabled, bypass off\0Gaijin home template v1\0FAT boot-sector dirty flag is set\0HOME refresh irq v1\0/sd/apps/com.github.siviqt.gaijin/boot/\0'
         loader.write_bytes(bootargs().encode() + common)
         with self.assertRaisesRegex(ValueError, 'loader is not current'):
             check_loader(loader)
-        loader.write_bytes(bootargs().encode() + b'\0' + bootargs(usb_only=True).encode() + common)
+        loader.write_bytes(loader_header() + bootargs().encode() + b'\0' + bootargs(usb_only=True).encode() + common)
         check_loader(loader)
+        valid = loader.read_bytes()
+        loader.write_bytes(loader_header('0.0.0') + valid[80:])
+        with self.assertRaisesRegex(ValueError, 'loader application version differs'):
+            check_loader(loader)
+        loader.write_bytes(valid)
         loader.write_bytes(loader.read_bytes() + b'earlycon=esp32p4usbjtag,mmio32,0x500d2000\0')
         with self.assertRaisesRegex(ValueError, 'must disable CONFIG_GAIJIN_USB_EARLYCON'):
             check_loader(loader)

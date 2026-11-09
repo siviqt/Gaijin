@@ -3160,7 +3160,7 @@
 +		       nommu_userspace_pool_rmem);
 --- a/drivers/video/fbdev/tanmatsu-fb.c
 +++ b/drivers/video/fbdev/tanmatsu-fb.c
-@@ -0,0 +1,298 @@
+@@ -0,0 +1,436 @@
 +// SPDX-License-Identifier: GPL-2.0-only
 +/* Tanmatsu rev7 ST7701: loader configures DSI/PHY and DW-GDMA channel 0.
 + * Linux owns all refresh interrupts; no IDF ISR or descriptor survives in use.
@@ -3169,7 +3169,10 @@
 +#include <linux/dma-map-ops.h>
 +#include <linux/fb.h>
 +#include <linux/interrupt.h>
++#include <linux/irqflags.h>
 +#include <linux/io.h>
++#include <linux/ktime.h>
++#include <linux/math64.h>
 +#include <linux/module.h>
 +#include <linux/of_address.h>
 +#include <linux/of_reserved_mem.h>
@@ -3201,6 +3204,9 @@
 +	u32 palette[16];
 +	struct delayed_work flush;
 +	atomic_t frames, errors, underruns;
++	atomic_t polled_frames;
++	u64 last_frame_ns, max_frame_ns;
++	bool running;
 +	int irq;
 +};
 +
@@ -3218,25 +3224,55 @@
 +	writel(0x101, fb->dma + DMA_CHEN);
 +}
 +
-+static irqreturn_t tanmatsu_fb_irq(int irq, void *data)
++/* The board is single-core. Both callers serialize with local IRQs masked;
++ * polling never enables interrupts inside printk's legacy console write.
++ */
++static irqreturn_t tanmatsu_fb_service(struct tanmatsu_fb *fb, bool polled)
 +{
-+	struct tanmatsu_fb *fb = data;
 +	u32 status = readl(fb->dma + DMA_STATUS);
++	u64 now, elapsed;
 +
 +	if (!(status & DMA_EVENTS))
 +		return IRQ_NONE;
 +	writel(status, fb->dma + DMA_CLEAR);
++	if (!fb->running)
++		return IRQ_HANDLED;
 +	if (status & DMA_ERRORS) {
 +		/* Stop on bus/descriptor errors. Never spin in an IRQ retry loop. */
++		fb->running = false;
 +		writel(0, fb->dma + DMA_SIGNAL_EN);
 +		writel(0x100, fb->dma + DMA_CHEN);
 +		atomic_inc(&fb->errors);
-+		dev_err_ratelimited(fb->info->device, "display DMA stopped: %#x\n", status);
++		/* A polled fault may occur inside fbcon/printk: do not recurse. */
++		if (!polled)
++			dev_err_ratelimited(fb->info->device, "display DMA stopped: %#x\n", status);
 +	} else if (status & DMA_DONE) {
++		now = ktime_get_ns();
++		elapsed = now - fb->last_frame_ns;
++		if (elapsed > fb->max_frame_ns)
++			fb->max_frame_ns = elapsed;
++		fb->last_frame_ns = now;
 +		atomic_inc(&fb->frames);
++		if (polled)
++			atomic_inc(&fb->polled_frames);
 +		tanmatsu_fb_start(fb);
 +	}
 +	return IRQ_HANDLED;
++}
++
++static irqreturn_t tanmatsu_fb_irq(int irq, void *data)
++{
++	return tanmatsu_fb_service(data, false);
++}
++
++static void tanmatsu_fb_poll(struct tanmatsu_fb *fb)
++{
++	unsigned long flags;
++
++	local_irq_save(flags);
++	if (fb->running)
++		tanmatsu_fb_service(fb, true);
++	local_irq_restore(flags);
 +}
 +
 +static void tanmatsu_fb_flush(struct work_struct *work)
@@ -3248,16 +3284,85 @@
 +	 * IRQs during each writeback, so limit each range to let the frame IRQ
 +	 * re-arm scanout between calls.
 +	 */
-+	for (offset = 0; offset < FB_BYTES; offset += FB_FLUSH_CHUNK)
++	for (offset = 0; offset < FB_BYTES; offset += FB_FLUSH_CHUNK) {
 +		arch_sync_dma_for_device(FB_BASE + offset,
 +					 min(FB_BYTES - offset, FB_FLUSH_CHUNK),
 +					 DMA_TO_DEVICE);
++		tanmatsu_fb_poll(fb);
++	}
 +	if (readl(fb->bridge + 0x58) & BIT(0)) {
 +		writel(BIT(0), fb->bridge + 0x54);
 +		atomic_inc(&fb->underruns);
 +		dev_warn_ratelimited(fb->info->device, "DSI FIFO underrun\n");
 +	}
 +	schedule_delayed_work(&fb->flush, msecs_to_jiffies(50));
++}
++
++/* Legacy printk calls fbcon with IRQs masked. A rotated glyph batch or
++ * scroll can occupy many native rows. Bound each draw to one 960-byte row
++ * and service completed DMA between rows, without changing the IRQ state.
++ */
++static bool tanmatsu_fb_rect_valid(struct fb_info *info, u32 x, u32 y,
++				 u32 width, u32 height)
++{
++	return width && height && x < info->var.xres_virtual &&
++		y < info->var.yres_virtual && width <= info->var.xres_virtual - x &&
++		height <= info->var.yres_virtual - y;
++}
++
++static void tanmatsu_fb_fillrect(struct fb_info *info, const struct fb_fillrect *rect)
++{
++	struct fb_fillrect row = *rect;
++	u32 y;
++
++	if (!tanmatsu_fb_rect_valid(info, rect->dx, rect->dy, rect->width, rect->height))
++		return;
++	row.height = 1;
++	tanmatsu_fb_poll(info->par);
++	for (y = 0; y < rect->height; y++) {
++		row.dy = rect->dy + y;
++		sys_fillrect(info, &row);
++		tanmatsu_fb_poll(info->par);
++	}
++}
++
++static void tanmatsu_fb_copyarea(struct fb_info *info, const struct fb_copyarea *area)
++{
++	struct fb_copyarea row = *area;
++	u32 y, offset;
++
++	if (!tanmatsu_fb_rect_valid(info, area->dx, area->dy, area->width, area->height) ||
++	    !tanmatsu_fb_rect_valid(info, area->sx, area->sy, area->width, area->height))
++		return;
++	row.height = 1;
++	tanmatsu_fb_poll(info->par);
++	for (y = 0; y < area->height; y++) {
++		/* Keep memmove semantics for vertically overlapping scrolls. */
++		offset = area->dy > area->sy ? area->height - 1 - y : y;
++		row.sy = area->sy + offset;
++		row.dy = area->dy + offset;
++		sys_copyarea(info, &row);
++		tanmatsu_fb_poll(info->par);
++	}
++}
++
++static void tanmatsu_fb_imageblit(struct fb_info *info, const struct fb_image *image)
++{
++	struct fb_image row = *image;
++	u32 y, pitch;
++
++	if (!tanmatsu_fb_rect_valid(info, image->dx, image->dy, image->width, image->height))
++		return;
++	/* Match sys_imageblit: byte-padded mono rows, else 8-bit color indices. */
++	pitch = image->depth == 1 ? DIV_ROUND_UP(image->width, 8) : image->width;
++	row.height = 1;
++	tanmatsu_fb_poll(info->par);
++	for (y = 0; y < image->height; y++) {
++		row.dy = image->dy + y;
++		row.data = image->data + y * pitch;
++		sys_imageblit(info, &row);
++		tanmatsu_fb_poll(info->par);
++	}
 +}
 +
 +static int tanmatsu_fb_check_var(struct fb_var_screeninfo *var, struct fb_info *info)
@@ -3297,7 +3402,9 @@
 +static const struct fb_ops tanmatsu_fb_ops = {
 +	.owner = THIS_MODULE,
 +	__FB_DEFAULT_SYSMEM_OPS_RDWR,
-+	__FB_DEFAULT_SYSMEM_OPS_DRAW,
++	.fb_fillrect = tanmatsu_fb_fillrect,
++	.fb_copyarea = tanmatsu_fb_copyarea,
++	.fb_imageblit = tanmatsu_fb_imageblit,
 +	.fb_destroy = tanmatsu_fb_destroy,
 +	.fb_check_var = tanmatsu_fb_check_var,
 +	.fb_setcolreg = tanmatsu_fb_setcolreg,
@@ -3324,8 +3431,30 @@
 +}
 +static DEVICE_ATTR_RO(underruns);
 +
++static ssize_t polled_frames_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct tanmatsu_fb *fb = platform_get_drvdata(to_platform_device(dev));
++	return sysfs_emit(buf, "%d\n", atomic_read(&fb->polled_frames));
++}
++static DEVICE_ATTR_RO(polled_frames);
++
++static ssize_t max_frame_us_show(struct device *dev, struct device_attribute *attr, char *buf)
++{
++	struct tanmatsu_fb *fb = platform_get_drvdata(to_platform_device(dev));
++	unsigned long flags;
++	u64 interval;
++
++	/* RV32 cannot snapshot a 64-bit counter atomically. */
++	local_irq_save(flags);
++	interval = fb->max_frame_ns;
++	local_irq_restore(flags);
++	return sysfs_emit(buf, "%llu\n", div_u64(interval, 1000));
++}
++static DEVICE_ATTR_RO(max_frame_us);
++
 +static struct attribute *tanmatsu_fb_attrs[] = {
-+	&dev_attr_frames.attr, &dev_attr_dma_errors.attr, &dev_attr_underruns.attr, NULL,
++	&dev_attr_frames.attr, &dev_attr_dma_errors.attr, &dev_attr_underruns.attr,
++	&dev_attr_polled_frames.attr, &dev_attr_max_frame_us.attr, NULL,
 +};
 +ATTRIBUTE_GROUPS(tanmatsu_fb);
 +
@@ -3336,6 +3465,7 @@
 +	struct reserved_mem *mem;
 +	struct fb_info *info;
 +	struct tanmatsu_fb *fb;
++	unsigned long flags;
 +	int ret;
 +
 +	np = of_parse_phandle(dev->of_node, "memory-region", 0);
@@ -3407,6 +3537,9 @@
 +		goto release;
 +	}
 +	arch_sync_dma_for_device(FB_BASE, FB_BYTES, DMA_TO_DEVICE);
++	local_irq_save(flags);
++	fb->last_frame_ns = ktime_get_ns();
++	fb->running = true;
 +	writel(DMA_EVENTS, fb->dma + DMA_STATUS_EN);
 +	writel(DMA_EVENTS, fb->dma + DMA_SIGNAL_EN);
 +	writel(~0U, fb->bridge + 0x54);
@@ -3416,8 +3549,9 @@
 +	 */
 +	writel(readl(fb->bridge + 0x40) | BIT(0), fb->bridge + 0x40);
 +	writel(1, fb->bridge + 0x44);
++	local_irq_restore(flags);
 +	schedule_delayed_work(&fb->flush, msecs_to_jiffies(50));
-+	dev_info(dev, "fb%d: 480x800 RGB565, landscape fbcon, 20 Hz cache flush\n", info->node);
++	dev_info(dev, "fb%d: 480x800 RGB565, row-bounded fbcon refresh, 20 Hz cache flush\n", info->node);
 +	return 0;
 +release:
 +	framebuffer_release(info);
@@ -3427,10 +3561,14 @@
 +static void tanmatsu_fb_shutdown(struct platform_device *pdev)
 +{
 +	struct tanmatsu_fb *fb = platform_get_drvdata(pdev);
++	unsigned long flags;
 +
++	local_irq_save(flags);
++	fb->running = false;
 +	writel(readl(fb->bridge + 0x40) & ~BIT(0), fb->bridge + 0x40);
 +	writel(1, fb->bridge + 0x44);
 +	writel(0, fb->dma + DMA_SIGNAL_EN);
++	local_irq_restore(flags);
 +	disable_irq(fb->irq);
 +	writel(0x100, fb->dma + DMA_CHEN);
 +	cancel_delayed_work_sync(&fb->flush);
@@ -3459,6 +3597,7 @@
 +module_platform_driver(tanmatsu_fb_driver);
 +MODULE_LICENSE("GPL");
 +MODULE_DESCRIPTION("Tanmatsu loader-initialized DSI framebuffer and native refresh");
+
 --- a/drivers/video/fbdev/Kconfig
 +++ b/drivers/video/fbdev/Kconfig
 @@ -1825,3 +1825,11 @@
@@ -3468,7 +3607,7 @@
 +
 +config FB_TANMATSU
 +	bool "Tanmatsu rev7 loader-initialized DSI framebuffer"
-+	depends on FB && SOC_ESP32P4 && !MMU && OF_RESERVED_MEM
++	depends on FB && SOC_ESP32P4 && !MMU && !SMP && OF_RESERVED_MEM
 +	select FB_SYSMEM_HELPERS
 +	help
 +	  Native DW-GDMA refresh and cache writeback for the ST7701 panel.
@@ -3483,72 +3622,79 @@
 +obj-$(CONFIG_FB_TANMATSU) += tanmatsu-fb.o
 --- a/drivers/power/reset/tanmatsu-power.c
 +++ b/drivers/power/reset/tanmatsu-power.c
-@@ -0,0 +1,68 @@
+@@ -0,0 +1,75 @@
 +// SPDX-License-Identifier: GPL-2.0-only
-+/* Tanmatsu rev7 reset to AppFS Launcher using ESP32-P4 ROM software_reset. */
++/* Tanmatsu AppFS reset: ordinary shutdown returns to Launcher; an explicit
++ * validated reset command uses AppFS 2.1.0's supported application argument. */
 +#include <linux/io.h>
 +#include <linux/module.h>
 +#include <linux/of.h>
 +#include <linux/platform_device.h>
 +#include <linux/reboot.h>
++#include "gaijin-home.h"
 +
 +#define RTC_CUSTOM_BYTES 256
 +struct tanmatsu_power {
-+	void __iomem *retained;
++    void __iomem *retained;
++    u32 appfs_fd;
++    bool appfs_ready;
 +};
-+
 +static int tanmatsu_restart(struct sys_off_data *data)
 +{
-+	struct tanmatsu_power *power = data->cb_data;
-+
-+	/* Clear AppFS magic before reset so the bootloader selects Launcher. */
-+	writel(0, power->retained);
-+	writel(0, power->retained + 4);
-+	wmb();
-+	local_irq_disable();
-+	/* Full digital-system reset from ROM, never an IDF/FreeRTOS call.
-+	 * The ROM executes outside PSRAM while resetting CPUs/peripherals.
-+	 */
-+	((void (*)(void))0x4fc00094UL)();
-+	pr_emerg("Tanmatsu ROM reset returned; use physical reset\n");
-+	return NOTIFY_DONE;
++    struct tanmatsu_power *power=data->cb_data;
++    /* Invalidate first. Publish magic last, after the complete argument. */
++    writel(0,power->retained);
++    writel(0,power->retained+4);
++    if(power->appfs_ready && gh_reset_valid(data->cmd)) {
++        memset_io(power->retained+8,0,GH_APPFS_ARG_OFFSET+GH_APPFS_ARG_BYTES-8);
++        writel(power->appfs_fd,power->retained+8);
++        writeb(1,power->retained+12);
++        memcpy_toio(power->retained+GH_APPFS_ARG_OFFSET,data->cmd,GH_RESET_LENGTH+1);
++        wmb();
++        writel((u32)GH_APPFS_MAGIC,power->retained);
++        writel((u32)(GH_APPFS_MAGIC>>32),power->retained+4);
++    }
++    wmb();
++    local_irq_disable();
++    ((void (*)(void))0x4fc00094UL)();
++    pr_emerg("Tanmatsu ROM reset returned; use physical reset\n");
++    return NOTIFY_DONE;
 +}
-+
-+static ssize_t ready_show(struct device *dev, struct device_attribute *attr, char *buf)
-+{
-+	return sysfs_emit(buf, "1\n");
-+}
++static ssize_t ready_show(struct device *dev,struct device_attribute *attr,char *buf)
++{ return sysfs_emit(buf,"1\n"); }
 +static DEVICE_ATTR_RO(ready);
-+static struct attribute *tanmatsu_power_attrs[] = {
-+	&dev_attr_ready.attr, NULL,
++static ssize_t home_reset_ready_show(struct device *dev,struct device_attribute *attr,char *buf)
++{
++    struct tanmatsu_power *power=dev_get_drvdata(dev);
++    return sysfs_emit(buf,"%u\n",power->appfs_ready?1:0);
++}
++static DEVICE_ATTR_RO(home_reset_ready);
++static struct attribute *tanmatsu_power_attrs[]={
++    &dev_attr_ready.attr,&dev_attr_home_reset_ready.attr,NULL,
 +};
 +ATTRIBUTE_GROUPS(tanmatsu_power);
-+
 +static int tanmatsu_power_probe(struct platform_device *pdev)
 +{
-+	struct tanmatsu_power *power;
-+	struct resource *res;
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	if (!res || res->start != 0x5010800c || resource_size(res) != RTC_CUSTOM_BYTES)
-+		return -EINVAL;
-+	power = devm_kzalloc(&pdev->dev, sizeof(*power), GFP_KERNEL);
-+	if (!power)
-+		return -ENOMEM;
-+	power->retained = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(power->retained))
-+		return PTR_ERR(power->retained);
-+	dev_info(&pdev->dev, "Launcher reset ready\n");
-+	return devm_register_sys_off_handler(&pdev->dev, SYS_OFF_MODE_RESTART,
-+		SYS_OFF_PRIO_FIRMWARE, tanmatsu_restart, power);
++    struct tanmatsu_power *power;
++    struct resource *res=platform_get_resource(pdev,IORESOURCE_MEM,0);
++    if(!res || res->start!=0x5010800c || resource_size(res)!=RTC_CUSTOM_BYTES) return -EINVAL;
++    power=devm_kzalloc(&pdev->dev,sizeof(*power),GFP_KERNEL);
++    if(!power) return -ENOMEM;
++    power->retained=devm_platform_ioremap_resource(pdev,0);
++    if(IS_ERR(power->retained)) return PTR_ERR(power->retained);
++    power->appfs_ready=!of_property_read_u32(pdev->dev.of_node,"gaijin,appfs-fd",&power->appfs_fd)
++        && power->appfs_fd<255;
++    platform_set_drvdata(pdev,power);
++    dev_info(&pdev->dev,"Launcher reset ready; home reset %s\n",power->appfs_ready?"available":"unavailable");
++    return devm_register_sys_off_handler(&pdev->dev,SYS_OFF_MODE_RESTART,
++        SYS_OFF_PRIO_FIRMWARE,tanmatsu_restart,power);
 +}
-+static const struct of_device_id tanmatsu_power_match[] = {
-+	{ .compatible = "tanmatsu,rev7-power" }, { }
++static const struct of_device_id tanmatsu_power_match[]={
++    {.compatible="tanmatsu,rev7-power"},{},
 +};
-+static struct platform_driver tanmatsu_power_driver = {
-+	.driver = { .name = "tanmatsu-power", .of_match_table = tanmatsu_power_match,
-+		.dev_groups = tanmatsu_power_groups },
-+	.probe = tanmatsu_power_probe,
++static struct platform_driver tanmatsu_power_driver={
++    .driver={.name="tanmatsu-power",.of_match_table=tanmatsu_power_match,.dev_groups=tanmatsu_power_groups},
++    .probe=tanmatsu_power_probe,
 +};
 +builtin_platform_driver(tanmatsu_power_driver);
 +MODULE_LICENSE("GPL");
@@ -3587,3 +3733,53 @@
  
  	OFFSET(SUSPEND_CONTEXT_REGS, suspend_context, regs);
  
+--- a/drivers/power/reset/gaijin-home.h
++++ b/drivers/power/reset/gaijin-home.h
+@@ -0,0 +1,47 @@
++// SPDX-License-Identifier: MIT
++/* Shared wire/format contract. No pointers or native structs go on disk. */
++#ifndef GAIJIN_HOME_H
++#define GAIJIN_HOME_H
++#define GH_FACTORY_BYTES (32U * 1024U * 1024U)
++#define GH_RESERVE_BYTES (16U * 1024U * 1024U)
++#define GH_IMAGE "userdata.ext2"
++#define GH_TEMP "userdata.new"
++#define GH_TRANSACTION "provision-v1"
++#define GH_RESET_PREFIX "ghr1:"
++#define GH_RESET_LENGTH 111
++#define GH_APPFS_MAGIC 0x2af7de4a994f7236ULL
++#define GH_APPFS_ARG_OFFSET 13
++#define GH_APPFS_ARG_BYTES 128
++
++static inline unsigned int gh_le16(const unsigned char *p)
++{ return p[0] | ((unsigned int)p[1] << 8); }
++static inline unsigned int gh_le32(const unsigned char *p)
++{ return gh_le16(p) | (gh_le16(p + 2) << 16); }
++static inline int gh_format(const unsigned char *s, unsigned long long size)
++{
++    static const char label[] = "GAIJIN-STATE";
++    unsigned int i;
++    if (size < 16U*1024U*1024U || size > 256U*1024U*1024U ||
++        gh_le16(s+56) != 0xef53 || gh_le32(s+24) != 0 ||
++        gh_le32(s+76) != 1 || gh_le16(s+88) != 128 ||
++        gh_le32(s+92) != 0 || gh_le32(s+96) != 2 || gh_le32(s+100) != 3 ||
++        (unsigned long long)gh_le32(s+4)*1024 != size) return 0;
++    for (i = 0; i < 12; i++) if (s[120+i] != (unsigned char)label[i]) return 0;
++    return 1;
++}
++static inline int gh_hex(char c)
++{ return (c >= '0' && c <= '9') || (c >= 'a' && c <= 'f'); }
++/* ghr1:<CID,32 hex>:<file length,8 hex>:<fresh superblock SHA256,64 hex> */
++static inline int gh_reset_valid(const char *p)
++{
++    unsigned int i;
++    if (!p) return 0;
++    for (i = 0; i < 5; i++) if (p[i] != GH_RESET_PREFIX[i]) return 0;
++    for (i = 5; i < GH_RESET_LENGTH; i++) {
++        if (!p[i]) return 0;
++        if (i == 37 || i == 46) { if (p[i] != ':') return 0; }
++        else if (!gh_hex(p[i])) return 0;
++    }
++    return p[GH_RESET_LENGTH] == 0;
++}
++#endif

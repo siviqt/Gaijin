@@ -1,0 +1,30 @@
+{
+  "date": "2026-11-09",
+  "version": "0.5.21",
+  "appfs_revision": 35,
+  "basis": "User report after installing the matching revision-35 set",
+  "user_report": "Home loading screen was upside down, but it worked. Having 32 MiB partition image created, all 6 options displayed.",
+  "status": "PARTIAL PASS: creation and setup menu; progress orientation defect",
+  "confirmed": [
+    "32 MiB home filesystem image was created on the device.",
+    "Initial setup menu was displayed.",
+    "Loader progress reached Linux setup without the revision-34 file-open crash."
+  ],
+  "issue": "HOME progress was upside down; loader drawing used the opposite landscape transform from Linux fbcon rotate:1.",
+  "correction": "Revision 36 maps landscape (x,y) to native (479-y,x). The corrected physical orientation still needs observation when progress next runs.",
+  "components_sha256": {
+    "loader": "17f91501e91760445039c087ef2ca41bfeff217d2db8b9639f7bb2ba73f399a2",
+    "Image": "2d45cc31b68bee546bf1c1a9e953d2aeace5e59e6af05e23e96be18a0c09fff0",
+    "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
+    "initramfs": "ac64a5f99e1c9cae34cd1bdc9bad6ab4332a69d504ecc5e57749df5e41d0d332",
+    "rootfs.sqfs": "b103e3dc7aee020dcca32c9ff1822d951c4d509b51b15051b394241c7810037d"
+  },
+  "full_storage_acceptance": false,
+  "not_reported": [
+    "Preference save and completion behavior.",
+    "Clean reboot and proof-file reuse.",
+    "Eligible dirty-image reset and cancellation on device.",
+    "No-space, identity refusal, and interrupted transactions.",
+    "Standalone cold-boot and power command regressions with this storage feature."
+  ]
+}

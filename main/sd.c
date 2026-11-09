@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: MIT
 #include "sd.h"
+#include "sd_card.h"
 #include "driver/gpio.h"
 #include "driver/sdmmc_host.h"
 #include "esp_check.h"
@@ -18,6 +19,7 @@
 
 static const char *TAG = "Gaijin SD reset";
 static sdmmc_card_t *card;
+sdmmc_card_t *gaijin_sd_card(void) { return card; }
 
 static esp_err_t power_cycle(sd_pwr_ctrl_handle_t *power)
 {

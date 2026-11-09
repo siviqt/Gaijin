@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-08",
+  "version": "0.5.20",
+  "appfs_revision": 34,
+  "application_id": "com.github.siviqt.gaijin",
+  "components": "Loader, kernel and pinned NOMMU userspace rebuilt successfully",
+  "host_tests": {
+    "run": 123,
+    "passed": 123,
+    "skipped": 0
+  },
+  "home_storage": {
+    "transaction": "PASS: creation, unchanged existing images, candidate-before-delete, identity recheck, no-space and interruption/replay refusal",
+    "setup": "PASS: real program under PTY, settings persistence, exact ERASE, cancellation, eligibility and concurrent-console exclusion",
+    "mapper": "PASS: probe, readonly inspection, fresh header checks and bound reset identity",
+    "appfs_reset": "PASS: retained-memory callback and independent AppFS argument layouts",
+    "factory": "PASS: deterministic 32 MiB ext2 seed, host e2fsck and bounded zlib round trip",
+    "sha256": "PASS: standard and independent hashlib vectors"
+  },
+  "clic_rv32_cases": 60,
+  "clic_negative_control": "PASS",
+  "actual_rv32_kernel_string_objects": "PASS under QEMU user harness",
+  "userspace_abi": "PASS: seven static bFLT executables, initramfs bounds and matching SquashFS",
+  "package_integrity": "PASS: current metadata, manifest, checksums, embedded home template and matching components",
+  "publication_audit": "PASS",
+  "components_sha256": {
+    "loader": "0715efaf2a28fc025db415507da673c9fb4f1edb46c028caa159794006b8b6fd",
+    "Image": "2d45cc31b68bee546bf1c1a9e953d2aeace5e59e6af05e23e96be18a0c09fff0",
+    "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
+    "initramfs": "7e87c5426452d943db306d8842555dec9963695a7dc480a10cbdcd841c1daf4b",
+    "rootfs.sqfs": "c5c50069092b923ccc10df1fef19e4b9da8ab27ebc75bd0319a57b25e8af2dde"
+  },
+  "home_template_expanded_sha256": "65f2473b31220be8272c81c076fbc288a351646f89258ec424718539a0562caf",
+  "hardware_validated": false,
+  "last_user_accepted_hardware_revision": 33,
+  "hardware_validation_report": "Documentation/validation/home-storage.md",
+  "remaining": [
+    "Run and capture revision-34 Tanmatsu acceptance: SD creation/reuse, setup, confirmed reset, no-space and identity refusal, interrupted transactions, clean/rescue suppression and standalone boot.",
+    "Validate ROM decompression, progress display and DMA/timer handoff on physical ESP32-P4 hardware."
+  ]
+}

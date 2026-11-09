@@ -14,11 +14,13 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include "gaijin_home.h"
 
 #define POWER_SYSFS "/sys/bus/platform/devices/5010800c.power-controller/"
 #define BACKLIGHT_POWER "/sys/class/backlight/tanmatsu/bl_power"
 /* This binary is target-only. Host regressions replace all transition calls. */
-enum action { GA_LAUNCHER, GA_POWEROFF, GA_HALT };
+enum action { GA_LAUNCHER, GA_POWEROFF, GA_HALT, GA_RESET_HOME };
+static char reset_command[128];
 
 static int trace_fd = -1;
 static void power_note(const char *message)
@@ -42,8 +44,11 @@ static int parse_action(int argc, char **argv, enum action *action, int *check)
     if (!strcmp(name, "shutdown")) *action = GA_LAUNCHER;
     else if (!strcmp(name, "poweroff")) *action = GA_POWEROFF;
     else if (!strcmp(name, "halt")) *action = GA_HALT;
+    else if (!strcmp(name, "reset-home")) *action = GA_RESET_HOME;
     else return -1;
     if (argc == 2 && !strcmp(argv[1], "--check")) { *check = 1; return 0; }
+    if (*action == GA_RESET_HOME)
+        return argc==2 && !strcmp(argv[1],"--erase-confirmed") ? 0 : -1;
     if (*action == GA_LAUNCHER) {
         if (argc > 1 && !strcmp(argv[1], "now")) return argc == 2 ? 0 : -1;
         if (argc > 1) {
@@ -79,6 +84,7 @@ static int preflight(enum action action)
     if (geteuid() != 0 || getpid() == 1) { errno = EPERM; return -1; }
     /* Refuse to signal processes on a host, another board or an old kernel. */
     if (read_number(POWER_SYSFS "ready", 1)) return -1;
+    if (action == GA_RESET_HOME && read_number(POWER_SYSFS "home_reset_ready",1)) return -1;
     if (action == GA_POWEROFF && read_number("/sys/bus/i2c/devices/0-005f/firmware_version", 9)) return -1;
     return 0;
 }
@@ -140,8 +146,44 @@ static int writable_devices(void)
     return 0;
 }
 
+static int prepare_reset(void)
+{
+    int pipefd[2],status;char text[128];
+    if(pipe2(pipefd,O_CLOEXEC)) return -1;
+    pid_t pid=vfork();
+    if(pid<0) {close(pipefd[0]);close(pipefd[1]);return -1;}
+    if(!pid) {
+        if(dup2(pipefd[1],STDOUT_FILENO)<0) _exit(127);
+        close(pipefd[0]);close(pipefd[1]);
+        execl("/sbin/gaijin-state-map","gaijin-state-map","reset-token",(char *)NULL);
+        _exit(127);
+    }
+    close(pipefd[1]);
+    size_t used=0;
+    for(;;) {
+        ssize_t n=read(pipefd[0],text+used,sizeof(text)-1-used);
+        if(n<0 && errno==EINTR) continue;
+        if(n<0) {used=0;break;}
+        if(!n) break;
+        used+=n;
+        if(used==sizeof(text)-1) break;
+    }
+    close(pipefd[0]);
+    while(waitpid(pid,&status,0)<0) if(errno!=EINTR) return -1;
+    if(!WIFEXITED(status) || WEXITSTATUS(status) || used!=GH_RESET_LENGTH+1 || text[used-1]!='\n') {
+        errno=EINVAL;return -1;
+    }
+    text[used-1]=0;
+    if(!gh_reset_valid(text)) {errno=EINVAL;return -1;}
+    memcpy(reset_command,text,used);
+    return 0;
+}
+
 static int transition(enum action action)
 {
+    if (action == GA_RESET_HOME)
+        return syscall(SYS_reboot,LINUX_REBOOT_MAGIC1,LINUX_REBOOT_MAGIC2,
+                       LINUX_REBOOT_CMD_RESTART2,reset_command);
     if (action == GA_LAUNCHER)
         return syscall(SYS_reboot, LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2,
                        LINUX_REBOOT_CMD_RESTART, NULL);
@@ -158,6 +200,7 @@ int main(int argc, char **argv)
         fputs("usage: shutdown|poweroff|halt [--check]\n"
               "       gaijin-power shutdown|poweroff|halt [--check]\n"
               "       shutdown [-P|-H] [now]\n"
+              "       gaijin-power reset-home --erase-confirmed (destructive)\n"
               "shutdown returns to Launcher; no force, no-sync or scheduled modes.\n", stderr);
         return 2;
     }
@@ -176,7 +219,7 @@ int main(int argc, char **argv)
     /* Keep the panel dark while shutdown messages scroll the framebuffer.
      * bl_power leaves the user's brightness setting in place.
      */
-    if (action != GA_HALT && !read_number(BACKLIGHT_POWER, 0))
+    if ((action == GA_LAUNCHER || action == GA_POWEROFF) && !read_number(BACKLIGHT_POWER, 0))
         restore_backlight = set_backlight_power(false);
     usleep(100000);
     power_note("paused init respawns");
@@ -195,6 +238,10 @@ int main(int argc, char **argv)
     if (stop_persistence()) goto failed;
     power_note("persistence cleanup complete; audit mounts");
     if (writable_devices()) goto failed;
+    if (action == GA_RESET_HOME) {
+        power_note("validate dirty home identity after cleanup");
+        if (prepare_reset()) goto failed;
+    }
     /* Cleanup has syncfs'ed ext2, unmounted it, verified the clean header
      * through fresh raw reads and removed the DM/loop map. A global sync
      * here needlessly revisits overlapping block-device aliases, including

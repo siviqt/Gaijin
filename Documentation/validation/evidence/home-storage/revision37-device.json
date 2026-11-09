@@ -1,0 +1,25 @@
+{
+  "date": "2026-11-09",
+  "appfs_revision": 37,
+  "basis": "User follow-up after testing the revision-37 set; revision inferred from the supplied bundle, not independently verified by a complete boot capture",
+  "user_reports": [
+    "Flicker during the HOME loading is gone.",
+    "Light-blue whole-screen flashes remain during startup scrolling, pause while SD checking/output pauses, and stop at the idle console.",
+    "The 100-line m5-display-test scroll did not show flashes; flashes occur only during startup."
+  ],
+  "display_test": {
+    "geometry": "480,800",
+    "bits_per_pixel": 16,
+    "tty_rows_columns": [
+      26,
+      80
+    ],
+    "frames_before": 3113,
+    "frames_after": 3557,
+    "dma_errors": 0,
+    "underruns": 0,
+    "result": "M5 refresh PASS"
+  },
+  "scope": "HOME visual correction and post-boot scroll confirmed; startup flicker unresolved in this build. Zero sampled error counters do not prove every DSI deadline was met.",
+  "hardware_fully_accepted": false
+}

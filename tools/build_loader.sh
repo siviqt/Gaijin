@@ -2,6 +2,7 @@
 set -euo pipefail
 : "${IDF_PATH:=$HOME/.espressif/v6.0.2/esp-idf}"
 export IDF_PATH
+python3 tools/build_home_seed.py
 # EIM installs can keep tools and their Python environment under this directory.
 if [[ -z "${IDF_TOOLS_PATH:-}" && -d "$HOME/.espressif/tools/python_env" ]]; then
     export IDF_TOOLS_PATH="$HOME/.espressif/tools"

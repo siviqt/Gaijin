@@ -1,11 +1,20 @@
 # Install the current Gaijin build
 
-Current build is **M5 (Framebuffer and fbcon) / application 0.5.19 / AppFS revision 33**.
+Current build is **application 0.5.24 / AppFS revision 38**, with first-run home
+creation and explicitly confirmed dirty-home reset. These new storage paths
+need the [storage device checks](Documentation/validation/home-storage.md).
 Expect **Linux 6.18.35-gaijin-m5**, framebuffer output, and login shells on
 LCD `tty1` and USB `ttyUJ0`. The user confirmed all revision-33 device checks
 passed on 8 November 2026; M5 is accepted.
 Revision 33 prefers the LCD after panel setup and removes the default USB early
 console. See the [standalone boot checks](Documentation/validation/revision33.md).
+
+Revision 37 adds IRQ-driven HOME refresh and bounded cache updates for the
+loader flicker reported on revision 36; the user confirmed HOME flicker is
+gone. Revision 38 targets the remaining startup flashes by servicing display
+completions during IRQ-masked console drawing. Follow the
+[boot display checks](Documentation/validation/revision38.md). The existing
+[HOME diagnostic](Documentation/validation/revision37.md) remains available.
 
 Use one complete set: the project's `build/` directory, or one extraction of
 `build/gaijin-current.zip`. The instructions below use paths relative to that
@@ -26,9 +35,17 @@ folder. Do not combine files from separate directories or downloads.
    initramfs, manifest, rootfs.sqfs and rootfs.sqfs.sha256.
    The SD card need not be formatted; unrelated files can remain. Replace the full application directory and upload its loader together.
    Keep `/gaijin/userdata.ext2` outside this replaceable directory and preserve it
-   during updates. To enable persistence, provision it once using
-   [persistence instructions](Documentation/guides/persistence.md). Without it, the system uses RAM.
-   Provisioning is explicit and never part of an application update.
+   during updates. If the image and creation artifacts are absent on an eligible
+   FAT16/FAT32 card, revision 38 creates an empty 32 MiB image automatically.
+   Creation requires at least 48 MiB free, including 16 MiB update headroom,
+   and a contiguous 32 MiB allocation. Existing images are preserved by default.
+   See [persistence instructions](Documentation/guides/persistence.md) for RAM
+   fallback, host provisioning and recovery.
+
+   Safely unmount/eject the card on the host before moving it to Tanmatsu.
+   A FAT dirty flag blocks home creation even if boot assets remain readable.
+   The loader logs the failed FAT check and setup explains the RAM fallback.
+   See [FAT-blocked creation](Documentation/guides/persistence.md#fat-blocked-home-creation).
 
    Revision 33 retains the corrected application identifier `com.github.siviqt.gaijin`.
    Revision 31 incorrectly compiled `com.github.siviq.gaijin`, which fails to
@@ -36,14 +53,14 @@ folder. Do not combine files from separate directories or downloads.
    initramfs and rootfs together; renaming the folder alone does not repair the
    revision-31 binaries for the correct identifier. Remove
    the old cached application entry in Launcher to avoid selecting it, then
-   launch Gaijin from the SD card so Launcher copies the revision-33 executable
+   launch Gaijin from the SD card so Launcher copies the revision-38 executable
    into AppFS. The package declares all boot assets and requires SD installation.
 
 3. Enter **BadgeLink mode**. Upload the loader from this same set:
 
    ```sh
    /path/to/tanmatsu-sdk/tools/badgelink.sh appfs upload \
-     com.github.siviqt.gaijin "Gaijin" 33 \
+     com.github.siviqt.gaijin "Gaijin" 37 \
      sd/apps/com.github.siviqt.gaijin/linux-loader.bin
    ```
 
@@ -55,7 +72,10 @@ folder. Do not combine files from separate directories or downloads.
    This application does not require flashing a bootloader or partition table.
 
 4. Launch Gaijin through Launcher. First verify standalone startup with USB
-   disconnected: the LCD should reach `gaijin#` and accept keyboard input.
+   disconnected: a missing home is created with a HOME progress display, then
+   initial setup appears before `gaijin#`. Select Continue to save default
+   preferences, or set a prompt label first. Later clean boots reach the shell
+   without repeating setup.
    For a USB capture, switch to **P4 USB Serial/JTAG debugging mode** and open
    the appropriate `/dev/ttyACM*` port at 115200. The USB shell can also be
    attached after startup. Disable host hardware/software flow control and
@@ -98,7 +118,11 @@ Before physical reset to Launcher, stop applications and run
 remains read-only FAT. With a validated state image, `/persist` is writable ext2
 and `/home` and `/root` persist. Otherwise those paths use bounded RAM and
 vanish on reset. `/run`, `/tmp` and `/usr/local` remain RAM-backed. Do not remove
-the card while Linux runs. Hotplug, automatic repair and formatting remain disabled.
+the card while Linux runs. Whole-card formatting, hotplug and automatic repair
+remain disabled. `gaijin-setup` offers an eligible dirty image's destructive
+reset only after typing `ERASE`; it stops Linux sessions and relaunches the
+same AppFS loader to verify a replacement before deleting the old file.
+The reset also needs 48 MiB free, independently of the old image's capacity.
 Date still starts at the Unix epoch. The USB flow-control workaround above and
 accepted keyboard behavior remain applicable.
 
@@ -107,8 +131,9 @@ expect `Gaijin SD: RAM rescue shell`. Inspect `dmesg` and `/proc/mounts`.
 Missing Image/DTB/initramfs still fails in the loader before Linux starts.
 For a Linux rescue test, temporarily rename only `boot/rootfs.sqfs` on a host,
 boot and restore it afterwards; keep the other boot assets together.
-A failed final root transition needs physical reset. Nothing automatically
-repairs or replaces card contents.
+A failed final root transition needs physical reset. A rejected image is never
+automatically repaired or replaced. Incompatible images, card I/O/FAT errors
+and incomplete creation/reset files require host inspection.
 
 For M3, run [the persistent-state acceptance procedure](Documentation/guides/persistence.md)
 and the existing [SD read regressions](Documentation/guides/sd-storage.md)

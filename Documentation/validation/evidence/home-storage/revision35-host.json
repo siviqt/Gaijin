@@ -1,0 +1,41 @@
+{
+  "date": "2026-11-09",
+  "version": "0.5.21",
+  "appfs_revision": 35,
+  "application_id": "com.github.siviqt.gaijin",
+  "components": "Loader and NOMMU userspace rebuilt; unchanged revision-34 kernel reused by hash",
+  "host_tests": {
+    "run": 132,
+    "passed": 132,
+    "skipped": 0
+  },
+  "home_fatfs": "PASS: real ESP-IDF 6.0.2 FatFs with dynamic file buffers, poisoned locals, creation/reuse/dirty reset, factory hash and Address/UB sanitizers",
+  "negative_control": "PASS: removing FIL initialization reproduces fault in f_open called by home_mark",
+  "fat_guard": "PASS: FAT16/32, boot dirty and both clean/error bits, meaningful copy mismatch, reserved high nibble, mirroring and I/O failures",
+  "setup": "PASS: preferences/completion, exact ERASE and cancellation, concurrent consoles, FAT/incomplete diagnostics, hidden unavailable options",
+  "host_volume_diagnostic": "PASS: reads only three metadata sectors and preserves fixture bytes",
+  "userspace_abi": "PASS: seven static bFLT executables and matching initramfs/SquashFS",
+  "package_integrity": "PASS",
+  "publication_audit": "PASS",
+  "components_sha256": {
+    "loader": "17f91501e91760445039c087ef2ca41bfeff217d2db8b9639f7bb2ba73f399a2",
+    "Image": "2d45cc31b68bee546bf1c1a9e953d2aeace5e59e6af05e23e96be18a0c09fff0",
+    "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
+    "initramfs": "ac64a5f99e1c9cae34cd1bdc9bad6ab4332a69d504ecc5e57749df5e41d0d332",
+    "rootfs.sqfs": "b103e3dc7aee020dcca32c9ff1822d951c4d509b51b15051b394241c7810037d"
+  },
+  "home_template_expanded_sha256": "65f2473b31220be8272c81c076fbc288a351646f89258ec424718539a0562caf",
+  "unchanged_kernel_regressions": {
+    "clic_rv32_cases": 60,
+    "clic_negative_control": "PASS",
+    "source": "Documentation/validation/evidence/home-storage/revision34-host.json"
+  },
+  "hardware_validated": false,
+  "last_user_accepted_hardware_revision": 33,
+  "previous_device_result": "Revision 34: FAT rejection resolved offline, then uninitialized FIL crash during marker open; documented in Documentation/validation/home-storage.md",
+  "hardware_validation_report": "Documentation/validation/home-storage.md",
+  "remaining": [
+    "Retest revision 35 on Tanmatsu, including partial-transaction inspection, factory creation, initial setup and clean reuse.",
+    "Physical ROM inflater, display/DMA handoff, confirmed reset and interruption acceptance remain pending."
+  ]
+}

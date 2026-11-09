@@ -1,0 +1,20 @@
+{
+  "date": "2026-11-09",
+  "version": "0.5.22",
+  "appfs_revision": 36,
+  "basis": "User report in this chat after testing the orientation correction",
+  "status": "PARTIAL PASS: orientation and normal Linux operation; continuous HOME flicker remains",
+  "confirmed": [
+    "HOME progress is in the proper orientation.",
+    "Linux works as expected.",
+    "Flicker stops after the console loads."
+  ],
+  "issue": "Constant light-blue flicker during the home operation.",
+  "diagnosis": "Loader DMA rearm polling and excessive full-frame cache maintenance are concrete weaknesses consistent with DSI FIFO starvation; raw on-device underrun evidence is not yet captured.",
+  "proposal": "Documentation/reference/home-progress-flicker-proposal.md",
+  "full_storage_acceptance": false,
+  "remaining": [
+    "Implement and physically qualify continuous loader scanout with bounded rendering and verified interrupt teardown.",
+    "Remaining preference durability, clean reuse, confirmed reset and interruption qualification."
+  ]
+}

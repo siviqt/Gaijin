@@ -23,7 +23,7 @@
     "url": "https://cdn.kernel.org/pub/linux/kernel/v6.x/linux-6.18.35.tar.xz",
     "sha256": "f78602932219125e211c5f5bfd84edcfd4ec5ce88fc944f8248413f665bef236",
     "patch": "linux/patches/0001-gaijin-esp32p4.patch",
-    "patch_sha256": "54c6369b3e0123b851b967d5eea9432b5f272bb57b89a689168e4e00ec31fe64",
+    "patch_sha256": "afaffd676cf0c24920a116288eda7a2faa97c2ba48935086ab03b3fc91819c21",
     "uaccess_patch": "linux/patches/0002-esp32p4-user-access.patch",
     "uaccess_patch_sha256": "7a465ec3e2ecc4b605e50de250836d9faad540431e554e0d110d027678334a2c"
   },
@@ -372,5 +372,48 @@
       "BusyBox-GPL-2.0": "bbfc9843646d483c334664f651c208b9839626891d8f17604db2146962f43548"
     },
     "deduplicated": "The uClibc COPYING.LIB text is byte-identical to LGPL-2.1."
+  },
+  "home_storage": {
+    "version": "0.5.24",
+    "appfs_revision": 38,
+    "status": "User confirmed revision-37 HOME flicker resolved; startup-only blue flashes remain with a clean post-boot scroll test. Revision 38 adds IRQ-masked fbcon completion polling between native rows; hardware test pending.",
+    "validation": "Documentation/validation/home-storage.md",
+    "guide": "Documentation/guides/persistence.md",
+    "factory_bytes": 33554432,
+    "update_reserve_bytes": 16777216,
+    "format": "gaijin-state-v1; ext2 1 KiB blocks, 128-byte inodes, feature masks 0/2/3",
+    "setup": "gaijin-setup-v1; pending and completed records independent of application revision",
+    "policy": "Create only when image and transaction artifacts are absent. Reuse clean supported state. Recover on host, or explicitly discard a recognized dirty image after ERASE confirmation. Incompatible and incomplete images are preserved.",
+    "reset": "One-shot ghr1 argument, card CID/file size/fresh superblock SHA256; AppFS descriptor captured by loader and supplied in DT; RESTART2 after checked cleanup. No new retained-memory allocation or writable Linux FAT.",
+    "appfs_abi": {
+      "repository": "https://github.com/badgeteam/esp32-component-appfs",
+      "tag": "v2.1.0",
+      "commit": "684af283b0ce22cef90239c8cfa82be4bbe8fdc6",
+      "layout": "custom: magic u64 at 0, fd u32 at 8, valid byte at 12, 128-byte argument at 13",
+      "launcher_manifest": "https://github.com/Nicolai-Electronics/tanmatsu-launcher/blob/v0.2.8/main/idf_component.yml"
+    },
+    "tests": [
+      "tests/test_home.py",
+      "tests/test_home_setup.py",
+      "tests/test_state.py",
+      "tests/test_power.py",
+      "tests/test_home_volume.py",
+      "tests/test_home_fatfs.py",
+      "tests/test_progress.py"
+    ],
+    "loader_fatfs": "ESP-IDF 6.0.2 FF_USE_DYN_BUFFER=1 requires zero-initialized local FIL objects; actual FatFs creation/reuse/reset and sanitizer negative control cover this contract.",
+    "initial_device_result": "Documentation/validation/evidence/home-storage/revision35-device.json",
+    "progress": {
+      "mode": "Owned internal-RAM DMA-completion ISR, immediate descriptor rearm, checked interrupt teardown before Linux",
+      "cache": "64-byte aligned, at most 4096 bytes per call; progress only updates changed bar rows at 10 Hz, with forced final 100%",
+      "diagnostics": "frames, underrun observations, DMA/cache errors, max frame interval and cleanup summary",
+      "display_test": "Read-only /gaijin/display-test marker containing gaijin-display-test-v1 plus newline; 5s static and 5s progress; ordinary home policy then applies",
+      "validation": "Documentation/validation/revision37.md"
+    },
+    "linux_refresh": {
+      "mode": "IRQ-driven refresh with completion polling between bounded native drawing rows and cache chunks; preserves caller IRQ mask",
+      "diagnostics": "polled_frames and max_frame_us (largest completion service interval since probe), alongside frames, dma_errors and underruns",
+      "validation": "Documentation/validation/revision38.md"
+    }
   }
 }

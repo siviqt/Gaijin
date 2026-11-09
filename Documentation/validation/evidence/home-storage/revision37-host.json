@@ -1,0 +1,58 @@
+{
+  "date": "2026-11-09",
+  "version": "0.5.23",
+  "appfs_revision": 37,
+  "application_id": "com.github.siviqt.gaijin",
+  "change": "Loader DMA-completion refresh, bounded incremental cache updates, checked interrupt teardown and non-destructive display diagnostic.",
+  "components": "Loader rebuilt; kernel and userspace unchanged from revision 36 by hash",
+  "host_tests": {
+    "run": 148,
+    "passed": 148,
+    "skipped": 0
+  },
+  "focused_progress_checks": {
+    "passed": 16,
+    "skipped": 0,
+    "coverage": [
+      "Repeated completion and fresh full descriptor restoration.",
+      "DMA error precedence and no retry loop.",
+      "Raw underrun sampling and summary.",
+      "10 Hz/percentage coalescing, forced final value, aligned bounded dirty-row synchronization.",
+      "Completion during rendering/stop and idempotent cleanup.",
+      "Cache/IRQ allocation/enable/disable/free failures and cleanup retry.",
+      "100 ms stuck-DMA bound and handoff refusal.",
+      "Ten-second static/animated diagnostic and strict read-only marker.",
+      "Built ISR/state placement and direct helper call targets."
+    ]
+  },
+  "internal_ram_placement": {
+    "esp_timer_get_time": "0x4ff01a52",
+    "progress_quiesce": "0x4ff01c3e",
+    "progress_observe_underrun": "0x4ff01c7c",
+    "progress_rearm": "0x4ff01caa",
+    "progress_interrupt": "0x4ff01d50",
+    "esp_cache_msync": "0x4ff07824",
+    "progress": "0x4ff0fd80"
+  },
+  "loader_build": "PASS",
+  "package_integrity": "PASS",
+  "publication_audit": "PASS",
+  "components_sha256": {
+    "loader": "cea21a458ae6b5ae250df4f84b5b6590a402830f6bae32ca6daf4ce1942188ff",
+    "Image": "2d45cc31b68bee546bf1c1a9e953d2aeace5e59e6af05e23e96be18a0c09fff0",
+    "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
+    "initramfs": "ac64a5f99e1c9cae34cd1bdc9bad6ab4332a69d504ecc5e57749df5e41d0d332",
+    "rootfs.sqfs": "b103e3dc7aee020dcca32c9ff1822d951c4d509b51b15051b394241c7810037d"
+  },
+  "home_template_expanded_sha256": "65f2473b31220be8272c81c076fbc288a351646f89258ec424718539a0562caf",
+  "unchanged_component_evidence": "Documentation/validation/evidence/home-storage/revision36-host.json",
+  "device_baseline": "Documentation/validation/evidence/home-storage/revision36-device.json",
+  "hardware_validated": false,
+  "last_fully_accepted_hardware_revision": 33,
+  "hardware_validation_report": "Documentation/validation/revision37.md",
+  "remaining": [
+    "User test: static/animated HOME with no visible blue flashes and capture the HOME refresh irq v1 summary.",
+    "Full creation/readback and physical handoff regressions; remaining home durability/reset/interruption qualification."
+  ],
+  "descriptor_snapshot": "Pinned SDK descriptor type with 64-byte alignment; reserved PSRAM descriptor unchanged; ordered publication verified in compiled code."
+}

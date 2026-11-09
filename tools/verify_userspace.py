@@ -174,7 +174,7 @@ def verify(archive, elfs, readelf, busybox_config=None):
     if b"gaijin-boot-report" in startup["data"] or any(Path(name).name == "gaijin-boot-report" for name in entries):
         raise ValueError("boot archive contains the retired backlight diagnostic")
     binaries = {}
-    for name in ("bin/busybox", "usr/bin/gaijin-abi-check", "usr/bin/m5-umode-probe", "usr/bin/m2-input-test", "sbin/gaijin-state-map", "sbin/gaijin-power"):
+    for name in ("bin/busybox", "usr/bin/gaijin-abi-check", "usr/bin/m5-umode-probe", "usr/bin/m2-input-test", "sbin/gaijin-state-map", "sbin/gaijin-power", "sbin/gaijin-setup"):
         _, item = resolve_path(entries, name)
         if not item.get("mode", 0) & 0o111:
             raise ValueError(f"missing executable {name}")
@@ -191,8 +191,8 @@ def verify(archive, elfs, readelf, busybox_config=None):
             raise ValueError(f"{name} must use the safe Gaijin power controller")
     if any(Path(name).name == "reboot" for name in entries):
         raise ValueError("the root filesystem must not contain a reboot command")
-    if len(elfs) != 6:
-        raise ValueError("supply BusyBox, ABI-probe, privilege-probe, input-test, state-mapper and power-controller ELF intermediates")
+    if len(elfs) != 7:
+        raise ValueError("supply BusyBox, ABI-probe, privilege-probe, input-test, state-mapper, power-controller and setup ELF intermediates")
     if busybox_config:
         check_busybox_config(busybox_config.read_text())
     return dict(abi="gaijin-rv32imac-ilp32-le-bflt4-static-uclibc-v1", compressed_bytes=archive.stat().st_size,
@@ -211,7 +211,7 @@ def verify_squashfs(image, archive, unsquashfs):
             not 96 <= struct.unpack_from("<Q", data, 40)[0] <= len(data)):
         raise ValueError("rootfs requires bounded SquashFS v4, gzip, 32 KiB blocks")
     entries, _ = read_newc(archive)
-    for name in ("bin/busybox", "usr/bin/gaijin-abi-check", "usr/bin/m5-umode-probe", "usr/bin/m2-input-test", "sbin/gaijin-state-map", "sbin/gaijin-power",
+    for name in ("bin/busybox", "usr/bin/gaijin-abi-check", "usr/bin/m5-umode-probe", "usr/bin/m2-input-test", "sbin/gaijin-state-map", "sbin/gaijin-power", "sbin/gaijin-setup",
                  "init", "etc/init.d/rcS", "sbin/gaijin-sd-root", "usr/bin/m2-sd-test",
                  "sbin/gaijin-persist", "usr/bin/m3-state-test", "usr/bin/m5-display-test", "etc/profile",
                  "etc/inittab", "etc/gaijin-base", "etc/gaijin-abi"):

@@ -1,7 +1,22 @@
 # Gaijin
 
 Native RV32 NOMMU Linux for Tanmatsu rev7, launched from AppFS. The current
-build is **application 0.5.19 / AppFS revision 33 / Linux 6.18.35-gaijin-m5**.
+build is **application 0.5.24 / AppFS revision 38 / Linux 6.18.35-gaijin-m5**.
+
+Revision 38 creates a missing 32 MiB home image from an embedded factory seed,
+starts `gaijin-setup` for initial preferences and reuses compatible existing
+storage. A recognized dirty image can be explicitly erased and recreated;
+data-preserving recovery remains offline on a host. See
+[home storage](Documentation/guides/persistence.md) and the
+[storage validation procedure](Documentation/validation/home-storage.md).
+The user confirmed revision-35 image creation/setup-menu display and revision-36
+orientation/Linux operation. The user confirmed revision 37 removed HOME
+flicker, while blue flashes remained during boot logging. Revision 38 services
+display completions between native drawing rows even when printk masks IRQs;
+see the [boot display test](Documentation/validation/revision38.md) and the
+[non-destructive HOME test](Documentation/validation/revision37.md).
+Full storage qualification is pending;
+revision 33 remains the last fully user-accepted hardware baseline.
 
 This build includes the [user-access and vi correction](Documentation/guides/user-access.md).
 Revision 33 removes the USB-reader dependency from early boot, prefers the LCD

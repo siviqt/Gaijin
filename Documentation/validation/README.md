@@ -10,6 +10,11 @@ work, and subsystem guides for operating procedures. Public captures and histori
 inventories are at the [locations below](#evidence-locations). Their observations
 are preserved, with [personal and device identifiers redacted](evidence/README.md).
 
+The current display follow-up is [revision 38](revision38.md), which targets
+startup-only blue flashes. The user confirmed revision 37 removed HOME
+flicker and its post-boot scrolling test was clean; see the
+[scoped result](evidence/home-storage/revision37-device.json).
+
 ## M1 USB console and ABI acceptance
 
 M1 is CLOSED — PASS, accepted by the user on 28 October 2026. The accepted

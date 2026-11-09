@@ -10,7 +10,8 @@ describes the runtime and contracts.
 
 Prerequisites: ESP-IDF v6.0.2 and its P4 compiler; Python 3.12+; GNU make,
 C/C++, Git, patch, dtc/fdtget, bc, bison, flex, OpenSSL development headers,
-cpio, rsync, file, unzip, wget, Perl and Buildroot host dependencies. The
+cpio, rsync, file, unzip, wget, Perl, host e2fsprogs (`mke2fs`, `debugfs`,
+`e2fsck`) and Buildroot host dependencies. The
 Espressif compiler builds the kernel and loader; Buildroot builds the NOMMU
 userspace toolchain. [sources.lock.json](../sources.lock.json) pins inputs.
 Initial builds need network access or populated source/download caches.
@@ -75,6 +76,7 @@ start with `/`.
 | Path | Authoritative content |
 | --- | --- |
 | `main/` | Loader, boot contract, handoff and BSP SD diagnostic |
+| `common/` | Home format/request contract, SHA256 and portable creation/reset transaction |
 | `components/libfdt/`, `THIRD_PARTY.md` | Vendored FDT implementation and consolidated third-party notices/license texts |
 | `launcher/` | AppFS metadata and icon |
 | `linux/tanmatsu_defconfig`, `linux/tanmatsu.dts` | Supported board configuration and wiring |
@@ -106,6 +108,7 @@ Do not hand-edit their generated output or prepared dependency sources.
 | `build/gaijin-current.zip` | Single downloadable installation bundle |
 | `build/CURRENT.json`, `build/SHA256SUMS` | Release identity and complete public-file inventory/hashes |
 | `build/loader/`, `build/kernel/`, `build/userspace/` | Current component workspaces and ABI intermediates |
+| `build/home/` | Generated deterministic factory seed header and host-verification report |
 | `build/Documentation/`, `build/tools/` | Generated release mirrors |
 | `build/README.md`, `build/INSTALL.md`, `build/sources.lock.json`, `build/THIRD_PARTY.md` | Generated copies of their source files |
 | `build/VERIFICATION.json`, `build/current-tests.log`, `build/current-package.log` | Latest workspace verification and check output |

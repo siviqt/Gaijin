@@ -19,5 +19,7 @@ else
     echo 'Gaijin: userspace ABI probe FAIL — retain this log'
 fi
 free
+/sbin/gaijin-setup --initial || echo 'Gaijin: initial preferences are pending; run gaijin-setup to continue'
 printf 'Read-only base; use gaijin-persist status to check state. Use shutdown for Launcher, poweroff to turn off, or halt.\n'
 printf 'Type m1-smoke, m2-sd-test and m3-state-test for checks.\n\n'
+printf 'Use gaijin-setup for preferences, storage status and host recovery instructions.\n'

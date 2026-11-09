@@ -1,0 +1,33 @@
+{
+  "date": "2026-11-09",
+  "version": "0.5.22",
+  "appfs_revision": 36,
+  "application_id": "com.github.siviqt.gaijin",
+  "change": "Correct loader HOME progress to the same clockwise landscape mapping as Linux fbcon rotate:1.",
+  "components": "Loader rebuilt; unchanged kernel and userspace reused with hashes matching revision 35",
+  "host_tests": {
+    "run": 132,
+    "passed": 132,
+    "skipped": 0
+  },
+  "package_integrity": "PASS",
+  "publication_audit": "PASS",
+  "components_sha256": {
+    "loader": "7ab33db43825168f29a8aebc120a15b476a6176637c89ec8341b2e0abbcb5697",
+    "Image": "2d45cc31b68bee546bf1c1a9e953d2aeace5e59e6af05e23e96be18a0c09fff0",
+    "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
+    "initramfs": "ac64a5f99e1c9cae34cd1bdc9bad6ab4332a69d504ecc5e57749df5e41d0d332",
+    "rootfs.sqfs": "b103e3dc7aee020dcca32c9ff1822d951c4d509b51b15051b394241c7810037d"
+  },
+  "home_template_expanded_sha256": "65f2473b31220be8272c81c076fbc288a351646f89258ec424718539a0562caf",
+  "prior_regressions": "Documentation/validation/evidence/home-storage/revision35-host.json",
+  "device_confirmed_scope": "Revision 35: 32 MiB creation, progress through handoff and initial setup-menu display; its progress was upside down.",
+  "device_evidence": "Documentation/validation/evidence/home-storage/revision35-device.json",
+  "hardware_validated": false,
+  "last_fully_accepted_hardware_revision": 33,
+  "hardware_validation_report": "Documentation/validation/home-storage.md",
+  "remaining": [
+    "Observe corrected orientation when HOME progress next runs; an existing compatible home is reused.",
+    "Preference durability, clean reuse, confirmed reset, interruption, no-space and identity-refusal device qualification remain pending."
+  ]
+}

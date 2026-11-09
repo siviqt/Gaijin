@@ -10,6 +10,9 @@ dev=$fb/device
 IFS= read -r before < "$dev/frames" || exit "$?"
 IFS= read -r errors_before < "$dev/dma_errors" || exit "$?"
 IFS= read -r underruns_before < "$dev/underruns" || exit "$?"
+IFS= read -r polled_before < "$dev/polled_frames" || exit "$?"
+IFS= read -r max_before < "$dev/max_frame_us" || exit "$?"
+printf 'M5 since display start: frames=%s dma_errors=%s underruns=%s polled_frames=%s max_frame_us=%s\n' "$before" "$errors_before" "$underruns_before" "$polled_before" "$max_before"
 [ "$errors_before" -eq 0 ] && [ "$underruns_before" -eq 0 ] || {
     echo 'M5 FAIL: display already has errors'; exit 1;
 }
@@ -25,6 +28,9 @@ sleep 3 || exit "$?"
 IFS= read -r after < "$dev/frames" || exit "$?"
 IFS= read -r errors_after < "$dev/dma_errors" || exit "$?"
 IFS= read -r underruns_after < "$dev/underruns" || exit "$?"
+IFS= read -r polled_after < "$dev/polled_frames" || exit "$?"
+IFS= read -r max_after < "$dev/max_frame_us" || exit "$?"
+printf 'M5 refresh detail: polled_frames=%s -> %s max_frame_us=%s -> %s\n' "$polled_before" "$polled_after" "$max_before" "$max_after"
 [ "$after" -gt "$before" ] && [ "$errors_after" -eq 0 ] && [ "$underruns_after" -eq 0 ] || {
     echo "M5 FAIL: frames=$before/$after dma_errors=$errors_after underruns=$underruns_after"; exit 1;
 }

@@ -123,7 +123,8 @@ class HushSmokeTests(unittest.TestCase):
         device.mkdir(parents=True, exist_ok=True)
         for name, value in {"name": "tanmatsu", "virtual_size": "480,800", "bits_per_pixel": "16"}.items():
             (fb / name).write_text(value + "\n")
-        for name, value in {"frames": "10", "dma_errors": "0", "underruns": "0"}.items():
+        for name, value in {"frames": "10", "dma_errors": "0", "underruns": "0",
+                            "polled_frames": "3", "max_frame_us": "16800"}.items():
             (device / name).write_text(value + "\n")
         self.command("sleep", '''
 case "$DISPLAY_FAILURE" in
@@ -131,7 +132,10 @@ case "$DISPLAY_FAILURE" in
     read) rm "$DISPLAY_DEVICE/frames" ;;
     *) printf '20\\n' > "$DISPLAY_DEVICE/frames" ;;
 esac
+printf '5\\n' > "$DISPLAY_DEVICE/polled_frames"
 case "$DISPLAY_FAILURE" in
+    poll_read) rm "$DISPLAY_DEVICE/polled_frames" ;;
+    max_read) rm "$DISPLAY_DEVICE/max_frame_us" ;;
     dma) printf '1\\n' > "$DISPLAY_DEVICE/dma_errors" ;;
     underrun) printf '1\\n' > "$DISPLAY_DEVICE/underruns" ;;
 esac
@@ -154,10 +158,12 @@ exit 0
         result = self.run_display()
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
         self.assertIn("M5 refresh PASS: frames=10 -> 20", result.stdout)
+        self.assertIn("M5 since display start: frames=10 dma_errors=0 underruns=0 polled_frames=3 max_frame_us=16800", result.stdout)
+        self.assertIn("M5 refresh detail: polled_frames=3 -> 5 max_frame_us=16800 -> 16800", result.stdout)
         self.assertIn("M5 display load 99:", (self.work / "tty1").read_text())
 
     def test_display_smoke_rejects_stalls_dma_underruns_and_missing_counters(self):
-        for failure in ("stalled", "dma", "underrun", "read"):
+        for failure in ("stalled", "dma", "underrun", "read", "poll_read", "max_read"):
             with self.subTest(failure=failure):
                 result = self.run_display(failure)
                 self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)

@@ -52,6 +52,20 @@ gaijin_persist_abort() {
     return 1
 }
 
+gaijin_layout_valid() {
+    [ -f /persist/state-version ] && [ ! -L /persist/state-version ] &&
+    [ "$(head -c 32 /persist/state-version)" = gaijin-state-v1 ] &&
+    [ -d /persist/home/root ] && [ ! -L /persist/home ] && [ ! -L /persist/home/root ] &&
+    [ -d /persist/settings ] && [ ! -L /persist/settings ] || return 1
+    for state_record in setup-version setup-pending; do
+        [ ! -L "/persist/settings/$state_record" ] || return 1
+        if [ -e "/persist/settings/$state_record" ]; then
+            [ -f "/persist/settings/$state_record" ] &&
+            [ "$(head -c 32 "/persist/settings/$state_record")" = gaijin-setup-v1 ] || return 1
+        fi
+    done
+}
+
 gaijin_persist_start() {
     case " $(cat /proc/cmdline) " in
         *" gaijin.clean "*|*" gaijin.rescue "*) echo 'Gaijin state: clean start (RAM only)'; return 1 ;;
@@ -62,6 +76,31 @@ gaijin_persist_start() {
         return 1
     fi
     [ ! -e /run/gaijin-state-map ] || { echo 'Gaijin state: already mapped'; return 1; }
+    gaijin-state-map probe > /run/gaijin-home-state || return 1
+    state_status=
+    IFS= read -r state_status < /run/gaijin-home-state
+    if [ "$state_status" != clean ]; then
+        echo "Gaijin state: $state_status; using RAM. Recover /gaijin/userdata.ext2 on a host."
+        return 1
+    fi
+    # Validate the layout on a read-only map before granting any SD writes.
+    state_device=$(gaijin-state-map map-ro) || return 1
+    printf '%s\n' "$state_device" > /run/gaijin-state-map
+    if ! mount -t ext2 -o ro,noatime,nosuid,nodev "$state_device" /persist; then
+        gaijin_persist_abort
+        return 1
+    fi
+    touch /run/gaijin-state-mounted
+    if ! gaijin_layout_valid; then
+        printf 'incompatible\n' > /run/gaijin-home-state
+        echo 'Gaijin state: incompatible directory layout; recover on a host'
+        gaijin_persist_abort
+        return 1
+    fi
+    umount /persist || return 1
+    rm -f /run/gaijin-state-mounted
+    gaijin-state-map stop || return 1
+    rm -f /run/gaijin-state-map
     state_device=$(gaijin-state-map) || return 1
     printf '%s\n' "$state_device" > /run/gaijin-state-map
     if ! mount -t ext2 -o rw,noatime,nosuid,nodev,errors=remount-ro "$state_device" /persist; then
@@ -69,15 +108,6 @@ gaijin_persist_start() {
         return 1
     fi
     touch /run/gaijin-state-mounted
-    # Provisioned directories and version marker only; never initialize or repair.
-    if [ "$(cat /persist/state-version)" != gaijin-state-v1 ] ||
-       [ ! -d /persist/home/root ] || [ -L /persist/home ] || [ -L /persist/home/root ] ||
-       [ ! -d /persist/settings ] || [ -L /persist/settings ] ||
-       [ -L /persist/state-version ]; then
-        echo 'Gaijin state: incompatible directory layout'
-        gaijin_persist_abort
-        return 1
-    fi
     if ! mount -o bind /persist/home /home; then
         gaijin_persist_abort
         return 1

@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-09",
+  "version": "0.5.24",
+  "appfs_revision": 38,
+  "application_id": "com.github.siviqt.gaijin",
+  "change": "Linux framebuffer services DMA completions between bounded native drawing rows and cache chunks while preserving caller IRQ state; boot-persistent timing/poll counters and updated diagnostic.",
+  "components": "Kernel and NOMMU userspace rebuilt; loader application descriptor rebuilt with corrected metadata dependency. HOME refresh code and factory template unchanged from revision 37.",
+  "host_tests": {
+    "run": 153,
+    "passed": 153,
+    "skipped": 0,
+    "elapsed_seconds": 19.82,
+    "command": "CROSS_COMPILE=<pinned P4 toolchain prefix> python3 -B -m unittest discover -s tests -v"
+  },
+  "host_tests_log": "Documentation/validation/evidence/home-storage/revision38-host-tests.log",
+  "host_tests_log_sha256": "914ef79254d42cad473f89207ac7a746f30cc49474595b9c834c90917970a76d",
+  "display_checks": {
+    "framebuffer_tests": 9,
+    "backlight_tests": 3,
+    "coverage": [
+      "IRQ-masked 160 ms bulk draw negative control versus row-bounded completion polling; caller IRQ state preserved.",
+      "Pixel checks for COPY/XOR fills, vertical/horizontal overlapping copies, mono byte padding and color stride.",
+      "DMA errors take precedence over completion; inactive and faulted scanout cannot restart through polling.",
+      "Existing descriptor invalidation/publication, bounded cache chunks, fixed geometry, palette and backlight regressions.",
+      "Diagnostic runs with pinned NOMMU hush; missing timing/polling counters and DMA/stall/underrun failures are rejected."
+    ],
+    "model_timing": "200 us per native row; old bulk control services after 160000 us; bounded callbacks maximum serviced-completion interval 16800 us. Model timings are not physical measurements."
+  },
+  "loader_build": "PASS",
+  "kernel_build": "PASS",
+  "userspace_build": "PASS",
+  "loader_application_version": "0.5.24",
+  "incremental_metadata_dependency": "launcher/metadata.json is a CMake configure input; packaging checks ESP app descriptor version against metadata and rejects cached older versions.",
+  "compiled_loader_isr_placement": "PASS in full regression suite",
+  "package_integrity": "PASS",
+  "publication_audit": "PASS",
+  "components_sha256": {
+    "loader": "a3ede13f02539c6ac9bccb1897b2cb240df772a3ed38a1faff458d40fad630ca",
+    "Image": "97c511f61b58dc98cded561b1668310191c5f5e4cc7131bea8adca8bfa2410b2",
+    "tanmatsu.dtb": "171d53b63de4900052addda9ec9b2762d87fd951ad25583fe544cea9ec4cc6df",
+    "initramfs": "cea0d3f5b6c432146510a8066296e9f30acb9577429f4f0c796bbaee6e695c50",
+    "rootfs.sqfs": "296512c1a9af25ba17d7fe787b781ebfcc57f96de6a2a374e9eb0ebe07bdb569"
+  },
+  "kernel_patch_sha256": "afaffd676cf0c24920a116288eda7a2faa97c2ba48935086ab03b3fc91819c21",
+  "home_template_expanded_sha256": "65f2473b31220be8272c81c076fbc288a351646f89258ec424718539a0562caf",
+  "device_baseline": "Documentation/validation/evidence/home-storage/revision37-device.json",
+  "hardware_validated": false,
+  "last_fully_accepted_hardware_revision": 33,
+  "hardware_validation_report": "Documentation/validation/revision38.md",
+  "limitations": [
+    "IRQ-local serialization relies on the single-core production build; framebuffer Kconfig excludes SMP and packaging checks it.",
+    "Polling and maximum service interval are diagnostic observations, not a guarantee that every DSI FIFO deadline was met.",
+    "Native models do not emulate panel scanout, PSRAM contention or all boot interrupt-masked sections."
+  ],
+  "remaining": [
+    "User device test for startup blue flashes, m5-display-test output, standalone boot and clean shutdown/relaunch.",
+    "Remaining first-run home creation/reset/durability/interruption device qualification."
+  ]
+}

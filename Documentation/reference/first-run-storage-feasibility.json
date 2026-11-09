@@ -1,0 +1,71 @@
+{
+  "experiment": "Host template feasibility; no target execution or SD writes",
+  "results": [
+    {
+      "size_mib": 16,
+      "gzip_bytes": 17025,
+      "exact_header": "PASS",
+      "host_e2fsck": "PASS"
+    },
+    {
+      "size_mib": 32,
+      "gzip_bytes": 33612,
+      "exact_header": "PASS",
+      "host_e2fsck": "PASS"
+    },
+    {
+      "size_mib": 64,
+      "gzip_bytes": 66855,
+      "exact_header": "PASS",
+      "host_e2fsck": "PASS"
+    },
+    {
+      "size_mib": 128,
+      "gzip_bytes": 132829,
+      "exact_header": "PASS",
+      "host_e2fsck": "PASS"
+    },
+    {
+      "size_mib": 256,
+      "gzip_bytes": 264877,
+      "exact_header": "PASS",
+      "host_e2fsck": "PASS"
+    }
+  ],
+  "date": "2026-11-08",
+  "production_baseline": {
+    "version": "0.5.19",
+    "appfs_revision": 33,
+    "kernel_release": "6.18.35-gaijin-m5"
+  },
+  "method": {
+    "create": "python3 tools/create_state.py <temporary-image> --size-mib <size>",
+    "compression": "gzip level 9, mtime 0; 64 KiB copy buffer",
+    "validation": "create_state.py runs e2fsck -fn; check_state.check_header repeated before compression",
+    "limitations": [
+      "Host feasibility only; images deleted after measurement.",
+      "UUIDs and creation metadata can vary; compressed sizes are illustrative.",
+      "No P4 decompression, low-memory, FAT allocation, SD timing or interruption tests performed."
+    ]
+  },
+  "generator_sha256": "cba7eb0e6b6089738deeb558fe3a35170dbbe9313d31e86cb281973ff1a34042",
+  "checker_sha256": "903ada9177309700315983d59aedcb0ee57ad5b2fa5e4cf99acdcf75946f5f45",
+  "host_mke2fs_version": [
+    "mke2fs 1.47.2 (1-Jan-2025)",
+    "\tUsing EXT2FS Library version 1.47.2"
+  ],
+  "source_inspection": [
+    {
+      "source": "Gaijin linux/patches/0001-gaijin-esp32p4.patch",
+      "sha256": "54c6369b3e0123b851b967d5eea9432b5f272bb57b89a689168e4e00ec31fe64"
+    },
+    {
+      "source": "Buildroot 2025.02.15 package/e2fsprogs/Config.in",
+      "sha256": "db6bed2e13499a6547c100b0b8a3d24bded07b44528b5d2fc14798cfaa10dea5"
+    },
+    {
+      "source": "BusyBox 1.37.0 util-linux/mkfs_ext2.c",
+      "sha256": "292f85c6a7ea80694ae9f7af6ad71a5ed45f9c9e51b61ec2fd641b02930d3812"
+    }
+  ]
+}

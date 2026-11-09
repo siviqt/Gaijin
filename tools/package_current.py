@@ -41,14 +41,23 @@ def check_loader(loader):
     if (any(bootargs(usb_only).encode() + b"\0" not in data for usb_only in (False, True)) or
             b"Gaijin M5 contract=1" not in data or
             b"Linux owns DMA refresh" not in data or b"LDO4 disabled, bypass off" not in data or
+            b"Gaijin home template v1" not in data or
+            b"FAT boot-sector dirty flag is set" not in data or
+            b"HOME refresh irq v1" not in data or
             b"tanmatsu,appfs-boot-selection" in data or
             f"/sd/apps/{APP_ID}/boot/".encode() not in data):
         raise ValueError("loader is not current: expected framebuffer setup and SD reset; run make loader")
+    version = launcher_metadata()["version"].encode()
+    # ESP image header + first segment header precede esp_app_desc_t.
+    if (len(data) < 80 or data[0] != 0xe9 or
+            struct.unpack_from('<I', data, 32)[0] != 0xabcd5432 or
+            data[48:80].split(b'\0', 1)[0] != version):
+        raise ValueError("loader application version differs from metadata; run make loader")
 
 
 def check_userspace_paths(archive):
     entries, _ = read_newc(archive)
-    for name in ("init", "etc/inittab", "etc/init.d/rcS", "sbin/gaijin-sd-root", "usr/bin/m2-sd-test"):
+    for name in ("init", "etc/inittab", "etc/init.d/rcS", "sbin/gaijin-sd-root", "usr/bin/m2-sd-test", "sbin/gaijin-persist"):
         _, item = resolve_path(entries, name)
         if name in ("sbin/gaijin-sd-root", "usr/bin/m2-sd-test"):
             paths = set(re.findall(rb"/sd/apps/([^/\s]+)/boot", item["data"]))
@@ -63,6 +72,15 @@ def file_record(path):
     return dict(bytes=len(data), sha256=hashlib.sha256(data).hexdigest())
 
 
+def check_home_template(loader, report):
+    if (report.get('format') != 1 or report.get('capacity_bytes') != 32*1024*1024 or
+            report.get('compression') != 'zlib' or report.get('host_fsck') != 'PASS'):
+        raise ValueError('missing verified factory home template; run make loader')
+    digest = report.get('expanded_sha256', '')
+    if not re.fullmatch('[0-9a-f]{64}', digest) or bytes.fromhex(digest) not in loader.read_bytes():
+        raise ValueError('loader differs from the recorded factory home template')
+
+
 def launcher_metadata():
     metadata = json.loads((ROOT / "launcher/metadata.json").read_text())
     if metadata.get("repository_url") != REPOSITORY_URL:
@@ -70,7 +88,7 @@ def launcher_metadata():
     if metadata.get("icon") != {f"{size}x{size}": f"icon{size}.png" for size in ICON_SIZES}:
         raise ValueError("metadata must use the three Penguin icons at the application root")
     app = metadata["application"][0]
-    expected = dict(targets=["tanmatsu"], type="appfs", executable="linux-loader.bin", revision=33,
+    expected = dict(targets=["tanmatsu"], type="appfs", executable="linux-loader.bin", revision=38,
                     external_only=True, assets=[dict(source_file=name, target_file=name) for name in APP_ASSETS])
     if app != expected:
         raise ValueError("metadata must match Tanmatsu Launcher 0.2.8 AppFS installation")
@@ -100,7 +118,7 @@ def stage_application(loader, kernel, userspace, output):
     rootfs = userspace / "images/rootfs.squashfs"
     report = json.loads((userspace / "gaijin-userspace.json").read_text())
     if (report.get("abi") != ABI or report.get("shell") != "hush" or
-            not {"usr/bin/m2-input-test", "sbin/gaijin-state-map", "sbin/gaijin-power"} <= report.get("binaries", {}).keys() or
+            not {"usr/bin/m2-input-test", "sbin/gaijin-state-map", "sbin/gaijin-power", "sbin/gaijin-setup"} <= report.get("binaries", {}).keys() or
             report.get("archive_sha256") != hashlib.sha256(archive.read_bytes()).hexdigest()):
         raise ValueError("missing/stale userspace verification; run make userspace")
     if report.get("rootfs", {}).get("sha256") != file_record(rootfs)["sha256"]:
@@ -220,6 +238,7 @@ def check_current(build):
             report.get("appfs_revision") != metadata["application"][0]["revision"] or
             report.get("version") != metadata["version"]):
         raise ValueError("build record and application metadata disagree")
+    check_home_template(app / 'linux-loader.bin', report.get('home_template', {}))
     # A separately rebuilt component must be packaged before it can be installed.
     for source, staged_name in (("loader/linux-loader.bin", "linux-loader.bin"),
                                 ("kernel/arch/riscv/boot/Image", "boot/Image"),
@@ -246,6 +265,7 @@ def release_files():
         "launcher/icon-prompts.json": ROOT / "launcher/icon-prompts.json",
         "tools/create_state.py": ROOT / "tools/create_state.py",
         "tools/check_state.py": ROOT / "tools/check_state.py",
+        "tools/check_home_volume.py": ROOT / "tools/check_home_volume.py",
     }
     # Documentation is curated source/evidence. Private userdata backups live
     # outside it and are never discovered by this release allowlist.
@@ -259,6 +279,8 @@ def release_files():
 
 
 def publish(build):
+    template = json.loads((build / 'home/home-seed.json').read_text())
+    check_home_template(build / 'loader/linux-loader.bin', template)
     stage_application(build / "loader/linux-loader.bin", build / "kernel", build / "userspace", build / APP)
     documents = release_files()
     # These are generated release mirrors. Replacing them removes stale files
@@ -282,6 +304,7 @@ def publish(build):
                   abi=ABI, bootargs=bootargs(), usb_recovery_bootargs=bootargs(usb_only=True),
                   sd_root="sd", appfs_binary=str(APP / "linux-loader.bin"),
                   verification="Host integrity record; hardware results are in Documentation/validation/README.md",
+                  home_template=template,
                   files=files)
     (build / "CURRENT.json").write_text(json.dumps(report, indent=2) + "\n")
     checksums = ''.join(f"{record['sha256']}  {name}\n" for name, record in sorted(files.items()))

@@ -32,7 +32,7 @@ class PowerCommands(unittest.TestCase):
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <unistd.h>
-static int firmware_fd, kmsg_fd = -1, backlight_read_fd = -1, backlight_write_fd = -1;
+static int firmware_fd, kmsg_fd = -1, backlight_read_fd = -1, backlight_write_fd = -1, token_read;
 static int failure(const char *s) {return getenv("POWER_FAIL") && !strcmp(getenv("POWER_FAIL"),s);}
 static int mock_open(const char *path,int flags,...) {
     if (failure("preflight") && strstr(path,"ready")) {errno=ENOENT; return -1;}
@@ -41,6 +41,7 @@ static int mock_open(const char *path,int flags,...) {
     if (strstr(path,"/bl_power") && failure("backlight-missing")) {errno=ENOENT;return -1;}
     int fd=open("/dev/null",O_RDWR);
     firmware_fd=strstr(path,"firmware_version") ? fd : -1;
+    if (strstr(path,"home_reset_ready") && failure("reset-unavailable")) firmware_fd=fd;
     if (!strcmp(path,"/dev/kmsg")) kmsg_fd=fd;
     if (strstr(path,"/bl_power")) {
         if ((flags & O_ACCMODE)==O_WRONLY) backlight_write_fd=fd;
@@ -49,8 +50,15 @@ static int mock_open(const char *path,int flags,...) {
     return fd;
 }
 static ssize_t mock_read(int fd,void *buffer,size_t len) {
+    if (fd==30) {
+        const char *token=failure("token") ? "invalid\n" :
+            "ghr1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:02000000:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\n";
+        size_t remaining=strlen(token)-token_read;
+        if(remaining>len) remaining=len;
+        memcpy(buffer,token+token_read,remaining);token_read+=remaining;return remaining;
+    }
     (void)len;
-    const char *value=fd==firmware_fd ? "9\n" : "1\n";
+    const char *value=fd==firmware_fd ? (failure("reset-unavailable")?"0\n":"9\n") : "1\n";
     if (failure("firmware") && fd==firmware_fd) value="8\n";
     if (fd==backlight_read_fd) value=failure("backlight-off") ? "4\n" : "0\n";
     memcpy(buffer,value,2); return 2;
@@ -68,6 +76,7 @@ static ssize_t mock_write(int fd,const void *buffer,size_t len) {
     return write(fd,buffer,len);
 }
 static int mock_dup2(int old,int target) {(void)old;printf("console-fd:%d\n",target);return target;}
+static int mock_pipe2(int *fds,int flags) {(void)flags;fds[0]=30;fds[1]=31;return 0;}
 static int mock_flock(int fd,int op) {(void)fd;(void)op; if(failure("lock")){errno=EWOULDBLOCK;return -1;}return 0;}
 static int mock_chdir(const char *p) {printf("chdir:%s\n",p);return 0;}
 static uid_t mock_uid(void) {return failure("uid") ? 1000 : 0;}
@@ -110,13 +119,14 @@ static long mock_syscall(long nr,...) {
 #define setmntent mock_mounts
 #define sync mock_sync
 #define syscall mock_syscall
+#define pipe2 mock_pipe2
 '''
         source = ROOT / 'userspace/package/gaijin-state/power.c'
         (work / 'power.c').write_text(harness + '\n' + source.read_text())
         cls.binary = work / 'gaijin-power'
         subprocess.run(['cc', '-std=c11', '-Wall', '-Wextra', '-Werror', '-O1',
                         '-fsanitize=undefined', '-fno-sanitize-recover=all',
-                        '-o', str(cls.binary), str(work / 'power.c')], check=True)
+                        '-I', str(ROOT/'common'), '-o', str(cls.binary), str(work / 'power.c')], check=True)
 
     def run_power(self, *args, fail=''):
         return subprocess.run([str(self.binary), *args], env=dict(os.environ, POWER_FAIL=fail),
@@ -163,6 +173,22 @@ static long mock_syscall(long nr,...) {
         self.assertNotIn('signal:', result.stdout)
         self.assertNotIn('transition:', result.stdout)
 
+    def test_confirmed_reset_checks_identity_after_cleanup_and_uses_restart2(self):
+        result=self.run_power('gaijin-power','reset-home','--erase-confirmed')
+        # The executable name already is gaijin-power; arguments start with action.
+        self.assertEqual(result.returncode,2)
+        result=self.run_power('reset-home','--erase-confirmed')
+        self.assertIn('transition:a1b2c3d4:ghr1:',result.stdout)
+        self.assertNotIn('backlight:',result.stdout)
+        self.assertLess(result.stderr.index('persistence cleanup complete'),
+                        result.stderr.index('validate dirty home identity'))
+        for failure in ('token','reset-unavailable','cleanup','mount'):
+            failed=self.run_power('reset-home','--erase-confirmed',fail=failure)
+            self.assertNotIn('transition:',failed.stdout)
+        refused=self.run_power('reset-home')
+        self.assertEqual(refused.returncode,2)
+        self.assertNotIn('signal:',refused.stdout)
+
     def test_cleanup_failures_and_rw_mounts_block_transition_and_resume_init(self):
         for failure in ('spawn', 'cleanup', 'mount', 'console'):
             result = self.run_power('shutdown', fail=failure)
@@ -199,6 +225,11 @@ class LauncherReset(unittest.TestCase):
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include "gaijin_home.h"
+typedef uint32_t u32;
+#define memset_io memset
+#define memcpy_toio memcpy
 #define __iomem
 #define NOTIFY_DONE 0
 #define pr_emerg(...) ((void)0)
@@ -206,7 +237,8 @@ static unsigned char retained[256];
 static int order;
 struct sys_off_data {void *cb_data; const char *cmd;};
 static void writel(uint32_t value, void *p) {memcpy(p, &value, 4);}
-static void wmb(void) {if (memcmp(retained, "\0\0\0\0\0\0\0\0", 8)) abort(); order = 1;}
+static void writeb(unsigned char value, void *p) {memcpy(p,&value,1);}
+static void wmb(void) {order = 1;}
 static void local_irq_disable(void) {if (order != 1) abort(); order = 2;}
 static void mock_rom_reset(void) {if (order != 2) abort(); order = 3;}
 ''' + source + r'''
@@ -218,16 +250,27 @@ int main(void) {
         order = 0;
         struct sys_off_data data = {.cb_data = &power, .cmd = commands[i]};
         if (tanmatsu_restart(&data) != NOTIFY_DONE || order != 3) abort();
+        if (memcmp(retained,"\0\0\0\0\0\0\0\0",8)) abort();
         for (unsigned j = 8; j < sizeof(retained); ++j)
             if (retained[j] != 0xa5) abort();
     }
+    power.appfs_ready=true;power.appfs_fd=7;
+    const char token[]="ghr1:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa:02000000:bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+    memset(retained,0xa5,sizeof(retained));order=0;
+    struct sys_off_data data={.cb_data=&power,.cmd=token};
+    if(tanmatsu_restart(&data)!=NOTIFY_DONE || order!=3) abort();
+    uint64_t magic;memcpy(&magic,retained,8);
+    if(magic!=GH_APPFS_MAGIC || retained[8]!=7 || retained[12]!=1 ||
+        strcmp((char *)retained+GH_APPFS_ARG_OFFSET,token)) abort();
+    for(unsigned j=GH_APPFS_ARG_OFFSET+GH_APPFS_ARG_BYTES;j<sizeof(retained);j++)
+        if(retained[j]!=0xa5) abort();
     return 0;
 }
 '''
         with tempfile.TemporaryDirectory() as temp:
             work = Path(temp)
             (work / 'reset.c').write_text(harness)
-            subprocess.run(['cc', '-Wall', '-Wextra', '-Werror', '-o', str(work / 'reset'),
+            subprocess.run(['cc', '-Wall', '-Wextra', '-Werror', '-I', str(ROOT/'common'), '-o', str(work / 'reset'),
                             str(work / 'reset.c')], check=True)
             subprocess.run([str(work / 'reset')], check=True)
 
